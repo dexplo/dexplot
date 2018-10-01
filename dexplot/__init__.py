@@ -199,10 +199,16 @@ class _AggPlot:
             raise ValueError('`sharex` must be one of `False`, `True`, `None`, "row", or "col"')
         if sharey not in [False, True, None, 'row', 'col']:
             raise ValueError('`sharex` must be one of `False`, `True`, `None`, "row", or "col"')
+
         if not isinstance(xlabel, (NoneType, str)):
             raise TypeError('`xlabel` must be either None or a str')
+        elif xlabel is None:
+            xlabel = ''
         if not isinstance(ylabel, (NoneType, str)):
             raise TypeError('`ylabel` must be either None or a str')
+        elif ylabel is None:
+            ylabel = ''
+
         if not isinstance(xlim, (NoneType, tuple)):
             raise TypeError('`xlim` must be a two-item tuple of numerics or `None`')
         if not isinstance(ylim, (NoneType, tuple)):
@@ -235,28 +241,35 @@ class _AggPlot:
                      'kde': self.kdeplot}
         return plot_dict[self.kind]
 
+    def set_single_plot_labels(self, ax):
+        if self.kind in ('bar', 'line', 'box'):
+            if self.orient == 'v':
+                ax.set_xlabel(self.xlabel)
+                ax.set_ylabel(self.ylabel or self.agg)
+                if not (self.groupby or self.hue):
+                    ax.set_xticklabels([])
+                else:
+                    ax.tick_params(axis='x', labelrotation=self.rot)
+            else:
+                ax.set_xlabel(self.xlabel or self.agg)
+                ax.set_ylabel(self.ylabel)
+                if not (self.groupby or self.hue):
+                    ax.set_yticklabels([])
+            if self.groupby and self.hue:
+                ax.legend()
+        else:
+            if self.orient == 'v':
+                ax.set_xlabel(self.xlabel or self.agg)
+            else:
+                ax.set_ylabel(self.ylabel or self.agg)
+            if self.groupby or self.hue:
+                ax.legend()
+
     def apply_single_plot_changes(self, ax):
         if self.title:
             ax.figure.suptitle(self.title)
-        if self.xlabel:
-            ax.set_xlabel(self.xlabel)
-        else:
-            if self.kind in ('bar', 'line', 'box'):
-                if self.orient == 'v':
-                    ax.set_xlabel('')
-                    if not (self.groupby or self.hue):
-                        ax.set_xticklabels([])
-                else:
-                    ax.set_xlabel(self.agg)
-        if self.ylabel:
-            ax.set_ylabel(self.ylabel)
-        else:
-            if self.kind in ('bar', 'line', 'box'):
-                if self.orient == 'v':
-                    ax.set_ylabel(self.agg)
-                else:
-                    if not (self.groupby or self.hue):
-                        ax.set_yticklabels([])
+
+        self.set_single_plot_labels(ax)
 
         if self.xlim:
             ax.set_xlim(self.xlim)
@@ -280,7 +293,6 @@ class _AggPlot:
                 ax.barh(x_data, height, width, label=col, tick_label=data.index)
         if self.orient == 'v':
             ax.set_xticks(x_range)
-            ax.tick_params(axis='x', labelrotation=self.rot)
         else:
             ax.set_yticks(x_range)
         if n_cols > 1:
@@ -293,10 +305,6 @@ class _AggPlot:
                 ax.plot(index, height, label=col, **self.kwargs)
             else:
                 ax.plot(height, index, label=col, **self.kwargs)
-            if self.orient == 'v':
-                ax.tick_params(axis='x', labelrotation=self.rot)
-        if i > 0:
-            ax.legend()
 
     def boxplot(self, ax, data, **kwargs):
         vert = self.orient == 'v'
@@ -307,12 +315,13 @@ class _AggPlot:
         orientation = 'vertical' if self.orient == 'v' else 'horizontal'
         labels = kwargs['labels']
         ax.hist(data, orientation=orientation, label=labels, **self.kwargs)
-        ax.legend()
 
     def kdeplot(self, ax, data, **kwargs):
         labels = kwargs['labels']
+        if not isinstance(data, list):
+            data = [data]
         for label, cur_data in zip(labels, data):
-            x, density = _calculate_density(data)
+            x, density = _calculate_density(cur_data)
             if self.orient == 'h':
                 x, density = density, x
             ax.plot(x, density, label=label, **self.kwargs)
@@ -364,8 +373,6 @@ class _AggPlot:
                     data.append(sub_df[self.agg].values)
                     hue_vals.append(hue_val)
                 self.plot_func(ax, data, labels=hue_vals)
-                if self.orient == 'v':
-                    ax.tick_params(axis='x', labelrotation=self.rot)
             else:
                 data = self.data.groupby(self.hue).agg({self.agg: self.aggfunc})
                 self.plot_func(ax, data)
@@ -463,7 +470,8 @@ def aggplot(agg, groupby=None, data=None, hue=None, row=None, col=None, kind='ba
         size of the figure in inches.
 
     rot: int
-        Degree of rotation of the x-tick labels. Default is 90
+        Degree of rotation of the x-tick labels. Default is 90. Only applied
+        labels are strings
 
     title: str
         Sets the figure title NOT the Axes title
