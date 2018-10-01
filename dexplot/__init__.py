@@ -77,6 +77,7 @@ class _AggPlot:
         self.no_legend = True
 
     def validate_figsize(self, figsize):
+        self.orig_figsize = figsize
         if figsize is None:
             self.figsize = plt.rcParams['figure.figsize']
         elif isinstance(figsize, tuple):
@@ -154,10 +155,11 @@ class _AggPlot:
             self.col_kind = self.col_data.dtype.kind
 
     def validate_groupby_agg(self):
-        if self.agg_kind == 'O' and self.groupby_kind == 'O':
-            raise TypeError('When the `agg` column is categorical, you cannot use `groupby`. '
-                            'Instead, place the groupby column as either '
-                            ' `hue`, `row`, or `col`.')
+        if self.groupby:
+            if self.agg_kind == 'O' and self.groupby_kind == 'O':
+                raise TypeError('When the `agg` column is categorical, you cannot use `groupby`. '
+                                'Instead, place the groupby column as either '
+                                ' `hue`, `row`, or `col`.')
 
     def validate_kde_hist(self):
         if self.kind in ('hist', 'kde'):
@@ -242,6 +244,30 @@ class _AggPlot:
         self.xscale = xscale
         self.yscale = yscale
 
+    def create_figure(self):
+        if not (self.row or self.col):
+            return plt.subplots(figsize=self.figsize)
+        if bool(self.row) != bool(self.col):
+            split_by = self.row or self.col
+            num_unique = len(self.data[split_by].unique())
+            if self.wrap is None:
+                dim1 = num_unique
+                dim2 = 1
+            else:
+                dim1 = min(num_unique, self.wrap)
+                dim2 = (num_unique - 1) // dim1 + 1
+
+            nrows, ncols = (dim1, dim2) if self.row else (dim2, dim1)
+        else:
+            nrows = len(self.data[self.row].unique())
+            ncols = len(self.data[self.col].unique())
+
+        if self.orig_figsize is None:
+            self.figsize = _calculate_figsize(nrows, ncols)
+
+        return plt.subplots(nrows, ncols, figsize=self.figsize,
+                            sharex=self.sharex, sharey=self.sharey)
+
     def is_single_plot(self):
         if not (self.row or self.col):
             self.single_plot = True
@@ -277,8 +303,35 @@ class _AggPlot:
                 ax.set_xlabel(self.xlabel or self.agg)
             else:
                 ax.set_ylabel(self.ylabel or self.agg)
-            if (self.groupby or self.hue) and self.no_legend():
+            if (self.groupby or self.hue) and self.no_legend:
                 ax.legend()
+
+    def set_figure_plot_labels(self, fig):
+        label_fontsize = plt.rcParams['font.size'] * 1.5
+        only_agg = not (self.groupby or self.hue)
+        is_vert = self.orient == 'v'
+        is_blb = self.kind in ('bar', 'line', 'box')
+        for ax in fig.axes:
+            if is_vert and only_agg and is_blb:
+                ax.set_xticks([])
+            if not is_vert and only_agg and is_blb:
+                ax.set_yticks([])
+
+        if is_blb and is_vert:
+            fig.text(-.02, .5, self.agg, rotation=90, fontsize=label_fontsize,
+                     ha='center', va='center')
+        elif is_blb and not is_vert:
+            fig.text(.5, -0.01, self.agg, fontsize=label_fontsize,
+                     ha='center', va='center')
+        elif not is_blb and is_vert:
+            fig.text(.5, -0.01, self.agg, fontsize=label_fontsize,
+                     ha='center', va='center')
+        else:
+            fig.text(-.02, .5, self.agg, rotation=90, fontsize=label_fontsize,
+                     ha='center', va='center')
+        if self.hue:
+            handles, labels = fig.axes[-1].get_legend_handles_labels()
+            fig.legend(handles, labels, bbox_to_anchor=(1.04, .5), loc='center left')
 
     def apply_single_plot_changes(self, ax):
         if self.title:
@@ -306,12 +359,7 @@ class _AggPlot:
                 ax.bar(x_data, height, width, label=col, tick_label=data.index)
             else:
                 ax.barh(x_data, height, width, label=col, tick_label=data.index)
-        if self.orient == 'v':
-            ax.set_xticks(x_range)
-        else:
-            ax.set_yticks(x_range)
-        if n_cols > 1:
-            ax.legend()
+        ax.set_xticks(x_range)
 
     def lineplot(self, ax, data, **kwargs):
         index = data.index
@@ -323,7 +371,13 @@ class _AggPlot:
 
     def boxplot(self, ax, data, **kwargs):
         vert = self.orient == 'v'
-        return ax.boxplot(data, vert=vert, **kwargs, **self.kwargs)
+        if 'boxprops' not in kwargs:
+            kwargs['boxprops'] = {'facecolor': plt.cm.tab10(0)}
+        if 'medianprops' not in kwargs:
+            kwargs['medianprops'] = {'color': 'black'}
+        if 'patch_artist' not in kwargs:
+            kwargs['patch_artist'] = True
+        return ax.boxplot(data, vert=vert, **kwargs)
 
     def histplot(self, ax, data, **kwargs):
         orientation = 'vertical' if self.orient == 'v' else 'horizontal'
@@ -335,42 +389,51 @@ class _AggPlot:
         if not isinstance(data, list):
             data = [data]
         for label, cur_data in zip(labels, data):
-            x, density = _calculate_density(cur_data)
+            if len(cur_data) > 1:
+                x, density = _calculate_density(cur_data)
+            else:
+                x, density = [], []
             if self.orient == 'h':
                 x, density = density, x
             ax.plot(x, density, label=label, **self.kwargs)
 
     def plot(self):
+        fig, ax = self.create_figure()
         if not (self.groupby or self.hue or self.row or self.col):
-            ax = self.plot_only_agg()
+            ax = self.plot_only_agg(ax, self.data)
         elif self.hue and not (self.groupby or self.row or self.col):
-            ax = self.plot_hue_agg()
+            ax = self.plot_hue_agg(ax, self.data)
         elif self.groupby and not (self.hue or self.row or self.col):
-            ax = self.plot_groupby_agg()
+            ax = self.plot_groupby_agg(ax, self.data)
         elif self.groupby and self.hue and not (self.row or self.col):
-            ax = self.plot_groupby_hue_agg()
+            ax = self.plot_groupby_hue_agg(ax, self.data)
+        elif bool(self.row) != bool(self.col):
+            fig = self.plot_row_or_col(fig, ax)
 
         if self.single_plot:
             self.apply_single_plot_changes(ax)
+        else:
+            self.set_figure_plot_labels(fig)
+        fig.tight_layout()
+        return fig,
 
-    def plot_only_agg(self):
-        fig, ax = plt.subplots(figsize=self.figsize)
-        if self.agg_kind == 'O':
+    def plot_only_agg(self, ax, data):
+        agg_data = data[self.agg]
+        agg_kind = agg_data.dtype.kind
+        if agg_kind == 'O':
             normalize = bool(self.normalize)
-            vc = self.agg_data.value_counts(sort=self.sort, normalize=normalize)
+            vc = agg_data.value_counts(sort=self.sort, normalize=normalize)
             self.plot_func(ax, vc.to_frame())
-        elif self.agg_kind in 'ifb':
+        elif agg_kind in 'ifb':
             if self.kind in ('box', 'hist', 'kde'):
-                self.plot_func(ax, self.agg_data, labels=[self.agg])
+                self.plot_func(ax, agg_data, labels=[self.agg])
             else:
                 # For bar and point plots only
-                value = self.agg_data.agg(self.aggfunc)
+                value = agg_data.agg(self.aggfunc)
                 self.plot_func(ax, pd.DataFrame({self.agg: [value]}))
         return ax
 
-    def plot_hue_agg(self):
-        fig, ax = plt.subplots(figsize=self.figsize)
-
+    def plot_hue_agg(self, ax, data):
         if self.normalize == 'hue':
             normalize = 'index'
         elif self.normalize == 'agg':
@@ -380,72 +443,92 @@ class _AggPlot:
         elif self.normalize is None:
             normalize = False
 
+        all_hues = np.sort(self.data[self.hue].unique())
+
         if self.agg_kind == 'O':
-            tbl = pd.crosstab(self.agg_data, self.hue_data, normalize=normalize)
+            tbl = pd.crosstab(data[self.agg], data[self.hue], normalize=normalize)
+            tbl = tbl.reindex(columns=all_hues)
             self.plot_func(ax, tbl)
         else:
             if self.kind in ('box', 'hist', 'kde'):
-                data = []
-                hue_vals = []
-                for hue_val, sub_df in self.data.groupby(self.hue):
-                    data.append(sub_df[self.agg].values)
-                    hue_vals.append(hue_val)
-                self.plot_func(ax, data, labels=hue_vals)
+                data_array = []
+                g = data.groupby(self.hue)
+                for hue in all_hues:
+                    if hue in g.groups:
+                        data_array.append(g.get_group(hue)[self.agg].values)
+                    else:
+                        data_array.append([])
+                self.plot_func(ax, data_array, labels=all_hues)
             else:
-                data = self.data.groupby(self.hue).agg({self.agg: self.aggfunc})
-                self.plot_func(ax, data)
+                final_data = data.groupby(self.hue).agg({self.agg: self.aggfunc})
+                self.plot_func(ax, final_data.reindex(all_hues))
         return ax
 
-    def plot_groupby_agg(self):
-        fig, ax = plt.subplots(figsize=self.figsize)
+    def plot_groupby_agg(self, ax, data):
         if self.kind in ('bar', 'line'):
-            grouped = self.data.groupby(self.groupby).agg({self.agg: self.aggfunc})
+            grouped = data.groupby(self.groupby).agg({self.agg: self.aggfunc})
             self.plot_func(ax, grouped)
         else:
             labels = []
-            data = []
-            for label, sub_df in self.data.groupby(self.groupby):
+            data_array = []
+            for label, sub_df in data.groupby(self.groupby):
                 labels.append(label)
-                data.append(sub_df[self.agg].values)
-            self.plot_func(ax, data, labels=labels)
+                data_array.append(sub_df[self.agg].values)
+            self.plot_func(ax, data_array, labels=labels)
         return ax
 
-    def plot_groupby_hue_agg(self):
-        fig, ax = plt.subplots(figsize=self.figsize)
+    def plot_groupby_hue_agg(self, ax, data):
         if self.kind in ('bar', 'line'):
-            tbl = self.data.pivot_table(index=self.groupby, columns=self.hue,
-                                        values=self.agg, aggfunc=self.aggfunc)
+            tbl = data.pivot_table(index=self.groupby, columns=self.hue,
+                                   values=self.agg, aggfunc=self.aggfunc)
             self.plot_func(ax, tbl)
         else:
             # only available to box plots
-            groupby_labels = np.sort(self.data[self.groupby].unique())
+            groupby_labels = np.sort(data[self.groupby].unique())
             hue_labels = []
-            g = self.data.groupby(self.hue)
+            g = data.groupby(self.hue)
             positions = np.arange(len(groupby_labels))
             move = .8 / len(g)
             start = move * (len(g) - 1) / 2
             start_positions = positions - start
             box_plots = []
             for i, (label, sub_df) in enumerate(g):
-                data = []
+                data_array = []
                 hue_labels.append(label)
                 g2 = sub_df.groupby(self.groupby)
                 color = plt.cm.tab10(i)
                 for groupby_label in groupby_labels:
                     if groupby_label in g2.groups:
-                        data.append(g2.get_group(groupby_label)[self.agg].values)
+                        data_array.append(g2.get_group(groupby_label)[self.agg].values)
                     else:
-                        data.append([])
-                bp = self.plot_func(ax, data, labels=groupby_labels, widths=move,
+                        data_array.append([])
+                bp = self.plot_func(ax, data_array, labels=groupby_labels, widths=move,
                                     positions=start_positions + i * move, patch_artist=True,
                                     boxprops={'facecolor': color}, medianprops={'color': 'black'})
                 patch = bp['boxes'][0]
                 box_plots.append(patch)
             ax.legend(handles=box_plots, labels=hue_labels)
-            ax.set_xlim(min(positions) - .5, max(positions) + .5)
-            ax.set_xticks(positions)
+            if self.orient == 'v':
+                ax.set_xlim(min(positions) - .5, max(positions) + .5)
+                ax.set_xticks(positions)
+            else:
+                ax.set_ylim(min(positions) - .5, max(positions) + .5)
+                ax.set_yticks(positions)
             self.no_legend = False
         return ax
+
+    def plot_row_or_col(self, fig, axes):
+        split_by = self.row or self.col
+        g = self.data.groupby(split_by)
+        how = 'F' if self.row else 'C'
+        axes_flat = axes.flatten(how)
+        for ax, (row_val, sub_df) in zip(axes_flat, g):
+            if not (self.groupby or self.hue):
+                self.plot_only_agg(ax, sub_df)
+            elif self.hue and not self.groupby:
+                self.plot_hue_agg(ax, sub_df)
+            ax.set_title(row_val)
+        return fig
 
 
 def aggplot(agg, groupby=None, data=None, hue=None, row=None, col=None, kind='bar', orient='v',
