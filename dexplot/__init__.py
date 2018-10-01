@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-import math
 import statsmodels.api as sm
 from statsmodels.stats.outliers_influence import summary_table
 import textwrap
@@ -17,12 +16,12 @@ def _get_fig_shape(n, wrap, is_row):
         if wrap is None:
             return n, 1
         else:
-            return wrap, math.ceil(n / wrap)
+            return wrap, int(np.ceil(n / wrap))
     else:
         if wrap is None:
             return 1, n
         else:
-            return math.ceil(n / wrap), wrap
+            return int(np.ceil(n / wrap)), wrap
 
 
 def _map_val_to_color(vals):
@@ -50,10 +49,324 @@ def _calculate_density(data):
     density = density[filt]
     return x, density
 
+# TODO: Do normalization for numeric variables
+
+
+class _AggPlot:
+
+    def __init__(self, agg, groupby, data, hue, row, col, kind, orient, sort, aggfunc, normalize,
+                 wrap, figsize, rot, title, sharex, sharey, xlabel, ylabel, xlim, ylim,
+                 xscale, yscale, kwargs):
+        self.col_params = ['agg', 'groupby', 'hue', 'row', 'col']
+        self.validate_figsize(figsize)
+        self.validate_data(data)
+        self.validate_column_names(agg, groupby, hue, row, col)
+        self.validate_orient_wrap_kind_sort(orient, wrap, kind, sort)
+        self.validate_agg_kind()
+        self.init_column_data()
+        self.validate_normalize(normalize)
+        self.validate_kwargs(kwargs)
+        self.validate_rot(rot)
+        self.validate_mpl_args(title, sharex, sharey, xlabel, ylabel, xlim, ylim, xscale, yscale)
+        self.is_single_plot()
+        self.aggfunc = aggfunc
+        self.width = .8
+
+    def validate_figsize(self, figsize):
+        if figsize is None:
+            self.figsize = plt.rcParams['figure.figsize']
+        elif isinstance(figsize, tuple):
+            if len(figsize) != 2:
+                raise ValueError('figsize must be a two-item tuple')
+            for val in figsize:
+                if not isinstance(val, (int, float)):
+                    raise ValueError('Each item in figsize must be an integer or a float')
+            self.figsize = figsize
+        else:
+            raise TypeError('figsize must be a two-item tuple')
+
+    def validate_data(self, data):
+        if not isinstance(data, pd.DataFrame):
+            raise TypeError('`data` must be a DataFrame')
+        elif len(data) == 0:
+            raise ValueError('DataFrame contains no  data')
+        else:
+            self.data = data
+
+    def validate_column_names(self, agg, groupby, hue, row, col):
+        param_vals = [agg, groupby, hue, row, col]
+        for arg_name, col_name in zip(self.col_params, param_vals):
+            if col_name and col_name not in self.data.columns:
+                raise KeyError(f'You passed {col_name} to parameter {arg_name} which is not a '
+                                 'column name')
+            self.__dict__[arg_name] = col_name
+
+    def validate_orient_wrap_kind_sort(self, orient, wrap, kind, sort):
+
+        if orient not in ['v', 'h']:
+            raise ValueError('`orient` must be either "v" or "h".')
+
+        if wrap is not None:
+            if not isinstance(wrap, int):
+                raise TypeError('`wrap` must either be None or an integer. '
+                                f'You passed {type(wrap)}')
+
+        if kind not in {'bar', 'line', 'box', 'hist', 'kde'}:
+            raise ValueError('`kind` must be either "bar", "line", "box", "hist", or "kde"')
+
+        if not isinstance(sort, bool):
+            raise TypeError('`sort` must be a bool')
+
+        self.orient, self.wrap, self.kind, self.sort = orient, wrap, kind, sort
+
+    def validate_agg_kind(self):
+        self.agg_data = self.data[self.agg]
+        self.agg_kind = self.agg_data.dtype.kind
+
+        if self.agg_kind not in ['i', 'f', 'b', 'O']:
+            raise TypeError(f'The data type for the `agg` column must either be boolean, integer, '
+                            'float, or categorical/object and not {agg_data.dtype}')
+
+        if self.agg_kind == 'O':
+            if self.kind not in ('bar', 'line'):
+                raise ValueError('When the `agg` variable is object/categorical, `kind` can '
+                                 'only be "bar" or "point"')
+
+    def init_column_data(self):
+        if self.groupby is not None:
+            self.groupby_data = self.data[self.groupby]
+            self.groupby_kind = self.groupby_data.dtype.kind
+
+        if self.hue is not None:
+            self.hue_data = self.data[self.hue]
+            self.hue_kind = self.hue_data.dtype.kind
+
+        if self.row is not None:
+            self.row_data = self.data[self.row]
+            self.row_kind = self.row_data.dtype.kind
+
+        if self.col is not None:
+            self.col_data = self.data[self.col]
+            self.col_kind = self.col_data.dtype.kind
+
+    def validate_normalize(self, normalize):
+        if self.agg_kind == 'O':
+            valid_normalize = ['all']
+            for cp in self.col_params:
+                if self.__dict__[cp] is not None:
+                    valid_normalize.append(cp)
+            if isinstance(normalize, str):
+                if normalize not in valid_normalize:
+                    raise ValueError(NORMALIZE_ERROR_MSG)
+            elif isinstance(normalize, tuple):
+                for val in normalize:
+                    if val not in valid_normalize:
+                        raise ValueError(NORMALIZE_ERROR_MSG)
+            elif normalize is not None:
+                raise TypeError(NORMALIZE_ERROR_MSG)
+
+            self.normalize = normalize
+        else:
+            # TODO: force normalziation for numerics
+            self.normalize = False
+
+    def validate_kwargs(self, kwargs):
+        if kwargs is None:
+            self.kwargs = {}
+        elif not isinstance(kwargs, dict):
+            raise TypeError('`kwargs` must be `None` or a dict')
+        else:
+            self.kwargs = kwargs
+
+        if self.kind == 'line':
+            if 'lw' not in self.kwargs:
+                self.kwargs['lw'] = 3
+            if 'marker' not in self.kwargs:
+                self.kwargs['marker'] = 'o'
+
+    def validate_rot(self, rot):
+        if not isinstance(rot, (int, float)):
+            raise ValueError('`rot` must be an int or float')
+        else:
+            self.rot = rot
+
+    def validate_mpl_args(self, title, sharex, sharey, xlabel, ylabel, xlim, ylim, xscale, yscale):
+        NoneType = type(None)
+        if not isinstance(title, (NoneType, str)):
+            raise TypeError('`title` must be either None or a str')
+        if sharex not in [False, True, None, 'row', 'col']:
+            raise ValueError('`sharex` must be one of `False`, `True`, `None`, "row", or "col"')
+        if sharey not in [False, True, None, 'row', 'col']:
+            raise ValueError('`sharex` must be one of `False`, `True`, `None`, "row", or "col"')
+        if not isinstance(xlabel, (NoneType, str)):
+            raise TypeError('`xlabel` must be either None or a str')
+        if not isinstance(ylabel, (NoneType, str)):
+            raise TypeError('`ylabel` must be either None or a str')
+        if not isinstance(xlim, (NoneType, tuple)):
+            raise TypeError('`xlim` must be a two-item tuple of numerics or `None`')
+        if not isinstance(ylim, (NoneType, tuple)):
+            raise TypeError('`xlim` must be a two-item tuple of numerics or `None`')
+        if xscale not in {'linear', 'log', 'symlog', 'logit'}:
+            raise ValueError("`xscale must be one of 'linear', 'log', 'symlog', 'logit'")
+        if yscale not in {'linear', 'log', 'symlog', 'logit'}:
+            raise ValueError("`xscale must be one of 'linear', 'log', 'symlog', 'logit'")
+        self.title = title
+        self.sharex = sharex
+        self.sharey = sharey
+        self.xlabel = xlabel
+        self.ylabel = ylabel
+        self.xlim = xlim
+        self.ylim = ylim
+        self.xscale = xscale
+        self.yscale = yscale
+
+    def is_single_plot(self):
+        if not (self.row or self.col):
+            self.single_plot = True
+        else:
+            self.single_plot = False
+
+    def apply_single_plot_changes(self, ax):
+        if self.title:
+            ax.figure.suptitle(self.title)
+        if self.xlabel:
+            ax.set_xlabel(self.xlabel)
+        if self.ylabel:
+            ax.set_ylabel(self.ylabel)
+        if self.xlim:
+            ax.set_xlim(self.xlim)
+        if self.ylim:
+            ax.set_ylim(self.ylim)
+        if self.xscale != 'linear':
+            ax.set_xscale(self.xscale)
+        if self.yscale != 'linear':
+            ax.set_yscale(self.yscale)
+
+    def make_plot(self, ax, data, **kwargs):
+        if self.kind == 'bar':
+            n_rows, n_cols = data.shape
+            width = self.width / n_cols
+            bar_start = (n_cols - 1) / 2 * width
+            x_range = np.arange(n_rows)
+            for i, (height, col) in enumerate(zip(data.values.T, data.columns)):
+                x_data = x_range - bar_start + i * width
+                if self.orient == 'v':
+                    ax.bar(x_data, height, width, label=col, tick_label=data.index)
+                else:
+                    ax.barh(x_data, height, width, label=col, tick_label=data.index)
+            if self.orient == 'v':
+                ax.set_xticks(x_range)
+                ax.tick_params(axis='x', labelrotation=self.rot)
+            else:
+                ax.set_yticks(x_range)
+            if n_cols > 1:
+                ax.legend()
+            return ax
+        elif self.kind == 'line':
+            index = data.index
+            for i, (height, col) in enumerate(zip(data.values.T, data.columns)):
+                if self.orient == 'v':
+                    ax.plot(index, height, label=col, **self.kwargs)
+                else:
+                    ax.plot(height, index, label=col, **self.kwargs)
+                if self.orient == 'v':
+                    ax.tick_params(axis='x', labelrotation=self.rot)
+            if i > 0:
+                ax.legend()
+            return ax
+        elif self.kind == 'box':
+            vert = self.orient == 'v'
+            labels = kwargs['labels']
+            ax.boxplot(data, vert=vert, labels=labels, **self.kwargs)
+            if self.single_plot:
+                if self.orient == 'v':
+                    ax.set_ylabel(self.agg)
+                else:
+                    ax.set_xlabel(self.agg)
+            return ax
+        elif self.kind == 'hist':
+            orientation = 'vertical' if self.orient == 'v' else 'horizontal'
+            labels = kwargs['labels']
+            ax.hist(data, orientation=orientation, label=labels, **self.kwargs)
+            if self.single_plot:
+                if self.orient == 'v':
+                    ax.set_xlabel(self.agg)
+                else:
+                    ax.set_ylabel(self.agg)
+            ax.legend()
+            return ax
+        elif self.kind == 'kde':
+            labels = kwargs['labels']
+            for label, cur_data in zip(labels, data):
+                x, density = _calculate_density(data)
+                if self.orient == 'h':
+                    x, density = density, x
+                ax.plot(x, density, label=label **self.kwargs)
+            if self.single_plot:
+                if self.orient == 'v':
+                    ax.set_xlabel(self.agg)
+                else:
+                    ax.set_ylabel(self.agg)
+            return ax
+
+    def plot(self):
+        if not (self.groupby or self.hue or self.row or self.col):
+            ax = self.plot_only_agg()
+        if self.hue and not (self.groupby or self.row or self.col):
+            ax = self.plot_hue_agg()
+
+        if self.single_plot:
+            self.apply_single_plot_changes(ax)
+
+    def plot_only_agg(self):
+        fig, ax = plt.subplots(figsize=self.figsize)
+        if self.agg_kind == 'O':
+            normalize = bool(self.normalize)
+            vc = self.agg_data.value_counts(sort=self.sort, normalize=normalize)
+            self.make_plot(ax, vc.to_frame())
+        elif self.agg_kind in 'ifb':
+            if self.kind in ('box', 'hist', 'kde'):
+                self.make_plot(ax, self.agg_data, labels=[self.agg])
+            else:
+                # For bar and point plots only
+                value = self.agg_data.agg(self.aggfunc)
+                self.make_plot(ax, pd.DataFrame({self.agg: [value]}))
+        return ax
+
+    def plot_hue_agg(self):
+        fig, ax = plt.subplots(figsize=self.figsize)
+
+        if self.normalize == 'hue':
+            normalize = 'index'
+        elif self.normalize == 'agg':
+            normalize = 'columns'
+        elif self.normalize == 'all':
+            normalize = 'all'
+        elif self.normalize is None:
+            normalize = False
+
+        if self.agg_kind == 'O':
+            tbl = pd.crosstab(self.agg_data, self.hue_data, normalize=normalize)
+            self.make_plot(ax, tbl)
+        else:
+            if self.kind in ('box', 'hist', 'kde'):
+                data = []
+                hue_vals = []
+                for hue_val, sub_df in self.data.groupby(self.hue):
+                    data.append(sub_df[self.agg].values)
+                    hue_vals.append(hue_val)
+                self.make_plot(ax, data, labels=hue_vals)
+                if self.orient == 'v':
+                    ax.tick_params(axis='x', labelrotation=self.rot)
+            else:
+                data = self.data.groupby(self.hue).agg({self.agg: self.aggfunc})
+                self.make_plot(ax, data)
+        return ax
+
 
 def aggplot(agg, groupby=None, data=None, hue=None, row=None, col=None, kind='bar', orient='v',
             sort=False, aggfunc='mean', normalize=None, wrap=None, figsize=None, rot=90,
-            sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None,
+            title=None, sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None,
             xscale='linear', yscale='linear', kwargs=None):
     """
     The `aggplot` function aggregates a single column of data. To begin,
@@ -144,11 +457,32 @@ def aggplot(agg, groupby=None, data=None, hue=None, row=None, col=None, kind='ba
     rot: int
         Degree of rotation of the x-tick labels. Default is 90
 
+    title: str
+        Sets the figure title NOT the Axes title
+
     sharex: bool
         Whether all plots should share the x-axis or not. Default is True
 
     sharey: bool
         Whether all plots should share the y-axis or not. Default is True
+
+    xlabel: str
+        Label used for x-axis on figures with a single plot
+
+    ylabel: str
+        Label used for y-axis on figures with a single plot
+
+    xlim: 2-item tuple of numerics
+        Determines x-axis limits for figures with a single plot
+
+    ylim: 2-item tuple of numerics
+        Determines y-axis limits for figures with a single plot
+
+    xscale: {'linear', 'log', 'symlog', 'logit'}
+        Sets the scale of the x-axis.
+
+    yscale: {'linear', 'log', 'symlog', 'logit'}
+        Sets the scale of the y-axis
 
     kwargs: dict
         Extra arguments used to control the plot used as the `kind`
@@ -163,6 +497,10 @@ def aggplot(agg, groupby=None, data=None, hue=None, row=None, col=None, kind='ba
     # TODO: textwrap titles
     # TODO: automate figsize for grid
     # TODO: Allow user to pass in ax to put plot in own figure
+
+    return _AggPlot(agg, groupby, data, hue, row, col, kind, orient, sort, aggfunc, normalize,
+                    wrap, figsize, rot, title, sharex, sharey, xlabel, ylabel, xlim, ylim,
+                    xscale, yscale, kwargs)
 
     if figsize is None:
         figsize = plt.rcParams['figure.figsize']
