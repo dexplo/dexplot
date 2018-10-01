@@ -69,6 +69,7 @@ class _AggPlot:
         self.validate_rot(rot)
         self.validate_mpl_args(title, sharex, sharey, xlabel, ylabel, xlim, ylim, xscale, yscale)
         self.is_single_plot()
+        self.plot_func = self.get_plotting_function()
         self.aggfunc = aggfunc
         self.width = .8
 
@@ -226,13 +227,37 @@ class _AggPlot:
         else:
             self.single_plot = False
 
+    def get_plotting_function(self):
+        plot_dict = {'bar': self.barplot,
+                     'line': self.lineplot,
+                     'box': self.boxplot,
+                     'hist': self.histplot,
+                     'kde': self.kdeplot}
+        return plot_dict[self.kind]
+
     def apply_single_plot_changes(self, ax):
         if self.title:
             ax.figure.suptitle(self.title)
         if self.xlabel:
             ax.set_xlabel(self.xlabel)
+        else:
+            if self.kind in ('bar', 'line', 'box'):
+                if self.orient == 'v':
+                    ax.set_xlabel('')
+                    if not (self.groupby or self.hue):
+                        ax.set_xticklabels([])
+                else:
+                    ax.set_xlabel(self.agg)
         if self.ylabel:
             ax.set_ylabel(self.ylabel)
+        else:
+            if self.kind in ('bar', 'line', 'box'):
+                if self.orient == 'v':
+                    ax.set_ylabel(self.agg)
+                else:
+                    if not (self.groupby or self.hue):
+                        ax.set_yticklabels([])
+
         if self.xlim:
             ax.set_xlim(self.xlim)
         if self.ylim:
@@ -242,72 +267,55 @@ class _AggPlot:
         if self.yscale != 'linear':
             ax.set_yscale(self.yscale)
 
-    def make_plot(self, ax, data, **kwargs):
-        if self.kind == 'bar':
-            n_rows, n_cols = data.shape
-            width = self.width / n_cols
-            bar_start = (n_cols - 1) / 2 * width
-            x_range = np.arange(n_rows)
-            for i, (height, col) in enumerate(zip(data.values.T, data.columns)):
-                x_data = x_range - bar_start + i * width
-                if self.orient == 'v':
-                    ax.bar(x_data, height, width, label=col, tick_label=data.index)
-                else:
-                    ax.barh(x_data, height, width, label=col, tick_label=data.index)
+    def barplot(self, ax, data, **kwargs):
+        n_rows, n_cols = data.shape
+        width = self.width / n_cols
+        bar_start = (n_cols - 1) / 2 * width
+        x_range = np.arange(n_rows)
+        for i, (height, col) in enumerate(zip(data.values.T, data.columns)):
+            x_data = x_range - bar_start + i * width
             if self.orient == 'v':
-                ax.set_xticks(x_range)
-                ax.tick_params(axis='x', labelrotation=self.rot)
+                ax.bar(x_data, height, width, label=col, tick_label=data.index)
             else:
-                ax.set_yticks(x_range)
-            if n_cols > 1:
-                ax.legend()
-            return ax
-        elif self.kind == 'line':
-            index = data.index
-            for i, (height, col) in enumerate(zip(data.values.T, data.columns)):
-                if self.orient == 'v':
-                    ax.plot(index, height, label=col, **self.kwargs)
-                else:
-                    ax.plot(height, index, label=col, **self.kwargs)
-                if self.orient == 'v':
-                    ax.tick_params(axis='x', labelrotation=self.rot)
-            if i > 0:
-                ax.legend()
-            return ax
-        elif self.kind == 'box':
-            vert = self.orient == 'v'
-            labels = kwargs['labels']
-            ax.boxplot(data, vert=vert, labels=labels, **self.kwargs)
-            if self.single_plot:
-                if self.orient == 'v':
-                    ax.set_ylabel(self.agg)
-                else:
-                    ax.set_xlabel(self.agg)
-            return ax
-        elif self.kind == 'hist':
-            orientation = 'vertical' if self.orient == 'v' else 'horizontal'
-            labels = kwargs['labels']
-            ax.hist(data, orientation=orientation, label=labels, **self.kwargs)
-            if self.single_plot:
-                if self.orient == 'v':
-                    ax.set_xlabel(self.agg)
-                else:
-                    ax.set_ylabel(self.agg)
+                ax.barh(x_data, height, width, label=col, tick_label=data.index)
+        if self.orient == 'v':
+            ax.set_xticks(x_range)
+            ax.tick_params(axis='x', labelrotation=self.rot)
+        else:
+            ax.set_yticks(x_range)
+        if n_cols > 1:
             ax.legend()
-            return ax
-        elif self.kind == 'kde':
-            labels = kwargs['labels']
-            for label, cur_data in zip(labels, data):
-                x, density = _calculate_density(data)
-                if self.orient == 'h':
-                    x, density = density, x
-                ax.plot(x, density, label=label **self.kwargs)
-            if self.single_plot:
-                if self.orient == 'v':
-                    ax.set_xlabel(self.agg)
-                else:
-                    ax.set_ylabel(self.agg)
-            return ax
+
+    def lineplot(self, ax, data, **kwargs):
+        index = data.index
+        for i, (height, col) in enumerate(zip(data.values.T, data.columns)):
+            if self.orient == 'v':
+                ax.plot(index, height, label=col, **self.kwargs)
+            else:
+                ax.plot(height, index, label=col, **self.kwargs)
+            if self.orient == 'v':
+                ax.tick_params(axis='x', labelrotation=self.rot)
+        if i > 0:
+            ax.legend()
+
+    def boxplot(self, ax, data, **kwargs):
+        vert = self.orient == 'v'
+        labels = kwargs['labels']
+        ax.boxplot(data, vert=vert, labels=labels, **self.kwargs)
+
+    def histplot(self, ax, data, **kwargs):
+        orientation = 'vertical' if self.orient == 'v' else 'horizontal'
+        labels = kwargs['labels']
+        ax.hist(data, orientation=orientation, label=labels, **self.kwargs)
+        ax.legend()
+
+    def kdeplot(self, ax, data, **kwargs):
+        labels = kwargs['labels']
+        for label, cur_data in zip(labels, data):
+            x, density = _calculate_density(data)
+            if self.orient == 'h':
+                x, density = density, x
+            ax.plot(x, density, label=label, **self.kwargs)
 
     def plot(self):
         if not (self.groupby or self.hue or self.row or self.col):
@@ -323,14 +331,14 @@ class _AggPlot:
         if self.agg_kind == 'O':
             normalize = bool(self.normalize)
             vc = self.agg_data.value_counts(sort=self.sort, normalize=normalize)
-            self.make_plot(ax, vc.to_frame())
+            self.plot_func(ax, vc.to_frame())
         elif self.agg_kind in 'ifb':
             if self.kind in ('box', 'hist', 'kde'):
-                self.make_plot(ax, self.agg_data, labels=[self.agg])
+                self.plot_func(ax, self.agg_data, labels=[self.agg])
             else:
                 # For bar and point plots only
                 value = self.agg_data.agg(self.aggfunc)
-                self.make_plot(ax, pd.DataFrame({self.agg: [value]}))
+                self.plot_func(ax, pd.DataFrame({self.agg: [value]}))
         return ax
 
     def plot_hue_agg(self):
@@ -347,7 +355,7 @@ class _AggPlot:
 
         if self.agg_kind == 'O':
             tbl = pd.crosstab(self.agg_data, self.hue_data, normalize=normalize)
-            self.make_plot(ax, tbl)
+            self.plot_func(ax, tbl)
         else:
             if self.kind in ('box', 'hist', 'kde'):
                 data = []
@@ -355,12 +363,12 @@ class _AggPlot:
                 for hue_val, sub_df in self.data.groupby(self.hue):
                     data.append(sub_df[self.agg].values)
                     hue_vals.append(hue_val)
-                self.make_plot(ax, data, labels=hue_vals)
+                self.plot_func(ax, data, labels=hue_vals)
                 if self.orient == 'v':
                     ax.tick_params(axis='x', labelrotation=self.rot)
             else:
                 data = self.data.groupby(self.hue).agg({self.agg: self.aggfunc})
-                self.make_plot(ax, data)
+                self.plot_func(ax, data)
         return ax
 
 
@@ -500,7 +508,7 @@ def aggplot(agg, groupby=None, data=None, hue=None, row=None, col=None, kind='ba
 
     return _AggPlot(agg, groupby, data, hue, row, col, kind, orient, sort, aggfunc, normalize,
                     wrap, figsize, rot, title, sharex, sharey, xlabel, ylabel, xlim, ylim,
-                    xscale, yscale, kwargs)
+                    xscale, yscale, kwargs).plot()
 
     if figsize is None:
         figsize = plt.rcParams['figure.figsize']
