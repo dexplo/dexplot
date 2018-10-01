@@ -50,6 +50,7 @@ def _calculate_density(data):
     return x, density
 
 # TODO: Do normalization for numeric variables
+# TODO: Add counts (number of obs) in bars
 
 
 class _AggPlot:
@@ -70,6 +71,9 @@ class _AggPlot:
         self.validate_kwargs(kwargs)
         self.validate_rot(rot)
         self.validate_mpl_args(title, sharex, sharey, xlabel, ylabel, xlim, ylim, xscale, yscale)
+        self.get_unique_hues()
+        self.get_unique_groupby()
+        self.get_unique_agg()
         self.is_single_plot()
         self.plot_func = self.get_plotting_function()
         self.aggfunc = aggfunc
@@ -135,7 +139,7 @@ class _AggPlot:
         if self.agg_kind == 'O':
             if self.kind not in ('bar', 'line'):
                 raise ValueError('When the `agg` variable is object/categorical, `kind` can '
-                                 'only be "bar" or "point"')
+                                 'only be "bar" or "line"')
 
     def init_column_data(self):
         if self.groupby is not None:
@@ -164,8 +168,8 @@ class _AggPlot:
     def validate_kde_hist(self):
         if self.kind in ('hist', 'kde'):
             if self.groupby and self.hue:
-                raise ValueError('When plotting a "hist" or "kde", you can set at most'
-                                 'one of `groupby` or `hue` but not both')
+                raise NotImplementedError('When plotting a "hist" or "kde", you can set at most '
+                                          'one of `groupby` or `hue` but not both')
 
     def validate_normalize(self, normalize):
         if self.agg_kind == 'O':
@@ -246,6 +250,8 @@ class _AggPlot:
 
     def create_figure(self):
         if not (self.row or self.col):
+            if self.orig_figsize is None:
+                self.figsize = (12, 6)
             return plt.subplots(figsize=self.figsize)
         if bool(self.row) != bool(self.col):
             split_by = self.row or self.col
@@ -298,6 +304,8 @@ class _AggPlot:
                     ax.set_yticklabels([])
             if self.groupby and self.hue and self.no_legend:
                 ax.legend()
+            if self.agg_kind == 'O' and self.hue and self.no_legend:
+                ax.legend()
         else:
             if self.orient == 'v':
                 ax.set_xlabel(self.xlabel or self.agg)
@@ -348,6 +356,18 @@ class _AggPlot:
         if self.yscale != 'linear':
             ax.set_yscale(self.yscale)
 
+    def get_unique_hues(self):
+        if self.hue:
+            self.all_hues = np.sort(self.data[self.hue].unique())
+
+    def get_unique_groupby(self):
+        if self.groupby:
+            self.all_groups = np.sort(self.data[self.groupby].unique())
+
+    def get_unique_agg(self):
+        if self.agg_kind == 'O':
+            self.all_aggs = np.sort(self.data[self.agg].unique())
+
     def barplot(self, ax, data, **kwargs):
         n_rows, n_cols = data.shape
         width = self.width / n_cols
@@ -359,7 +379,10 @@ class _AggPlot:
                 ax.bar(x_data, height, width, label=col, tick_label=data.index)
             else:
                 ax.barh(x_data, height, width, label=col, tick_label=data.index)
-        ax.set_xticks(x_range)
+        if self.orient == 'v':
+            ax.set_xticks(x_range)
+        else:
+            ax.set_yticks(x_range)
 
     def lineplot(self, ax, data, **kwargs):
         index = data.index
@@ -443,44 +466,47 @@ class _AggPlot:
         elif self.normalize is None:
             normalize = False
 
-        all_hues = np.sort(self.data[self.hue].unique())
-
         if self.agg_kind == 'O':
             tbl = pd.crosstab(data[self.agg], data[self.hue], normalize=normalize)
-            tbl = tbl.reindex(columns=all_hues)
+            tbl = tbl.reindex(index=self.all_aggs, columns=self.all_hues)
             self.plot_func(ax, tbl)
         else:
             if self.kind in ('box', 'hist', 'kde'):
                 data_array = []
                 g = data.groupby(self.hue)
-                for hue in all_hues:
+                for hue in self.all_hues:
                     if hue in g.groups:
                         data_array.append(g.get_group(hue)[self.agg].values)
                     else:
                         data_array.append([])
-                self.plot_func(ax, data_array, labels=all_hues)
+                self.plot_func(ax, data_array, labels=self.all_hues)
             else:
                 final_data = data.groupby(self.hue).agg({self.agg: self.aggfunc})
-                self.plot_func(ax, final_data.reindex(all_hues))
+                self.plot_func(ax, final_data.reindex(self.all_hues))
         return ax
 
     def plot_groupby_agg(self, ax, data):
         if self.kind in ('bar', 'line'):
             grouped = data.groupby(self.groupby).agg({self.agg: self.aggfunc})
+            grouped = grouped.reindex(self.all_groups)
             self.plot_func(ax, grouped)
         else:
-            labels = []
             data_array = []
-            for label, sub_df in data.groupby(self.groupby):
-                labels.append(label)
-                data_array.append(sub_df[self.agg].values)
-            self.plot_func(ax, data_array, labels=labels)
+            g = data.groupby(self.groupby)
+            for group in self.all_groups:
+                if group in g.groups:
+                    data_array.append(g.get_group(group)[self.agg].values)
+                else:
+                    data_array.append([])
+            self.plot_func(ax, data_array, labels=self.all_groups)
         return ax
 
     def plot_groupby_hue_agg(self, ax, data):
+        # might need to refactor to put in all_hues, all_groups, all_aggs
         if self.kind in ('bar', 'line'):
             tbl = data.pivot_table(index=self.groupby, columns=self.hue,
                                    values=self.agg, aggfunc=self.aggfunc)
+            tbl = tbl.reindex(index=self.all_groups, columns=self.all_hues)
             self.plot_func(ax, tbl)
         else:
             # only available to box plots
@@ -707,7 +733,7 @@ def aggplot(agg, groupby=None, data=None, hue=None, row=None, col=None, kind='ba
     if agg_kind == 'O':
         if kind not in ('bar', 'line'):
             raise ValueError('When the `agg` variable is object/categorical, `kind` can '
-                             'only be "bar" or "point"')
+                             'only be "bar" or "line"')
 
     if groupby is not None:
         groupby_data = data[groupby]
