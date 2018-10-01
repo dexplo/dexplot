@@ -1,2 +1,3 @@
-# dexplot
-Simple plotting library that wraps Matplotlib - works with DataFrames
+# Dexplot
+Dexplot is a simple plotting library used for plotting data from a DataFrame object.
+
