@@ -190,7 +190,7 @@ class _AggPlot:
     def validate_normalize(self, normalize):
         if self.agg_kind == 'O':
             valid_normalize = ['all']
-            for cp in self.col_params:
+            for cp in ['agg', 'hue', 'row', 'col']:
                 if self.__dict__[cp] is not None:
                     valid_normalize.append(cp)
             if isinstance(normalize, str):
@@ -198,7 +198,7 @@ class _AggPlot:
                     raise ValueError(NORMALIZE_ERROR_MSG)
             elif isinstance(normalize, tuple):
                 for val in normalize:
-                    if val not in valid_normalize:
+                    if val not in valid_normalize[1:]:
                         raise ValueError(NORMALIZE_ERROR_MSG)
             elif normalize is not None:
                 raise TypeError(NORMALIZE_ERROR_MSG)
@@ -395,7 +395,7 @@ class _AggPlot:
             else:
                 fig.text(-.02, .5, self.agg, rotation=90, fontsize=label_fontsize,
                          ha='center', va='center')
-        if self.hue:
+        if self.hue and not fig.legends:
             handles, labels = fig.axes[-1].get_legend_handles_labels()
             fig.legend(handles, labels, bbox_to_anchor=(1.04, .5), loc='center left')
 
@@ -468,15 +468,23 @@ class _AggPlot:
 
     def wrap_labels(self, fig):
         renderer = fig.canvas.get_renderer()
-        fig_width = fig.get_window_extent(renderer).width
+        nrows, ncols, *_ = fig.axes[0].get_subplotspec().get_rows_columns()
+        ax_width = fig.get_window_extent(renderer).width / ncols
 
         for ax in fig.axes:
             xlabels = ax.get_xticklabels()
+            print(xlabels[0])
             num_labels = len(xlabels)
-            max_width = (fig_width * .8) / num_labels
+            max_width = (ax_width * .8) / num_labels
             new_labels = []
             for label in xlabels:
                 text = label.get_text()
+                try:
+                    float(text)
+                    new_labels.append(text)
+                    continue
+                except ValueError:
+                    pass
                 len_text = len(text)
                 width = label.get_window_extent(renderer).width
                 if width > max_width:
@@ -486,9 +494,11 @@ class _AggPlot:
                     new_labels.append('\n'.join(wrapper.wrap(text)))
                 else:
                     new_labels.append(text)
+            print(new_labels)
             ax.set_xticklabels(new_labels)
 
             ylabels = ax.get_yticklabels()
+            old_labels = [label.get_text() for label in ylabels]
             new_labels = []
             for label in ylabels:
                 text = label.get_text()
@@ -497,9 +507,9 @@ class _AggPlot:
                     new_labels.append('\n'.join(wrapper.wrap(text)))
                 else:
                     new_labels.append(text)
-            ax.set_yticklabels(new_labels)
-
-
+            # print(new_labels)
+            if old_labels != new_labels:
+                ax.set_yticklabels(new_labels)
 
     def plot(self):
         fig, ax = self.create_figure()
@@ -518,11 +528,11 @@ class _AggPlot:
             self.apply_single_plot_changes(ax)
         else:
             self.set_figure_plot_labels(fig)
-        fig.tight_layout()
         self.wrap_labels(fig)
+        fig.tight_layout()
         return fig,
 
-    def do_normalization(self, vc):
+    def do_normalization(self, vc, data=None):
         if not self.normalize:
             return vc
         elif self.normalize == 'all':
@@ -534,23 +544,29 @@ class _AggPlot:
             join_key = [self.__dict__[col] for col in self.normalize]
         else:
             join_key = self.__dict__[self.normalize]
-        print(vc)
-        print(self.normalize_counts)
-        norms = vc.merge(self.normalize_counts, on=join_key)
-        print(norms)
-        norms['pct'] = norms.iloc[:, -2] / norms.iloc[:, -1]
-        print(norms)
-        norms = norms.drop(columns=norms.columns[[-3, -2]])
-        print(norms)
-        norms = norms.set_index(norms.columns[:-1].tolist())
-        print(norms)
+        if self.normalize in ('row', 'col') or 'row' in self.normalize or 'col' in self.normalize:
+            if isinstance(self.normalize, str):
+                col_name = self.__dict__[self.normalize]
+                cur_group = data.iloc[0].loc[col_name]
+                df = self.normalize_counts
+                cur_count = df.loc[df[col_name] == cur_group].iloc[0, -1]
+                vc.iloc[:, -1] = vc.iloc[:, -1] / cur_count
+                vc = vc.set_index(vc.columns[:-1].tolist())
+                return vc
+            else:
+                pass
+        else:
+            norms = vc.merge(self.normalize_counts, on=join_key)
+            norms['pct'] = norms.iloc[:, -2] / norms.iloc[:, -1]
+            norms = norms.drop(columns=norms.columns[[-3, -2]])
+            norms = norms.set_index(norms.columns[:-1].tolist())
         return norms
 
     def plot_only_agg(self, ax, data):
         if self.agg_kind == 'O':
             vc = data.groupby(self.agg).size()
             if self.normalize is not None:
-                vc = self.do_normalization(vc.reset_index())
+                vc = self.do_normalization(vc.reset_index(), data)
             else:
                 vc = vc.to_frame()
             self.plot_func(ax, vc)
@@ -568,7 +584,7 @@ class _AggPlot:
             tbl = pd.crosstab(data[self.agg], data[self.hue])
             tbl = tbl.reindex(index=self.all_aggs, columns=self.all_hues)
             tbl = tbl.stack().reset_index()
-            tbl = self.do_normalization(tbl)
+            tbl = self.do_normalization(tbl, data)
             tbl = tbl.squeeze().unstack()
             self.plot_func(ax, tbl)
         else:
@@ -587,6 +603,7 @@ class _AggPlot:
         return ax
 
     def plot_groupby_agg(self, ax, data):
+        # not possible to do value counts and normalize here
         if self.kind in ('bar', 'line'):
             grouped = data.groupby(self.groupby).agg({self.agg: self.aggfunc})
             grouped = grouped.reindex(self.all_groups)
@@ -634,7 +651,11 @@ class _AggPlot:
                                     boxprops={'facecolor': color}, medianprops={'color': 'black'})
                 patch = bp['boxes'][0]
                 box_plots.append(patch)
-            ax.legend(handles=box_plots, labels=hue_labels)
+            if self.is_single_plot():
+                ax.legend(handles=box_plots, labels=hue_labels)
+            else:
+                ax.figure.legend(handles=box_plots, labels=hue_labels,
+                                 bbox_to_anchor=(1.02, .5), loc='center left')
             if self.orient == 'v':
                 ax.set_xlim(min(positions) - .5, max(positions) + .5)
                 ax.set_xticks(positions)
@@ -649,12 +670,19 @@ class _AggPlot:
         g = self.data.groupby(split_by)
         how = 'F' if self.row else 'C'
         axes_flat = axes.flatten(how)
-        for ax, (row_val, sub_df) in zip(axes_flat, g):
+        for i, (ax, (val, sub_df)) in enumerate(zip(axes_flat, g)):
             if not (self.groupby or self.hue):
                 self.plot_only_agg(ax, sub_df)
             elif self.hue and not self.groupby:
                 self.plot_hue_agg(ax, sub_df)
-            ax.set_title(row_val)
+            elif not self.hue and self.groupby:
+                self.plot_groupby_agg(ax, sub_df)
+            elif self.hue and self.groupby:
+                self.plot_groupby_hue_agg(ax, sub_df)
+            ax.set_title(val)
+        ax.tick_params(axis='x', reset=True)
+        for ax in axes_flat[i+1:]:
+            ax.remove()
         return fig
 
 
