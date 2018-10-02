@@ -79,6 +79,7 @@ class _AggPlot:
         self.aggfunc = aggfunc
         self.width = .8
         self.no_legend = True
+        self.vc_dict = {}
 
     def validate_figsize(self, figsize):
         self.orig_figsize = figsize
@@ -319,24 +320,26 @@ class _AggPlot:
         only_agg = not (self.groupby or self.hue)
         is_vert = self.orient == 'v'
         is_blb = self.kind in ('bar', 'line', 'box')
+        is_numeric = self.agg_kind != 'O'
         for ax in fig.axes:
-            if is_vert and only_agg and is_blb:
+            if is_vert and only_agg and is_blb and is_numeric:
                 ax.set_xticks([])
-            if not is_vert and only_agg and is_blb:
+            if not is_vert and only_agg and is_blb and is_numeric:
                 ax.set_yticks([])
 
-        if is_blb and is_vert:
-            fig.text(-.02, .5, self.agg, rotation=90, fontsize=label_fontsize,
-                     ha='center', va='center')
-        elif is_blb and not is_vert:
-            fig.text(.5, -0.01, self.agg, fontsize=label_fontsize,
-                     ha='center', va='center')
-        elif not is_blb and is_vert:
-            fig.text(.5, -0.01, self.agg, fontsize=label_fontsize,
-                     ha='center', va='center')
-        else:
-            fig.text(-.02, .5, self.agg, rotation=90, fontsize=label_fontsize,
-                     ha='center', va='center')
+        if is_numeric:
+            if is_blb and is_vert:
+                fig.text(-.02, .5, self.agg, rotation=90, fontsize=label_fontsize,
+                         ha='center', va='center')
+            elif is_blb and not is_vert:
+                fig.text(.5, -0.01, self.agg, fontsize=label_fontsize,
+                         ha='center', va='center')
+            elif not is_blb and is_vert:
+                fig.text(.5, -0.01, self.agg, fontsize=label_fontsize,
+                         ha='center', va='center')
+            else:
+                fig.text(-.02, .5, self.agg, rotation=90, fontsize=label_fontsize,
+                         ha='center', va='center')
         if self.hue:
             handles, labels = fig.axes[-1].get_legend_handles_labels()
             fig.legend(handles, labels, bbox_to_anchor=(1.04, .5), loc='center left')
@@ -440,12 +443,38 @@ class _AggPlot:
         fig.tight_layout()
         return fig,
 
+    def get_counts(self):
+        if self.normalize in self.vc_dict:
+            return self.vc_dict[self.normalize]
+        elif self.normalize == 'all':
+            self.vc_dict['all'] = self.data[self.agg].count()
+        elif self.normalize == 'agg':
+            self.vc_dict['agg'] = self.data[self.agg].value_counts()
+        elif self.normalize == 'groupby':
+            self.vc_dict['groupby'] = self.data[self.groupby].value_counts()
+        elif self.normalize == 'row':
+            self.vc_dict['row'] = self.data[self.row].value_counts()
+
+        return self.vc_dict[self.normalize]
+
+    def get_val(self):
+        pass
+
+
+    def do_normalization(self, vc):
+        if not self.normalize:
+            return vc
+        else:
+            counts = self.get_counts()
+            counts.loc[]
+            return vc / self.get_counts()
+
     def plot_only_agg(self, ax, data):
         agg_data = data[self.agg]
         agg_kind = agg_data.dtype.kind
         if agg_kind == 'O':
-            normalize = bool(self.normalize)
-            vc = agg_data.value_counts(sort=self.sort, normalize=normalize)
+            vc = agg_data.value_counts(sort=self.sort)
+            vc = self.do_normalization(vc)
             self.plot_func(ax, vc.to_frame())
         elif agg_kind in 'ifb':
             if self.kind in ('box', 'hist', 'kde'):
