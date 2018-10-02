@@ -7,7 +7,7 @@ import textwrap
 from scipy.stats import gaussian_kde
 
 NORMALIZE_ERROR_MSG = '`normalize` can only be None, "all", one of the parameter names "agg", ' \
-                      '"groupby", "hue", "row", "col", or a combination of those parameter names ' \
+                      '"hue", "row", "col", or a combination of those parameter names ' \
                       'in a tuple, if they are defined.'
 
 
@@ -51,6 +51,7 @@ def _calculate_density(data):
 
 # TODO: Do normalization for numeric variables
 # TODO: Add counts (number of obs) in bars
+# TODO: Automatically wrap ticklabels instead of rotating them
 
 
 class _AggPlot:
@@ -66,6 +67,7 @@ class _AggPlot:
         self.validate_agg_kind()
         self.init_column_data()
         self.validate_groupby_agg()
+        self.validate_diff_col_names()
         self.validate_kde_hist()
         self.validate_normalize(normalize)
         self.validate_kwargs(kwargs)
@@ -74,6 +76,7 @@ class _AggPlot:
         self.get_unique_hues()
         self.get_unique_groupby()
         self.get_unique_agg()
+        self.normalize_counts = self.get_normalize_counts()
         self.is_single_plot()
         self.plot_func = self.get_plotting_function()
         self.aggfunc = aggfunc
@@ -166,6 +169,18 @@ class _AggPlot:
                                 'Instead, place the groupby column as either '
                                 ' `hue`, `row`, or `col`.')
 
+    def validate_diff_col_names(self):
+        param_names = ['agg', 'groupby', 'hue', 'row', 'col']
+        seen = set()
+        for name in param_names:
+            val = self.__dict__[name]
+            if val is not None:
+                if val in seen:
+                    raise ValueError(f'Duplicate column found in parameter `{name}` with "{val}". '
+                                     'All column names supplied to `agg`, `groupby`, `hue`'
+                                     ', `row` and `col` must be unique')
+                seen.add(val)
+
     def validate_kde_hist(self):
         if self.kind in ('hist', 'kde'):
             if self.groupby and self.hue:
@@ -249,6 +264,53 @@ class _AggPlot:
         self.xscale = xscale
         self.yscale = yscale
 
+    def get_unique_hues(self):
+        if self.hue:
+            self.all_hues = np.sort(self.data[self.hue].unique())
+
+    def get_unique_groupby(self):
+        if self.groupby:
+            self.all_groups = np.sort(self.data[self.groupby].unique())
+
+    def get_unique_agg(self):
+        if self.agg_kind == 'O':
+            self.all_aggs = np.sort(self.data[self.agg].unique())
+
+    def get_normalize_counts(self):
+        if self.agg_kind != 'O' or not self.normalize:
+            return None
+        if self.normalize == 'all':
+            return self.data[self.agg].count()
+        if self.normalize == 'agg':
+            return self.data[self.agg].value_counts() \
+                       .rename_axis(self.agg).rename(None).reset_index()
+        if self.normalize == 'hue':
+            return self.data[self.hue].value_counts()\
+                       .rename_axis(self.hue).rename(None).reset_index()
+        if self.normalize == 'row':
+            return self.data[self.row].value_counts() \
+                       .rename_axis(self.row).rename(None).reset_index()
+        if self.normalize == 'col':
+            return self.data[self.col].value_counts() \
+                       .rename_axis(self.col).rename(None).reset_index()
+        if isinstance(self.normalize, tuple):
+            group_cols = [self.__dict__[col] for col in self.normalize]
+            return self.data.groupby(group_cols).size().reset_index()
+
+    def is_single_plot(self):
+        if not (self.row or self.col):
+            self.single_plot = True
+        else:
+            self.single_plot = False
+
+    def get_plotting_function(self):
+        plot_dict = {'bar': self.barplot,
+                     'line': self.lineplot,
+                     'box': self.boxplot,
+                     'hist': self.histplot,
+                     'kde': self.kdeplot}
+        return plot_dict[self.kind]
+
     def create_figure(self):
         if not (self.row or self.col):
             if self.orig_figsize is None:
@@ -275,34 +337,27 @@ class _AggPlot:
         return plt.subplots(nrows, ncols, figsize=self.figsize,
                             sharex=self.sharex, sharey=self.sharey)
 
-    def is_single_plot(self):
-        if not (self.row or self.col):
-            self.single_plot = True
-        else:
-            self.single_plot = False
-
-    def get_plotting_function(self):
-        plot_dict = {'bar': self.barplot,
-                     'line': self.lineplot,
-                     'box': self.boxplot,
-                     'hist': self.histplot,
-                     'kde': self.kdeplot}
-        return plot_dict[self.kind]
-
     def set_single_plot_labels(self, ax):
         if self.kind in ('bar', 'line', 'box'):
-            if self.orient == 'v':
+            if self.orient == 'v' and self.agg_kind != 'O':
                 ax.set_xlabel(self.xlabel)
                 ax.set_ylabel(self.ylabel or self.agg)
                 if not (self.groupby or self.hue):
                     ax.set_xticklabels([])
+                    ax.set_xticks([])
                 else:
                     ax.tick_params(axis='x', labelrotation=self.rot)
-            else:
-                ax.set_xlabel(self.xlabel or self.agg)
-                ax.set_ylabel(self.ylabel)
-                if not (self.groupby or self.hue):
+            elif self.orient == 'h' and self.agg_kind != 'O':
+                if not (self.groupby or self.hue or self.normalize):
                     ax.set_yticklabels([])
+                    ax.set_yticks([])
+                    ax.set_xlabel(self.xlabel or self.agg)
+                else:
+                    ax.set_xlabel(self.xlabel or self.agg)
+            elif self.orient == 'v' and self.agg_kind == 'O':
+                pass
+                # ax.tick_params(axis='x', labelrotation=self.rot)
+
             if self.groupby and self.hue and self.no_legend:
                 ax.legend()
             if self.agg_kind == 'O' and self.hue and self.no_legend:
@@ -346,7 +401,7 @@ class _AggPlot:
 
     def apply_single_plot_changes(self, ax):
         if self.title:
-            ax.figure.suptitle(self.title)
+            ax.figure.suptitle(self.title, y=1.02)
 
         self.set_single_plot_labels(ax)
 
@@ -358,18 +413,6 @@ class _AggPlot:
             ax.set_xscale(self.xscale)
         if self.yscale != 'linear':
             ax.set_yscale(self.yscale)
-
-    def get_unique_hues(self):
-        if self.hue:
-            self.all_hues = np.sort(self.data[self.hue].unique())
-
-    def get_unique_groupby(self):
-        if self.groupby:
-            self.all_groups = np.sort(self.data[self.groupby].unique())
-
-    def get_unique_agg(self):
-        if self.agg_kind == 'O':
-            self.all_aggs = np.sort(self.data[self.agg].unique())
 
     def barplot(self, ax, data, **kwargs):
         n_rows, n_cols = data.shape
@@ -423,6 +466,41 @@ class _AggPlot:
                 x, density = density, x
             ax.plot(x, density, label=label, **self.kwargs)
 
+    def wrap_labels(self, fig):
+        renderer = fig.canvas.get_renderer()
+        fig_width = fig.get_window_extent(renderer).width
+
+        for ax in fig.axes:
+            xlabels = ax.get_xticklabels()
+            num_labels = len(xlabels)
+            max_width = (fig_width * .8) / num_labels
+            new_labels = []
+            for label in xlabels:
+                text = label.get_text()
+                len_text = len(text)
+                width = label.get_window_extent(renderer).width
+                if width > max_width:
+                    ratio = max_width / width
+                    text_width = int(ratio * len_text)
+                    wrapper = textwrap.TextWrapper(text_width)
+                    new_labels.append('\n'.join(wrapper.wrap(text)))
+                else:
+                    new_labels.append(text)
+            ax.set_xticklabels(new_labels)
+
+            ylabels = ax.get_yticklabels()
+            new_labels = []
+            for label in ylabels:
+                text = label.get_text()
+                if len(text) > 30:
+                    wrapper = textwrap.TextWrapper(30)
+                    new_labels.append('\n'.join(wrapper.wrap(text)))
+                else:
+                    new_labels.append(text)
+            ax.set_yticklabels(new_labels)
+
+
+
     def plot(self):
         fig, ax = self.create_figure()
         if not (self.groupby or self.hue or self.row or self.col):
@@ -441,63 +519,57 @@ class _AggPlot:
         else:
             self.set_figure_plot_labels(fig)
         fig.tight_layout()
+        self.wrap_labels(fig)
         return fig,
-
-    def get_counts(self):
-        if self.normalize in self.vc_dict:
-            return self.vc_dict[self.normalize]
-        elif self.normalize == 'all':
-            self.vc_dict['all'] = self.data[self.agg].count()
-        elif self.normalize == 'agg':
-            self.vc_dict['agg'] = self.data[self.agg].value_counts()
-        elif self.normalize == 'groupby':
-            self.vc_dict['groupby'] = self.data[self.groupby].value_counts()
-        elif self.normalize == 'row':
-            self.vc_dict['row'] = self.data[self.row].value_counts()
-
-        return self.vc_dict[self.normalize]
-
-    def get_val(self):
-        pass
-
 
     def do_normalization(self, vc):
         if not self.normalize:
             return vc
+        elif self.normalize == 'all':
+            vc.iloc[:, -1] = vc.iloc[:, -1] / self.normalize_counts
+            vc = vc.set_index(vc.columns[:-1].tolist())
+            return vc
+
+        if isinstance(self.normalize, tuple):
+            join_key = [self.__dict__[col] for col in self.normalize]
         else:
-            counts = self.get_counts()
-            counts.loc[]
-            return vc / self.get_counts()
+            join_key = self.__dict__[self.normalize]
+        print(vc)
+        print(self.normalize_counts)
+        norms = vc.merge(self.normalize_counts, on=join_key)
+        print(norms)
+        norms['pct'] = norms.iloc[:, -2] / norms.iloc[:, -1]
+        print(norms)
+        norms = norms.drop(columns=norms.columns[[-3, -2]])
+        print(norms)
+        norms = norms.set_index(norms.columns[:-1].tolist())
+        print(norms)
+        return norms
 
     def plot_only_agg(self, ax, data):
-        agg_data = data[self.agg]
-        agg_kind = agg_data.dtype.kind
-        if agg_kind == 'O':
-            vc = agg_data.value_counts(sort=self.sort)
-            vc = self.do_normalization(vc)
-            self.plot_func(ax, vc.to_frame())
-        elif agg_kind in 'ifb':
+        if self.agg_kind == 'O':
+            vc = data.groupby(self.agg).size()
+            if self.normalize is not None:
+                vc = self.do_normalization(vc.reset_index())
+            else:
+                vc = vc.to_frame()
+            self.plot_func(ax, vc)
+        elif self.agg_kind in 'ifb':
             if self.kind in ('box', 'hist', 'kde'):
-                self.plot_func(ax, agg_data, labels=[self.agg])
+                self.plot_func(ax, data[self.agg], labels=[self.agg])
             else:
                 # For bar and point plots only
-                value = agg_data.agg(self.aggfunc)
+                value = data[self.agg].agg(self.aggfunc)
                 self.plot_func(ax, pd.DataFrame({self.agg: [value]}))
         return ax
 
     def plot_hue_agg(self, ax, data):
-        if self.normalize == 'hue':
-            normalize = 'index'
-        elif self.normalize == 'agg':
-            normalize = 'columns'
-        elif self.normalize == 'all':
-            normalize = 'all'
-        elif self.normalize is None:
-            normalize = False
-
         if self.agg_kind == 'O':
-            tbl = pd.crosstab(data[self.agg], data[self.hue], normalize=normalize)
+            tbl = pd.crosstab(data[self.agg], data[self.hue])
             tbl = tbl.reindex(index=self.all_aggs, columns=self.all_hues)
+            tbl = tbl.stack().reset_index()
+            tbl = self.do_normalization(tbl)
+            tbl = tbl.squeeze().unstack()
             self.plot_func(ax, tbl)
         else:
             if self.kind in ('box', 'hist', 'kde'):
@@ -587,7 +659,7 @@ class _AggPlot:
 
 
 def aggplot(agg, groupby=None, data=None, hue=None, row=None, col=None, kind='bar', orient='v',
-            sort=False, aggfunc='mean', normalize=None, wrap=None, figsize=None, rot=90,
+            sort=False, aggfunc='mean', normalize=None, wrap=None, figsize=None, rot=0,
             title=None, sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None,
             xscale='linear', yscale='linear', kwargs=None):
     """
@@ -677,8 +749,8 @@ def aggplot(agg, groupby=None, data=None, hue=None, row=None, col=None, kind='ba
         size of the figure in inches.
 
     rot: int
-        Degree of rotation of the x-tick labels. Default is 90. Only applied
-        labels are strings
+        Long labels will be automatically wrapped, but you can still use
+        this parameter to rotate x-tick labels. Only applied to strings.
 
     title: str
         Sets the figure title NOT the Axes title
