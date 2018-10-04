@@ -330,6 +330,7 @@ class _AggPlot:
         if not (self.row or self.col):
             if self.orig_figsize is None:
                 self.figsize = (12, 6)
+                self.nrows, self.ncols = 1, 1
             return plt.subplots(figsize=self.figsize)
         if bool(self.row) != bool(self.col):
             split_by = self.row or self.col
@@ -349,6 +350,7 @@ class _AggPlot:
         if self.orig_figsize is None:
             self.figsize = _calculate_figsize(nrows, ncols)
 
+        self.nrows, self.ncols = nrows, ncols
         return plt.subplots(nrows, ncols, figsize=self.figsize)
 
     def set_single_plot_labels(self, ax):
@@ -389,8 +391,10 @@ class _AggPlot:
         only_agg = not (self.groupby or self.hue)
         is_vert = self.orient == 'v'
         is_blb = self.kind in ('bar', 'line', 'box')
+        is_hk = self.kind in ('hist', 'kde')
         is_numeric = self.agg_kind != 'O'
         is_numeric_split = self.hue and self.groupby and is_numeric
+        is_numeric_split_hue = (self.hue or self.groupby) and is_numeric and is_hk
         is_cat_split = self.hue and not is_numeric
         for ax in fig.axes:
             if is_vert and only_agg and is_blb and is_numeric:
@@ -411,7 +415,7 @@ class _AggPlot:
             else:
                 fig.text(-.02, .5, self.agg, rotation=90, fontsize=label_fontsize,
                          ha='center', va='center')
-        if (is_numeric_split or is_cat_split) and not fig.legends:
+        if (is_numeric_split or is_cat_split or is_numeric_split_hue) and not fig.legends:
             handles, labels = fig.axes[-1].get_legend_handles_labels()
             fig.legend(handles, labels, bbox_to_anchor=(1.04, .5), loc='center left')
 
@@ -574,13 +578,17 @@ class _AggPlot:
     def remove_yticklabels(self, axes):
         if self.sharey in ('col', False):
             return
+        if axes.ndim == 1:
+            axes = axes[:, np.newaxis]
         for ax in axes[:, 1:].flatten():
             n = len(ax.get_yticklabels())
             ax.set_yticklabels([''] * n)
 
     def remove_xticklabels(self, axes):
-        if self.sharex in ('row', False):
+        if self.sharex in ('row', False) or self.nrows == 1:
             return
+        if axes.ndim == 1:
+            axes = axes[:, np.newaxis]
         for ax in axes[:-1].flatten():
             n = len(ax.get_xticklabels())
             ax.set_xticklabels([''] * n)
@@ -693,7 +701,7 @@ class _AggPlot:
                 data_array = []
                 g = data.groupby(self.hue)
                 for hue in self.all_hues:
-                    if hue in g.groups:
+                    if hue in g.groups and len(g.groups[hue]) > 0:
                         data_array.append(g.get_group(hue)[self.agg].values)
                     else:
                         data_array.append([])
