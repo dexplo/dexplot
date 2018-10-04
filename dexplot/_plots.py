@@ -53,8 +53,37 @@ def _calculate_density(data):
 # TODO: Add counts (number of obs) in bars
 # TODO: Automatically wrap ticklabels instead of rotating them
 
+class CommonPlotter:
 
-class _AggPlot:
+    def create_figure(self):
+        if not (self.row or self.col):
+            if self.orig_figsize is None:
+                self.figsize = (12, 6)
+                self.nrows, self.ncols = 1, 1
+            return plt.subplots(figsize=self.figsize)
+        if bool(self.row) != bool(self.col):
+            split_by = self.row or self.col
+            num_unique = len(self.data[split_by].unique())
+            if self.wrap is None:
+                dim1 = num_unique
+                dim2 = 1
+            else:
+                dim1 = min(num_unique, self.wrap)
+                dim2 = (num_unique - 1) // dim1 + 1
+
+            nrows, ncols = (dim1, dim2) if self.row else (dim2, dim1)
+        else:
+            nrows = len(self.data[self.row].unique())
+            ncols = len(self.data[self.col].unique())
+
+        if self.orig_figsize is None:
+            self.figsize = _calculate_figsize(nrows, ncols)
+
+        self.nrows, self.ncols = nrows, ncols
+        return plt.subplots(nrows, ncols, figsize=self.figsize)
+
+
+class AggPlot:
 
     def __init__(self, agg, groupby, data, hue, row, col, kind, orient, sort, aggfunc, normalize,
                  wrap, figsize, rot, title, sharex, sharey, xlabel, ylabel, xlim, ylim,
@@ -76,6 +105,8 @@ class _AggPlot:
         self.get_unique_hues()
         self.get_unique_groupby()
         self.get_unique_agg()
+        self.get_unique_row()
+        self.get_unique_col()
         self.normalize_counts = self.get_normalize_counts()
         self.is_single_plot()
         self.plot_func = self.get_plotting_function()
@@ -202,6 +233,9 @@ class _AggPlot:
                 for val in normalize:
                     if val not in valid_normalize[1:]:
                         raise ValueError(NORMALIZE_ERROR_MSG)
+                for val in normalize:
+                    if normalize.count(val) > 1:
+                        raise ValueError(f'{val} is duplicated in your `normalize` tuple')
             elif normalize is not None:
                 raise TypeError(NORMALIZE_ERROR_MSG)
 
@@ -278,6 +312,15 @@ class _AggPlot:
         if self.agg_kind == 'O':
             self.all_aggs = np.sort(self.data[self.agg].unique())
 
+    def get_unique_row(self):
+        if self.row:
+            self.all_rows = np.sort(self.data[self.row].unique())
+
+    def get_unique_col(self):
+        if self.col:
+            self.all_cols = np.sort(self.data[self.col].unique())
+
+
     def get_normalize_counts(self):
         if self.agg_kind != 'O' or not self.normalize:
             return None
@@ -297,17 +340,11 @@ class _AggPlot:
                        .rename_axis(self.col).rename(None).reset_index()
         if isinstance(self.normalize, tuple):
             group_cols = [self.__dict__[col] for col in self.normalize]
-            uniques = [self.all_aggs]
-            names = [self.agg]
-            if self.hue:
-                uniques.append(self.all_hues)
-                names.append(self.hue)
-            if self.row:
-                uniques.append(self.data[self.row].unique())
-                names.append(self.row)
-            if self.col:
-                uniques.append(self.data[self.col].unique())
-                names.append(self.col)
+            uniques, names = [], []
+            for val in self.normalize:
+                uniques.append(getattr(self, f'all_{val}s'))
+                names.append(self.__dict__[val])
+
             df = self.data.groupby(group_cols).size()
             mi = pd.MultiIndex.from_product(uniques, names=names)
             return df.reindex(mi).reset_index()
@@ -494,7 +531,7 @@ class _AggPlot:
         needs_wrap = False
         for ax in fig.axes:
             xlabels = ax.get_xticklabels()
-            num_labels = len(xlabels)
+            num_labels = max(len(xlabels), 1)
             max_width = (ax_width * .8) / num_labels
             new_labels = []
             for label in xlabels:
@@ -532,6 +569,18 @@ class _AggPlot:
             if needs_wrap:
                 ax.set_yticklabels(new_labels)
 
+            # wrap title
+            title = ax.title
+            text = title.get_text()
+            len_title = len(text)
+            width = title.get_window_extent(renderer).width
+            max_width = ax_width * .8
+            if width > max_width:
+                ratio = max_width / width
+                text_width = int(ratio * len_title)
+                wrapper = textwrap.TextWrapper(text_width)
+                ax.set_title('\n'.join(wrapper.wrap(text)))
+
     def align_axes(self, axes):
         def set_lim(cur_axes, axis):
             axes_flat = cur_axes.flatten()
@@ -541,7 +590,8 @@ class _AggPlot:
             else:
                 get_func, set_func = 'get_ylim', 'set_ylim'
             for ax in axes_flat:
-                lims.append(getattr(ax, get_func)())
+                if ax.lines or ax.patches:
+                    lims.append(getattr(ax, get_func)())
 
             max_lim = max(lim[1] for lim in lims)
             min_lim = min(lim[0] for lim in lims)
@@ -581,8 +631,9 @@ class _AggPlot:
         if axes.ndim == 1:
             axes = axes[:, np.newaxis]
         for ax in axes[:, 1:].flatten():
-            n = len(ax.get_yticklabels())
-            ax.set_yticklabels([''] * n)
+            if ax is not None:
+                n = len(ax.get_yticklabels())
+                ax.set_yticklabels([''] * n)
 
     def remove_xticklabels(self, axes):
         if self.sharex in ('row', False) or self.nrows == 1:
@@ -590,8 +641,34 @@ class _AggPlot:
         if axes.ndim == 1:
             axes = axes[:, np.newaxis]
         for ax in axes[:-1].flatten():
-            n = len(ax.get_xticklabels())
-            ax.set_xticklabels([''] * n)
+            if ax is not None:
+                n = len(ax.get_xticklabels())
+                ax.set_xticklabels([''] * n)
+
+    def remove_ax(self, axes):
+        if self.row and not self.col:
+            if self.ncols > 1:
+                num_plots = len(self.all_rows)
+                left_over = self.nrows * self.ncols - num_plots
+                if left_over > 0:
+                    ax_flat = axes.flatten('F')
+                    good_labels = ax_flat[self.wrap - 1].get_xticklabels()
+                    labels = [label.get_text() for label in good_labels]
+                    ax_flat[-left_over - 1].set_xticklabels(labels)
+                    for ax in ax_flat[-left_over:]:
+                        ax.remove()
+        elif self.col and not self.row:
+            if self.nrows > 1:
+                num_plots = len(self.all_cols)
+                left_over = self.nrows * self.ncols - num_plots
+                if left_over > 0:
+                    ax_flat = axes.flatten('C')
+                    good_labels = ax_flat[-self.wrap].get_xticklabels()
+                    labels = [label.get_text() for label in good_labels]
+                    for ax in ax_flat[-self.ncols - left_over: -self.ncols]:
+                        ax.set_xticklabels(labels)
+                    for ax in ax_flat[-left_over:]:
+                        ax.remove()
 
     def plot(self):
         fig, ax = self.create_figure()
@@ -617,7 +694,11 @@ class _AggPlot:
             self.remove_xticklabels(ax)
 
         self.wrap_labels(fig)
+        self.remove_ax(ax)
         fig.tight_layout()
+
+        if self.single_plot:
+            return ax
         return fig,
 
     def do_normalization(self, vc, data=None):
@@ -632,6 +713,8 @@ class _AggPlot:
             join_key = [self.__dict__[col] for col in self.normalize]
         else:
             join_key = self.__dict__[self.normalize]
+
+        unique_col_name = "@@@@@count"
 
         if self.normalize in ('row', 'col'):
             col_name = self.__dict__[self.normalize]
@@ -653,7 +736,6 @@ class _AggPlot:
             if len(col_names) == 2:
                 b = b & (df[col_names[1]] == cur_groups[1])
             cur_counts = df[b].copy()
-            unique_col_name = "@@@@@count"
             cur_counts.columns = cur_counts.columns.tolist()[:-1] + [unique_col_name]
             join_keys = [self.__dict__[name] for name in self.normalize
                          if name not in ('row', 'col')]
@@ -789,15 +871,20 @@ class _AggPlot:
             elif self.hue and self.groupby:
                 self.plot_groupby_hue_agg(ax, sub_df)
             ax.set_title(val)
-        ax.tick_params(axis='x', reset=True)
-        for ax in axes_flat[i+1:]:
-            ax.remove()
         return fig
 
     def plot_row_and_col(self, fig, axes):
         g = self.data.groupby([self.row, self.col])
         axes_flat = axes.flatten()
-        for ax, (val, sub_df) in zip(axes_flat, g):
+        groups = [(r, c) for r in self.all_rows for c in self.all_cols]
+
+        for ax, group in zip(axes_flat, groups):
+            p = False
+            ax.set_title(' | '.join(group))
+            if group not in g.groups:
+                continue
+            else:
+                sub_df = g.get_group(group)
             if not (self.groupby or self.hue):
                 self.plot_only_agg(ax, sub_df)
             elif self.hue and not self.groupby:
@@ -806,7 +893,6 @@ class _AggPlot:
                 self.plot_groupby_agg(ax, sub_df)
             elif self.hue and self.groupby:
                 self.plot_groupby_hue_agg(ax, sub_df)
-            ax.set_title(' | '.join(val))
 
 
 def aggplot(agg, groupby=None, data=None, hue=None, row=None, col=None, kind='bar', orient='v',
@@ -944,7 +1030,7 @@ def aggplot(agg, groupby=None, data=None, hue=None, row=None, col=None, kind='ba
     # TODO: automate figsize for grid
     # TODO: Allow user to pass in ax to put plot in own figure
 
-    return _AggPlot(agg, groupby, data, hue, row, col, kind, orient, sort, aggfunc, normalize,
+    return AggPlot(agg, groupby, data, hue, row, col, kind, orient, sort, aggfunc, normalize,
                     wrap, figsize, rot, title, sharex, sharey, xlabel, ylabel, xlim, ylim,
                     xscale, yscale, kwargs).plot()
 
@@ -994,7 +1080,7 @@ def _fit_reg(fit_reg, ci, ax, x, y, data, color, line_kws):
 
 
 def _calculate_figsize(nrows, ncols):
-    return ncols * 2 + 6, nrows * 2 + 4
+    return ncols * 2 + 8, nrows * 2 + 4
 
 
 def scatterplot(x, y, data=None, hue=None, row=None, col=None, figsize=None, wrap=None, s=None,
@@ -1095,7 +1181,7 @@ def scatterplot(x, y, data=None, hue=None, row=None, col=None, figsize=None, wra
     orig_figsize = figsize
 
     if figsize is None:
-        figsize = plt.rcParams['figure.figsize']
+        figsize = (12, 6)
 
     if not isinstance(data, pd.DataFrame):
         raise TypeError('`data` must be a DataFrame')
