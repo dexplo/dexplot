@@ -1,0 +1,1536 @@
+title,dept,salary,race,gender,experience,experience_level
+POLICE OFFICER,Houston Police Department-HPD,45279.0,White,Male,1,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,White,Male,34,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,32,Veteran
+ENGINEER,Public Works & Engineering-PWE,71680.0,Asian,Male,4,Novice
+CARPENTER,Houston Airport System (HAS),42390.0,White,Male,3,Novice
+DEPUTY ASSISTANT DIRECTOR (EXECUTIVE LEV,Public Works & Engineering-PWE,107962.0,White,Male,23,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),52644.0,Hispanic,Male,9,Experienced
+"CHIEF PHYSICIAN,MD",Health & Human Services,180416.0,Black,Male,29,Veteran
+CUSTOMER SERVICE REPRESENTATIVE I,Public Works & Engineering-PWE,30347.0,Black,Male,1,Novice
+PUBLIC HEALTH INVESTIGATOR SUPERVISOR,Health & Human Services,55269.0,Black,Male,17,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,77076.0,Black,Male,15,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,21,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,24,Veteran
+SENIOR INSPECTOR,Public Works & Engineering-PWE,61506.0,White,Male,7,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),57815.0,Black,Male,15,Experienced
+INSPECTOR,Public Works & Engineering-PWE,43264.0,Black,Male,1,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,White,Male,12,Experienced
+POLICE OFFICER,Houston Police Department-HPD,52514.0,Black,Male,6,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,White,Male,17,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,26,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,38,Veteran
+UTILITY WORKER,Public Works & Engineering-PWE,29557.0,Black,Male,2,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,12,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),61921.0,Hispanic,Male,9,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,26,Veteran
+DENTAL ASSISTANT,Health & Human Services,34923.0,Black,Female,34,Veteran
+SENIOR INSPECTOR,Public Works & Engineering-PWE,60258.0,White,Female,12,Experienced
+SENIOR MICROCOMPUTER ANALYST,Health & Human Services,67499.0,Asian,Female,22,Veteran
+INVENTORY MANAGEMENT SUPERVISOR,Public Works & Engineering-PWE,38168.0,Black,Male,8,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),43528.0,Hispanic,Male,2,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),48190.0,White,Male,5,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),48190.0,White,Male,4,Novice
+ASSOCIATE EMS PHYSICIAN DIRECTOR,Houston Fire Department (HFD),165216.0,Hispanic,Male,3,Novice
+POLICE OFFICER,Houston Police Department-HPD,45279.0,White,Male,2,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,35,Veteran
+FIELD SUPERVISOR,Public Works & Engineering-PWE,43597.0,Black,Male,8,Novice
+CUSTOMER SERVICE SUPERVISOR,Public Works & Engineering-PWE,43618.0,Black,Female,9,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,14,Experienced
+CAPTAIN,Houston Fire Department (HFD),66523.0,White,Male,13,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),61921.0,Hispanic,Male,9,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Hispanic,Male,33,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,Hispanic,Male,13,Experienced
+DIVISION MANAGER,Houston Airport System (HAS),86297.0,Hispanic,Male,24,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,White,Male,34,Veteran
+ADMINISTRATIVE ASSOCIATE,Houston Police Department-HPD,34757.0,Black,Female,11,Experienced
+ELECTRICIAN,Public Works & Engineering-PWE,49483.0,Hispanic,Male,11,Experienced
+EQUIPMENT OPERATOR III,Houston Airport System (HAS),40144.0,White,Male,7,Novice
+LABORER,Houston Airport System (HAS),28163.0,Black,Male,3,Novice
+EQUIPMENT WORKER,Public Works & Engineering-PWE,30992.0,Hispanic,Male,3,Novice
+IT PROJECT MANAGER,Houston Fire Department (HFD),96668.0,Black,Female,18,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,58,Veteran
+LABORER,Public Works & Engineering-PWE,26125.0,Black,Female,15,Experienced
+AIRPORT OPERATIONS SPECIALIST,Houston Airport System (HAS),43826.0,White,Male,12,Experienced
+"PUBLIC HEALTH DENTIST,DDS",Health & Human Services,100791.0,White,Female,1,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Female,18,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,21,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,25,Veteran
+CUSTOMER SERVICE CLERK,Health & Human Services,31387.0,Hispanic,Female,19,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,18,Experienced
+ADMINISTRATIVE AIDE,Houston Airport System (HAS),36296.0,White,Female,17,Experienced
+SENIOR CAPTAIN,Houston Fire Department (HFD),78355.0,White,Male,20,Veteran
+POLICE OFFICER,Houston Police Department-HPD,52514.0,Hispanic,Male,6,Novice
+POLICE OFFICER,Houston Police Department-HPD,43443.0,Hispanic,Male,2,Novice
+CUSTOMER SERVICE REPRESENTATIVE I,Public Works & Engineering-PWE,30347.0,Black,Female,17,Experienced
+FIELD SUPERVISOR,Public Works & Engineering-PWE,44283.0,White,Male,36,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,16,Experienced
+LICENSED VOCATIONAL NURSE,Health & Human Services,48984.0,Black,Female,16,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,12,Experienced
+CUSTOMER SERVICE REPRESENTATIVE I,Public Works & Engineering-PWE,30347.0,Hispanic,Female,0,Novice
+FIELD SUPERVISOR,Public Works & Engineering-PWE,53373.0,Black,Male,20,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,31,Veteran
+PROCUREMENT SPECIALIST,Public Works & Engineering-PWE,52156.0,Hispanic,Male,2,Novice
+CUSTODIAN,Parks & Recreation,26125.0,Black,Female,23,Veteran
+INSPECTOR FIRE,Houston Fire Department (HFD),66523.0,Hispanic,Male,12,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,77076.0,Hispanic,Male,15,Experienced
+POLICE OFFICER,Houston Police Department-HPD,60347.0,Native American,Male,10,Experienced
+UTILITY WORKER,Public Works & Engineering-PWE,29557.0,Black,Male,4,Novice
+UTILITY WORKER,Public Works & Engineering-PWE,30139.0,Black,Male,0,Novice
+LABORER,Houston Airport System (HAS),26125.0,Hispanic,Female,15,Experienced
+CAPTAIN,Houston Fire Department (HFD),66523.0,White,Male,16,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,Hispanic,Male,7,Novice
+SENIOR PLANT OPERATOR,Public Works & Engineering-PWE,45926.0,Black,Female,6,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,22,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,Black,Male,15,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,White,Male,30,Veteran
+PUBLIC HEALTH EDUCATOR,Health & Human Services,36650.0,Hispanic,Female,1,Novice
+FIELD SUPERVISOR,Public Works & Engineering-PWE,41288.0,Black,Male,10,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,Hispanic,Male,8,Novice
+SENIOR DATA ENTRY OPERATOR,Health & Human Services,31554.0,Asian,Female,23,Veteran
+POLICE LIEUTENANT,Houston Police Department-HPD,91181.0,White,Male,31,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Female,22,Veteran
+UTILITY MECHANIC,Public Works & Engineering-PWE,30597.0,Hispanic,Male,3,Novice
+ADMINISTRATIVE ASSISTANT,Health & Human Services,44200.0,Black,Female,20,Veteran
+"FIRE FIGHTER, PROBATIONARY",Houston Fire Department (HFD),40170.0,Black,Male,1,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,13,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,24,Veteran
+STAFF EPIDEMIOLOGIST,Health & Human Services,59819.0,White,Male,6,Novice
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Hispanic,Male,18,Experienced
+POLICE OFFICER,Houston Police Department-HPD,43443.0,Hispanic,Female,2,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,20,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,25,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),61921.0,Hispanic,Male,9,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,24,Veteran
+EQUIPMENT WORKER,Public Works & Engineering-PWE,38646.0,Black,Male,27,Veteran
+"POLICE OFFICER,PROBATIONARY",Houston Police Department-HPD,42000.0,Black,Male,1,Novice
+RECREATION SPECIALIST,Parks & Recreation,33592.0,Black,Male,3,Novice
+INSPECTOR,Public Works & Engineering-PWE,52458.0,Black,Male,28,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,77076.0,Asian,Male,13,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,Hispanic,Female,7,Novice
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Female,25,Veteran
+JAIL ATTENDANT,Houston Police Department-HPD,36317.0,Black,Female,8,Novice
+CUSTOMER SERVICE CLERK,Health & Human Services,30826.0,Hispanic,Female,8,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),45791.0,Hispanic,Male,3,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,25,Veteran
+DISTRICT CHIEF,Houston Fire Department (HFD),89590.0,White,Male,23,Veteran
+GRAPHIC DESIGNER,Houston Airport System (HAS),52499.0,Black,Male,4,Novice
+UTILITY WORKER,Public Works & Engineering-PWE,34798.0,Black,Male,9,Experienced
+ADMINISTRATIVE ASSOCIATE,Public Works & Engineering-PWE,35942.0,Black,Female,24,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),52644.0,Black,Male,9,Experienced
+POLICE OFFICER,Houston Police Department-HPD,60347.0,White,Male,8,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,White,Male,31,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Hispanic,Male,5,Novice
+CEMENT FINISHER,Public Works & Engineering-PWE,31491.0,Black,Male,4,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,8,Novice
+EQUIPMENT OPERATOR III,Houston Airport System (HAS),40435.0,Black,Male,26,Veteran
+UTILITY WORKER,Public Works & Engineering-PWE,30555.0,Black,Male,25,Veteran
+SENIOR MICROCOMPUTER ANALYST,Houston Police Department-HPD,62383.0,Asian,Male,3,Novice
+RECREATION SPECIALIST,Parks & Recreation,30368.0,Black,Male,9,Experienced
+SENIOR UTILITY MECHANIC,Public Works & Engineering-PWE,40435.0,Black,Male,23,Veteran
+AIRPORT OPERATIONS SPECIALIST,Houston Airport System (HAS),43826.0,Black,Male,27,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,74511.0,Black,Male,9,Experienced
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Hispanic,Male,4,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,21,Veteran
+EQUIPMENT WORKER,Parks & Recreation,29307.0,Black,Male,0,Novice
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Black,Male,31,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),43528.0,Hispanic,Male,2,Novice
+SENIOR INSPECTOR,Public Works & Engineering-PWE,56742.0,Black,Male,30,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,31,Veteran
+ASSISTANT DIRECTOR (EXECUTIVE LEVEL),Houston Airport System (HAS),120916.0,White,Male,12,Experienced
+EQUIPMENT WORKER,Parks & Recreation,30347.0,Hispanic,Male,12,Experienced
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,10,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),61921.0,Hispanic,Male,8,Novice
+LABORER,Houston Airport System (HAS),26125.0,Black,Male,1,Novice
+CAPTAIN,Houston Fire Department (HFD),66523.0,White,Male,13,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,34,Veteran
+"ASSOCIATE EMS PHYSICIAN DIRECTOR,MD",Houston Fire Department (HFD),210588.0,White,Male,15,Experienced
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Hispanic,Female,5,Novice
+WEB DESIGNER,Houston Police Department-HPD,59530.0,Hispanic,Male,9,Experienced
+SURVEILLANCE INVESTIGATOR-EPIDEMIOLOGY,Health & Human Services,45906.0,Black,Female,15,Experienced
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Black,Male,5,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,34,Veteran
+EQUIPMENT WORKER,Public Works & Engineering-PWE,30347.0,Asian,Male,2,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Female,27,Veteran
+MANAGING ENGINEER,Public Works & Engineering-PWE,110881.0,White,Male,10,Experienced
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Hispanic,Male,5,Novice
+ADMINISTRATIVE AIDE,Houston Police Department-HPD,30451.0,Hispanic,Female,16,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),57815.0,White,Male,15,Experienced
+MAINTENANCE MECHANIC III,Houston Airport System (HAS),39707.0,Hispanic,Male,3,Novice
+UTILITY WORKER,Public Works & Engineering-PWE,28995.0,Hispanic,Male,2,Novice
+SUPERINTENDENT,Houston Airport System (HAS),69514.0,White,Male,10,Experienced
+EQUIPMENT WORKER,Public Works & Engineering-PWE,32344.0,Black,Male,9,Experienced
+UTILITY WORKER,Public Works & Engineering-PWE,30992.0,White,Male,23,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Asian,Male,23,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Female,24,Veteran
+COUNSELOR,Health & Human Services,47382.0,Black,Female,8,Novice
+UTILITY WORKER,Public Works & Engineering-PWE,39104.0,Black,Female,17,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),43528.0,Hispanic,Male,2,Novice
+SENIOR MICROCOMPUTER ANALYST,Houston Airport System (HAS),62432.0,Asian,Male,4,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),57815.0,Hispanic,Male,15,Experienced
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Asian,Male,10,Experienced
+CUSTOMER SERVICE REPRESENTATIVE II,Health & Human Services,43784.0,Hispanic,Female,23,Veteran
+POLICE SERVICE OFFICER,Houston Police Department-HPD,27914.0,Asian,Male,1,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,14,Experienced
+INSPECTOR,Public Works & Engineering-PWE,53123.0,Hispanic,Male,15,Experienced
+MOBILITY SERVICE OFFICER,Houston Police Department-HPD,42370.0,Hispanic,Male,9,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,23,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,37,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,Hispanic,Male,15,Experienced
+EQUIPMENT WORKER,Public Works & Engineering-PWE,30347.0,Black,Male,0,Novice
+ADMINISTRATIVE SPECIALIST,Houston Fire Department (HFD),58040.0,Hispanic,Female,21,Veteran
+SENIOR CAPTAIN,Houston Fire Department (HFD),74270.0,White,Female,15,Experienced
+SENIOR POLICE TELECOMMUNICATOR,Houston Police Department-HPD,46675.0,White,Female,5,Novice
+FINANCIAL ANALYST III,Houston Police Department-HPD,59182.0,Black,Female,31,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Female,20,Veteran
+EQUIPMENT WORKER,Public Works & Engineering-PWE,33987.0,Black,Female,3,Novice
+SENIOR CAPTAIN,Houston Fire Department (HFD),78355.0,Native American,Male,20,Veteran
+INSPECTOR,Public Works & Engineering-PWE,47382.0,Hispanic,Male,3,Novice
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,34,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),45791.0,White,Female,3,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,21,Veteran
+TECHNICAL  HARDWARE  ANALYST  III,Houston Police Department-HPD,62338.0,Asian,Male,3,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,24,Veteran
+FIELD SUPERVISOR,Public Works & Engineering-PWE,45490.0,Black,Male,25,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,33,Veteran
+CAPTAIN,Houston Fire Department (HFD),66523.0,Hispanic,Male,15,Experienced
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,Hispanic,Male,0,Novice
+COMMUNITY RELATIONS SPECIALIST,Health & Human Services,32802.0,Hispanic,Male,2,Novice
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Hispanic,Male,3,Novice
+"POLICE OFFICER,PROBATIONARY",Houston Police Department-HPD,42000.0,Black,Male,1,Novice
+OFFICE SUPERVISOR,Public Works & Engineering-PWE,38542.0,Hispanic,Male,3,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,White,Male,7,Novice
+CUSTOMER SERVICE REPRESENTATIVE III,Public Works & Engineering-PWE,35485.0,Black,Female,11,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),45791.0,Hispanic,Male,2,Novice
+LABORER,Houston Airport System (HAS),26125.0,Black,Male,1,Novice
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Black,Male,5,Novice
+CAPTAIN,Houston Fire Department (HFD),66523.0,White,Male,15,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),48190.0,White,Male,4,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Black,Male,10,Experienced
+LABORATORY MANAGER,Health & Human Services,81849.0,White,Female,8,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Black,Female,9,Experienced
+CUSTOMER SERVICE REPRESENTATIVE I,Health & Human Services,30347.0,Black,Female,4,Novice
+SPECIAL SERVICE REPRESENTATIVE,Houston Airport System (HAS),35277.0,Black,Male,12,Experienced
+SENIOR PUBLIC HEALTH INVESTIGATOR,Health & Human Services,39312.0,Hispanic,Female,7,Novice
+ELECTRICIAN,Houston Airport System (HAS),58677.0,White,Male,13,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,14,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),61921.0,White,Male,7,Novice
+CAPTAIN,Houston Fire Department (HFD),66523.0,White,Male,12,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,20,Veteran
+SENIOR CUSTOMER SERVICE CLERK,Health & Human Services,34382.0,White,Female,33,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,White,Male,8,Novice
+EQUIPMENT WORKER,Public Works & Engineering-PWE,38438.0,Hispanic,Male,24,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,19,Veteran
+POLICE OFFICER,Houston Police Department-HPD,43443.0,White,Male,2,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,18,Experienced
+POLICE OFFICER,Houston Police Department-HPD,52514.0,White,Male,7,Novice
+INSPECTOR,Public Works & Engineering-PWE,54600.0,White,Male,11,Experienced
+PLANT OPERATOR SUPERVISOR,Public Works & Engineering-PWE,54995.0,Black,Male,11,Experienced
+INSPECTOR,Public Works & Engineering-PWE,51584.0,Hispanic,Male,1,Novice
+INSPECTOR,Houston Fire Department (HFD),70181.0,Black,Male,26,Veteran
+ADMINISTRATIVE COORDINATOR,Public Works & Engineering-PWE,59748.0,Black,Male,10,Experienced
+ASSISTANT DIRECTOR-PUBLIC WORKS (EXECUTI,Public Works & Engineering-PWE,141948.0,White,Male,11,Experienced
+ASSISTANT AIRPORT MANAGER,Houston Airport System (HAS),100228.0,Black,Male,25,Veteran
+UTILITY WORKER,Public Works & Engineering-PWE,31450.0,Hispanic,Male,13,Experienced
+FIELD SUPERVISOR,Public Works & Engineering-PWE,45989.0,Black,Male,18,Experienced
+SENIOR CONTRACT ADMINISTRATOR,Health & Human Services,81972.0,Black,Female,15,Experienced
+EQUIPMENT WORKER,Parks & Recreation,33634.0,Hispanic,Male,22,Veteran
+DISTRICT CHIEF,Houston Fire Department (HFD),84995.0,White,Male,16,Experienced
+DENTAL ASSISTANT,Health & Human Services,28434.0,Hispanic,Female,2,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,20,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,77076.0,Hispanic,Male,14,Experienced
+ADMINISTRATIVE SPECIALIST,Houston Airport System (HAS),51139.0,White,Female,24,Veteran
+POLICE OFFICER,Houston Police Department-HPD,45279.0,Hispanic,Male,3,Novice
+SEMI-SKILLED LABORER,Public Works & Engineering-PWE,27373.0,Black,Female,8,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Black,Male,9,Experienced
+POLICE LIEUTENANT,Houston Police Department-HPD,91181.0,White,Male,35,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,31,Veteran
+ACCOUNTANT SUPERVISOR,Houston Airport System (HAS),68451.0,Hispanic,Female,10,Experienced
+ADMINISTRATIVE ASSISTANT,Parks & Recreation,36920.0,Hispanic,Female,26,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,77076.0,White,Male,16,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),45791.0,Hispanic,Female,2,Novice
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Black,Male,20,Veteran
+RECORDS ADMINISTRATOR,Houston Airport System (HAS),65832.0,White,Male,1,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Hispanic,Male,9,Experienced
+POLICE OFFICER,Houston Police Department-HPD,50621.0,Black,Male,5,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),52644.0,Black,Male,12,Experienced
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,Hispanic,Female,1,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,Hispanic,Male,6,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,White,Female,22,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),48190.0,Hispanic,Male,4,Novice
+POLICE OFFICER,Houston Police Department-HPD,47650.0,White,Male,4,Novice
+POLICE OFFICER,Houston Police Department-HPD,60347.0,White,Female,15,Experienced
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,White,Female,0,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Black,Male,14,Experienced
+SENIOR BREASTFEEDING PEER COUNSELOR,Health & Human Services,32864.0,Hispanic,Female,10,Experienced
+SENIOR PLAN ANALYST,Public Works & Engineering-PWE,56742.0,White,Male,9,Experienced
+FIELD SUPERVISOR,Public Works & Engineering-PWE,41288.0,Black,Male,7,Novice
+COMMUNITY INVOLVEMENT COORDINATOR,Parks & Recreation,48090.0,Black,Female,8,Novice
+POLICE OFFICER,Houston Police Department-HPD,60347.0,White,Male,11,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,20,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,Black,Male,8,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Asian,Male,15,Experienced
+UTILITY MECHANIC,Public Works & Engineering-PWE,30597.0,Black,Male,2,Novice
+INSPECTOR,Public Works & Engineering-PWE,46800.0,Hispanic,Male,0,Novice
+POLICE OFFICER,Houston Police Department-HPD,50621.0,Hispanic,Male,2,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),61921.0,White,Male,7,Novice
+SENIOR INSPECTOR,Public Works & Engineering-PWE,63315.0,White,Male,10,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,23,Veteran
+CUSTOMER SERVICE REPRESENTATIVE I,Public Works & Engineering-PWE,30347.0,Hispanic,Female,2,Novice
+EQUIPMENT WORKER,Public Works & Engineering-PWE,39978.0,Black,Male,22,Veteran
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Hispanic,Female,5,Novice
+SAFETY REPRESENTATIVE,Parks & Recreation,54600.0,Black,Male,2,Novice
+POLICE LIEUTENANT,Houston Police Department-HPD,86534.0,Black,Female,23,Veteran
+ADMINISTRATIVE ASSOCIATE,Houston Police Department-HPD,37294.0,Hispanic,Female,10,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,16,Experienced
+POLICE OFFICER,Houston Police Department-HPD,50621.0,White,Male,6,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,Hispanic,Male,13,Experienced
+CAPTAIN,Houston Fire Department (HFD),66523.0,Black,Male,17,Experienced
+POLICE OFFICER,Houston Police Department-HPD,45279.0,Black,Male,2,Novice
+EQUIPMENT WORKER,Parks & Recreation,33488.0,Black,Male,17,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,White,Male,7,Novice
+UTILITY WORKER,Public Works & Engineering-PWE,28995.0,Black,Male,2,Novice
+SUPERVISING ENGINEER,Public Works & Engineering-PWE,90716.0,Asian,Female,8,Novice
+EQUIPMENT OPERATOR II,Houston Airport System (HAS),41808.0,Hispanic,Male,18,Experienced
+DIVISION MANAGER (EXECUTIVE LEVEL),Health & Human Services,94149.0,Asian,Female,12,Experienced
+STAFF ANALYST,Public Works & Engineering-PWE,73783.0,White,Female,16,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Black,Male,32,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,Black,Male,13,Experienced
+POLICE OFFICER,Houston Police Department-HPD,45279.0,Hispanic,Female,3,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),48190.0,Hispanic,Female,3,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,Hispanic,Male,8,Novice
+SENIOR PLAN ANALYST,Public Works & Engineering-PWE,54600.0,Black,Male,7,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,9,Experienced
+PLANT OPERATOR,Public Works & Engineering-PWE,39478.0,White,Male,2,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,White,Male,2,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Hispanic,Male,9,Experienced
+RECORDS TECHNICIAN,Public Works & Engineering-PWE,28600.0,Black,Female,0,Novice
+ELECTRICIAN,Public Works & Engineering-PWE,44096.0,White,Male,0,Novice
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Black,Male,17,Experienced
+SENIOR INSPECTOR,Public Works & Engineering-PWE,60133.0,Black,Female,22,Veteran
+MICROBIOLOGIST III,Health & Human Services,52072.0,White,Male,4,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,15,Experienced
+CHEMIST II,Public Works & Engineering-PWE,51168.0,Asian,Female,13,Experienced
+WATER SERVICE INSPECTOR I,Public Works & Engineering-PWE,32240.0,Black,Male,3,Novice
+CUSTOMER SERVICE REPRESENTATIVE II,Public Works & Engineering-PWE,33488.0,Hispanic,Female,1,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),61921.0,White,Male,6,Novice
+POLICE OFFICER,Houston Police Department-HPD,45279.0,Black,Male,3,Novice
+POLICE OFFICER,Houston Police Department-HPD,50621.0,Asian,Male,6,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,13,Experienced
+PUBLIC WORKS MAINTENANCE SECTION CHIEF,Public Works & Engineering-PWE,53851.0,Black,Male,25,Veteran
+POLICE CAPTAIN,Houston Police Department-HPD,104455.0,White,Male,33,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,7,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),52644.0,Black,Male,9,Experienced
+JAIL ATTENDANT,Houston Police Department-HPD,36317.0,Black,Female,8,Novice
+DATA ENTRY OPERATOR,Houston Police Department-HPD,27893.0,Black,Male,10,Experienced
+CUSTOMER SERVICE REPRESENTATIVE III,Public Works & Engineering-PWE,42266.0,Black,Male,12,Experienced
+MOBILITY SERVICE OFFICER,Houston Police Department-HPD,44970.0,Black,Female,31,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),61226.0,White,Male,30,Veteran
+UTILITY WORKER,Public Works & Engineering-PWE,35797.0,Black,Male,13,Experienced
+DIVISION MANAGER,Houston Airport System (HAS),88003.0,White,Female,20,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),52644.0,White,Male,10,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,23,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,White,Male,12,Experienced
+SENIOR PUBLIC HEALTH INVESTIGATOR,Health & Human Services,38189.0,Black,Female,5,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,White,Male,16,Experienced
+PUBLIC HEALTH NURSE IV,Health & Human Services,76246.0,Black,Female,24,Veteran
+ADMINISTRATIVE ASSISTANT,Public Works & Engineering-PWE,40352.0,Hispanic,Female,25,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,35,Veteran
+CAPTAIN,Houston Fire Department (HFD),70181.0,White,Male,22,Veteran
+UTILITY MECHANIC,Public Works & Engineering-PWE,30597.0,Hispanic,Male,0,Novice
+TECHNICAL HARDWARE ANALYST I,Public Works & Engineering-PWE,39666.0,Black,Female,0,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,White,Male,13,Experienced
+CHIEF COMMUNICATION OFFICER,Houston Fire Department (HFD),89590.0,White,Male,38,Veteran
+CUSTOMER SERVICE CLERK,Health & Human Services,30410.0,Hispanic,Female,24,Veteran
+CLINIC ASSISTANT,Health & Human Services,30597.0,Black,Female,10,Experienced
+EQUIPMENT OPERATOR I,Houston Airport System (HAS),27851.0,White,Male,10,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,31,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,White,Male,13,Experienced
+CAR ATTENDANT,Houston Police Department-HPD,24960.0,Black,Female,0,Novice
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Black,Male,5,Novice
+SENIOR ACCOUNT CLERK,Health & Human Services,34299.0,Hispanic,Female,23,Veteran
+COMMUNITY LIAISON,Health & Human Services,49379.0,Black,Female,12,Experienced
+TECHNICAL HARDWARE ANALYST II,Public Works & Engineering-PWE,51605.0,Black,Male,11,Experienced
+EQUIPMENT WORKER,Public Works & Engineering-PWE,32968.0,Black,Male,9,Experienced
+LABORER,Houston Airport System (HAS),26125.0,Hispanic,Female,16,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Female,22,Veteran
+POLICE OFFICER,Houston Police Department-HPD,60347.0,Black,Male,13,Experienced
+CUSTOMER SERVICE REPRESENTATIVE III,Public Works & Engineering-PWE,35485.0,Black,Female,11,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,13,Experienced
+CUSTOMER SERVICE REPRESENTATIVE I,Public Works & Engineering-PWE,30347.0,Black,Female,0,Novice
+COMMUNITY RELATIONS SPECIALIST,Health & Human Services,31470.0,Black,Female,18,Experienced
+POLICE OFFICER,Houston Police Department-HPD,60347.0,White,Female,11,Experienced
+GRADUATE ENGINEER,Public Works & Engineering-PWE,63461.0,White,Male,9,Experienced
+POLICE LIEUTENANT,Houston Police Department-HPD,91181.0,Asian,Female,27,Veteran
+ADMINISTRATIVE COORDINATOR,Public Works & Engineering-PWE,70780.0,Black,Female,27,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Asian,Male,23,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Hispanic,Male,15,Experienced
+JAIL ATTENDANT,Houston Police Department-HPD,35318.0,Black,Female,8,Novice
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,White,Male,1,Novice
+POLICE OFFICER,Houston Police Department-HPD,50621.0,Hispanic,Male,3,Novice
+CUSTOMER SERVICE CLERK,Health & Human Services,29245.0,Hispanic,Female,0,Novice
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,17,Experienced
+PUBLIC WORKS MAINTENANCE MANAGER,Public Works & Engineering-PWE,83744.0,Black,Male,27,Veteran
+ADMINISTRATIVE COORDINATOR,Parks & Recreation,56826.0,Black,Female,8,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),61226.0,White,Male,27,Veteran
+LABORER,Public Works & Engineering-PWE,26104.0,Hispanic,Male,0,Novice
+TECHNICAL HARDWARE ANALYST III,Public Works & Engineering-PWE,59613.0,White,Male,7,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,31,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,27,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),43528.0,White,Male,2,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),61921.0,White,Male,10,Experienced
+DIVISION MANAGER,Public Works & Engineering-PWE,93089.0,White,Male,33,Veteran
+CHEMIST IV,Public Works & Engineering-PWE,64432.0,Asian,Male,10,Experienced
+CUSTOMER SERVICE SECTION CHIEF,Public Works & Engineering-PWE,53726.0,White,Female,8,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,31,Veteran
+PLAN ANALYST,Public Works & Engineering-PWE,34029.0,White,Female,8,Novice
+BREASTFEEDING PEER COUNSELOR,Health & Human Services,28600.0,Hispanic,Female,1,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,21,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Hispanic,Male,16,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,34,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Black,Female,25,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,17,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),48190.0,Hispanic,Male,4,Novice
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,24,Veteran
+UTILITY WORKER,Public Works & Engineering-PWE,30992.0,Black,Male,9,Experienced
+MAINTENANCE MECHANIC III,Parks & Recreation,35027.0,Black,Male,3,Novice
+POLICE OFFICER,Houston Police Department-HPD,60347.0,Hispanic,Female,13,Experienced
+DEPUTY ASSISTANT DIRECTOR (EX LVL),Houston Airport System (HAS),110686.0,Black,Female,5,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,35,Veteran
+FIELD SUPERVISOR,Public Works & Engineering-PWE,45157.0,Black,Female,20,Veteran
+POLICE OFFICER,Houston Police Department-HPD,52514.0,Black,Female,10,Experienced
+POLICE OFFICER,Houston Police Department-HPD,43443.0,White,Male,2,Novice
+FIRE FIGHTER TRAINEE,Houston Fire Department (HFD),28024.0,Black,Male,1,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Female,17,Experienced
+SENIOR UTILITY MECHANIC,Public Works & Engineering-PWE,36130.0,Black,Male,8,Novice
+POLICE OFFICER,Houston Police Department-HPD,47650.0,White,Male,5,Novice
+CAPTAIN,Houston Fire Department (HFD),66523.0,Hispanic,Male,16,Experienced
+AIRPORT OPERATIONS SPECIALIST,Houston Airport System (HAS),43826.0,Black,Male,11,Experienced
+POLICE OFFICER,Houston Police Department-HPD,43443.0,Hispanic,Female,2,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),61226.0,White,Male,30,Veteran
+SENIOR PLAN ANALYST,Public Works & Engineering-PWE,54600.0,White,Male,7,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),61226.0,White,Male,37,Veteran
+WATER SERVICE INSPECTOR I,Public Works & Engineering-PWE,34861.0,Black,Male,14,Experienced
+MICROBIOLOGIST III,Public Works & Engineering-PWE,56992.0,Black,Female,9,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),45791.0,White,Male,3,Novice
+POLICE OFFICER,Houston Police Department-HPD,50621.0,White,Male,6,Novice
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Black,Male,5,Novice
+SEMI-SKILLED LABORER,Parks & Recreation,26125.0,Hispanic,Male,2,Novice
+SANITARIAN I,Health & Human Services,38709.0,Hispanic,Female,1,Novice
+UTILITY WORKER,Public Works & Engineering-PWE,34320.0,Black,Male,9,Experienced
+JAIL ATTENDANT,Houston Police Department-HPD,35838.0,Black,Male,8,Novice
+MANAGEMENT ANALYST IV,Health & Human Services,60496.0,Black,Male,10,Experienced
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Hispanic,Male,9,Experienced
+SUPERVISING ENGINEER,Public Works & Engineering-PWE,90716.0,White,Male,7,Novice
+PROJECT MANAGER,Public Works & Engineering-PWE,55695.0,Asian,Male,4,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,Hispanic,Male,13,Experienced
+POLICE OFFICER,Houston Police Department-HPD,60347.0,Black,Female,11,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Black,Male,15,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,30,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,White,Female,14,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Female,21,Veteran
+ADMINISTRATIVE ASSOCIATE,Public Works & Engineering-PWE,40851.0,Black,Female,25,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),61226.0,White,Male,18,Experienced
+CUSTOMER SERVICE REPRESENTATIVE I,Public Works & Engineering-PWE,30347.0,Black,Female,18,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),61921.0,Hispanic,Male,9,Experienced
+SENIOR PLANT OPERATOR,Public Works & Engineering-PWE,45926.0,Black,Male,14,Experienced
+SENIOR INSPECTOR,Public Works & Engineering-PWE,56576.0,White,Male,4,Novice
+TECHNICAL HARDWARE ANALYST III,Public Works & Engineering-PWE,58157.0,White,Male,24,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Black,Female,9,Experienced
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,9,Experienced
+INSPECTOR,Public Works & Engineering-PWE,51563.0,Black,Female,1,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),61921.0,White,Male,6,Novice
+CUSTOMER SERVICE SECTION CHIEF,Public Works & Engineering-PWE,52957.0,Black,Female,14,Experienced
+EQUIPMENT OPERATOR II,Houston Airport System (HAS),37003.0,Asian,Male,13,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Hispanic,Male,14,Experienced
+ENVIRONMENTAL INVESTIGATOR II,Public Works & Engineering-PWE,40622.0,White,Male,1,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Female,34,Veteran
+FIELD SUPERVISOR,Parks & Recreation,36920.0,Hispanic,Male,12,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),61226.0,Black,Male,20,Veteran
+SENIOR STAFF ANALYST,Public Works & Engineering-PWE,105503.0,White,Female,25,Veteran
+STAFF PSYCHOLOGIST,Houston Police Department-HPD,99953.0,White,Female,4,Novice
+PROJECT MANAGER,Public Works & Engineering-PWE,63338.0,Hispanic,Male,11,Experienced
+SUPERVISING ENGINEER,Public Works & Engineering-PWE,90715.0,White,Female,4,Novice
+POLICE OFFICER,Houston Police Department-HPD,60347.0,White,Male,11,Experienced
+CUSTOMER SERVICE REPRESENTATIVE II,Public Works & Engineering-PWE,33488.0,Black,Female,8,Novice
+JAIL ATTENDANT,Houston Police Department-HPD,35318.0,White,Female,2,Novice
+SPECIAL SERVICE REPRESENTATIVE,Houston Airport System (HAS),35318.0,Hispanic,Male,9,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,74511.0,White,Male,8,Novice
+DEPUTY DIRECTOR (EXECUTIVE LEVEL),Houston Airport System (HAS),150416.0,Black,Female,3,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,32,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Asian,Male,15,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),43528.0,Asian,Male,2,Novice
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Hispanic,Female,4,Novice
+ADMINISTRATIVE ASSISTANT,Health & Human Services,45614.0,Black,Female,25,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,White,Male,7,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,White,Male,26,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Hispanic,Male,14,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,22,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Black,Male,9,Experienced
+DATA ENTRY OPERATOR,Houston Police Department-HPD,29827.0,Black,Female,20,Veteran
+LABORER,Houston Airport System (HAS),26125.0,Black,Female,8,Novice
+SENIOR INVENTORY MANAGEMENT CLERK,Public Works & Engineering-PWE,29765.0,White,Male,13,Experienced
+SEMI-SKILLED LABORER,Parks & Recreation,29910.0,Hispanic,Male,20,Veteran
+SEMI-SKILLED LABORER,Parks & Recreation,26125.0,Black,Male,2,Novice
+"POLICE OFFICER,PROBATIONARY",Houston Police Department-HPD,42000.0,Black,Male,1,Novice
+HUMAN RESOURCES ASSISTANT,Public Works & Engineering-PWE,32406.0,Black,Female,2,Novice
+CUSTOMER SERVICE CLERK,Health & Human Services,31387.0,Black,Female,24,Veteran
+CAPTAIN,Houston Fire Department (HFD),70181.0,White,Male,30,Veteran
+SEMI-SKILLED LABORER,Public Works & Engineering-PWE,27373.0,Black,Female,3,Novice
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Hispanic,Male,19,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),61226.0,Hispanic,Male,32,Veteran
+POLICE OFFICER,Houston Police Department-HPD,50621.0,Hispanic,Male,6,Novice
+PLANT OPERATOR TRAINEE,Public Works & Engineering-PWE,31158.0,Hispanic,Male,1,Novice
+SENIOR PROJECT MANAGER,Public Works & Engineering-PWE,84500.0,Hispanic,Male,0,Novice
+MOBILITY SERVICE OFFICER,Houston Police Department-HPD,41621.0,Black,Male,8,Novice
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,White,Male,1,Novice
+CUSTOMER SERVICE CLERK,Health & Human Services,31803.0,Hispanic,Male,14,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),57815.0,Hispanic,Male,15,Experienced
+SENIOR PUBLIC HEALTH INVESTIGATOR,Health & Human Services,46010.0,Asian,Male,14,Experienced
+SURVEILLANCE INVESTIGATOR-EPIDEMIOLOGY,Health & Human Services,47362.0,White,Male,1,Novice
+DIVISION MANAGER,Public Works & Engineering-PWE,95950.0,Asian,Female,13,Experienced
+SENIOR CAPTAIN,Houston Fire Department (HFD),78355.0,Hispanic,Male,18,Experienced
+POLICE OFFICER,Houston Police Department-HPD,45279.0,White,Male,3,Novice
+SENIOR DISPATCHER,Public Works & Engineering-PWE,29931.0,Black,Female,5,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,31,Veteran
+ADMINISTRATIVE ASSOCIATE,Public Works & Engineering-PWE,34757.0,Black,Female,13,Experienced
+ADMINISTRATIVE ASSISTANT,Parks & Recreation,42640.0,Hispanic,Female,10,Experienced
+SUPERINTENDENT,Parks & Recreation,57533.0,Black,Female,22,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,23,Veteran
+CUSTOMER SERVICE REPRESENTATIVE I,Public Works & Engineering-PWE,30347.0,Black,Female,1,Novice
+SENIOR POLICE SERVICE OFFICER,Houston Police Department-HPD,32261.0,Black,Female,24,Veteran
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Hispanic,Female,4,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,19,Veteran
+CAPTAIN,Houston Fire Department (HFD),70181.0,White,Male,26,Veteran
+HUMAN SERVICE PROGRAM MANAGER,Health & Human Services,63785.0,Black,Female,7,Novice
+GARDENER,Parks & Recreation,28205.0,Black,Male,1,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),45791.0,White,Male,3,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,21,Veteran
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,Hispanic,Male,1,Novice
+POLICE OFFICER,Houston Police Department-HPD,60347.0,Hispanic,Male,13,Experienced
+SUPERVISING ENGINEER,Public Works & Engineering-PWE,98752.0,White,Female,10,Experienced
+EQUIPMENT WORKER,Public Works & Engineering-PWE,32968.0,Black,Female,1,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),45791.0,Hispanic,Male,2,Novice
+POLICE OFFICER,Houston Police Department-HPD,47650.0,White,Male,4,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,13,Experienced
+EQUIPMENT WORKER,Public Works & Engineering-PWE,34653.0,Black,Male,1,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),45791.0,White,Male,3,Novice
+EQUIPMENT WORKER,Public Works & Engineering-PWE,32968.0,Black,Male,0,Novice
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Hispanic,Male,3,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,23,Veteran
+POLICE OFFICER,Houston Police Department-HPD,60347.0,White,Male,11,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Female,21,Veteran
+CUSTOMER SERVICE REPRESENTATIVE III,Public Works & Engineering-PWE,36920.0,Hispanic,Male,4,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,24,Veteran
+POLICE OFFICER,Houston Police Department-HPD,50621.0,Hispanic,Male,6,Novice
+SENIOR GIS TECHNICIAN,Public Works & Engineering-PWE,44866.0,Hispanic,Female,7,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,21,Veteran
+TECHNICAL HARDWARE ANALYST II,Public Works & Engineering-PWE,53581.0,Hispanic,Male,23,Veteran
+POLICE OFFICER,Houston Police Department-HPD,43443.0,White,Male,1,Novice
+ACCOUNTANT ASSOCIATE,Houston Airport System (HAS),39229.0,Black,Female,19,Veteran
+SENIOR OFFICE ASSISTANT,Houston Police Department-HPD,29890.0,Black,Female,4,Novice
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Black,Male,25,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),61921.0,White,Male,10,Experienced
+CAPTAIN,Houston Fire Department (HFD),66523.0,White,Male,15,Experienced
+REGULATORY INVESTIGATOR,Houston Airport System (HAS),33238.0,Hispanic,Male,19,Veteran
+SEMI-SKILLED LABORER,Public Works & Engineering-PWE,34611.0,Asian,Male,23,Veteran
+CUSTOMER SERVICE REPRESENTATIVE III,Houston Fire Department (HFD),41267.0,Hispanic,Female,15,Experienced
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,9,Experienced
+CAPTAIN,Houston Fire Department (HFD),70181.0,White,Male,34,Veteran
+DWI TECHNICIAN,Houston Police Department-HPD,43035.0,Black,Male,1,Novice
+SENIOR OFFICE ASSISTANT,Houston Police Department-HPD,35152.0,Asian,Female,27,Veteran
+INSPECTOR,Houston Fire Department (HFD),70181.0,Hispanic,Male,22,Veteran
+CAPTAIN,Houston Fire Department (HFD),70181.0,White,Male,19,Veteran
+CAPTAIN,Houston Fire Department (HFD),66523.0,Black,Male,13,Experienced
+EXECUTIVE ASSISTANT FIRE CHIEF,Houston Fire Department (HFD),130585.0,Black,Male,26,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Female,27,Veteran
+INSPECTOR,Houston Fire Department (HFD),66523.0,Hispanic,Female,15,Experienced
+"POLICE OFFICER,PROBATIONARY",Houston Police Department-HPD,28169.0,White,Male,1,Novice
+FIELD SUPERVISOR,Public Works & Engineering-PWE,42182.0,Black,Male,10,Experienced
+UTILITY WORKER,Public Works & Engineering-PWE,29557.0,Black,Male,1,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),52644.0,White,Male,9,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,18,Experienced
+SENIOR BUYER,Public Works & Engineering-PWE,48360.0,Black,Female,31,Veteran
+DEPUTY DIRECTOR (EXECUTIVE LEVEL),Houston Police Department-HPD,163228.0,Asian,Male,39,Veteran
+MAINTENANCE MECHANIC III,Houston Airport System (HAS),39125.0,Hispanic,Male,0,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,Black,Male,8,Novice
+OFFICE SERVICE MANAGER,Houston Police Department-HPD,58409.0,Black,Female,8,Novice
+CAPTAIN,Houston Fire Department (HFD),66523.0,White,Male,13,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),61921.0,White,Male,10,Experienced
+ACCOUNTANT ASSOCIATE,Public Works & Engineering-PWE,37440.0,Black,Female,2,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,24,Veteran
+POLICE OFFICER,Houston Police Department-HPD,52514.0,Hispanic,Male,7,Novice
+IT PROJECT MANAGER,Houston Airport System (HAS),96284.0,White,Male,4,Novice
+SENIOR STAFF ANALYST,Public Works & Engineering-PWE,90293.0,Hispanic,Male,16,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),48190.0,Hispanic,Male,5,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,12,Experienced
+PUBLIC HEALTH INVESTIGATOR SUPERVISOR,Health & Human Services,57433.0,Black,Female,22,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,White,Male,8,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,8,Novice
+UTILITY WORKER,Public Works & Engineering-PWE,31408.0,Asian,Male,22,Veteran
+RECREATION FACILITY MANAGER,Parks & Recreation,46580.0,Hispanic,Male,23,Veteran
+WATER SERVICE INSPECTOR II,Public Works & Engineering-PWE,40581.0,Black,Female,26,Veteran
+ADMINISTRATIVE ASSISTANT,Houston Police Department-HPD,45552.0,White,Female,9,Experienced
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Black,Male,1,Novice
+POLICE OFFICER,Houston Police Department-HPD,50621.0,White,Female,5,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),43528.0,Black,Male,2,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,White,Male,13,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,31,Veteran
+POLICE OFFICER,Houston Police Department-HPD,60347.0,White,Male,19,Veteran
+CUSTOMER SERVICE REPRESENTATIVE III,Health & Human Services,37835.0,Hispanic,Female,1,Novice
+UTILITY WORKER,Public Works & Engineering-PWE,30139.0,Black,Male,2,Novice
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Black,Male,23,Veteran
+GENERAL SUPERINTENDENT,Public Works & Engineering-PWE,50960.0,Asian,Male,35,Veteran
+SENIOR CUSTOMER SERVICE CLERK,Health & Human Services,34008.0,Hispanic,Female,2,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,Hispanic,Male,13,Experienced
+POLICE SERVICE OFFICER,Houston Police Department-HPD,27914.0,Hispanic,Female,3,Novice
+SENIOR CUSTOMER SERVICE CLERK,Health & Human Services,32198.0,Hispanic,Female,24,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Hispanic,Male,22,Veteran
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,Black,Male,0,Novice
+DEPUTY DIRECTOR-FINANCE & ADMINISTRATION,Houston Police Department-HPD,199596.0,White,Male,9,Experienced
+TECHNICAL HARDWARE ANALYST III,Public Works & Engineering-PWE,57304.0,White,Male,13,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,35,Veteran
+SEMI-SKILLED LABORER,Parks & Recreation,26125.0,Hispanic,Male,1,Novice
+ACCOUNT CLERK,Houston Police Department-HPD,35880.0,Asian,Female,35,Veteran
+UTILITY WORKER,Public Works & Engineering-PWE,31762.0,Black,Male,16,Experienced
+"POLICE OFFICER,PROBATIONARY",Houston Police Department-HPD,42000.0,Hispanic,Male,1,Novice
+SEMI-SKILLED LABORER,Public Works & Engineering-PWE,27373.0,Black,Male,2,Novice
+EQUIPMENT WORKER,Parks & Recreation,31075.0,Black,Female,17,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Hispanic,Male,22,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),43528.0,Black,Male,2,Novice
+CUSTOMER SERVICE REPRESENTATIVE II,Health & Human Services,34320.0,Black,Female,1,Novice
+FIELD SUPERVISOR,Parks & Recreation,36920.0,Black,Male,23,Veteran
+SENIOR CAPTAIN,Houston Fire Department (HFD),78355.0,White,Male,34,Veteran
+CAPTAIN,Houston Fire Department (HFD),66523.0,White,Male,16,Experienced
+FIELD SUPERVISOR,Public Works & Engineering-PWE,41288.0,Black,Male,14,Experienced
+INSPECTOR,Houston Fire Department (HFD),70181.0,Black,Male,20,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,74511.0,Hispanic,Male,8,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),45791.0,White,Male,2,Novice
+UTILITY WORKER,Public Works & Engineering-PWE,28995.0,Black,Male,2,Novice
+SENIOR INSPECTOR,Public Works & Engineering-PWE,63336.0,White,Male,28,Veteran
+DIVISION MANAGER,Houston Airport System (HAS),100873.0,White,Female,11,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,22,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Asian,Male,23,Veteran
+POLICE LIEUTENANT,Houston Police Department-HPD,91181.0,Hispanic,Male,24,Veteran
+POLICE OFFICER,Houston Police Department-HPD,60347.0,Hispanic,Female,10,Experienced
+EQUIPMENT WORKER,Public Works & Engineering-PWE,31429.0,White,Male,1,Novice
+DISTRICT CHIEF,Houston Fire Department (HFD),89590.0,White,Male,23,Veteran
+SENIOR CAPTAIN,Houston Fire Department (HFD),78355.0,White,Male,26,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Hispanic,Female,8,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),61226.0,Black,Male,20,Veteran
+DEPUTY CHIEF,Houston Fire Department (HFD),99480.0,White,Male,36,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,23,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Asian,Female,20,Veteran
+EQUIPMENT WORKER,Public Works & Engineering-PWE,36837.0,Black,Male,22,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),61226.0,Black,Male,34,Veteran
+ADMINISTRATION MANAGER,Health & Human Services,83174.0,Black,Female,29,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),61226.0,Hispanic,Male,22,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),48190.0,Black,Male,3,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),43528.0,Black,Male,2,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Asian,Male,23,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,7,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,White,Male,9,Experienced
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,White,Male,1,Novice
+ADMINISTRATIVE COORDINATOR,Health & Human Services,65589.0,Hispanic,Female,7,Novice
+POLICE OFFICER,Houston Police Department-HPD,43443.0,White,Male,1,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,35,Veteran
+EVIDENCE TECHNICIAN,Houston Police Department-HPD,33322.0,Hispanic,Female,1,Novice
+DWI TECHNICIAN,Houston Police Department-HPD,47008.0,Hispanic,Female,21,Veteran
+INSPECTOR,Houston Fire Department (HFD),70181.0,Black,Male,22,Veteran
+SENIOR POLICE SERVICE OFFICER,Houston Police Department-HPD,32490.0,Black,Female,27,Veteran
+RECREATION SUPERVISOR,Parks & Recreation,37565.0,White,Male,4,Novice
+POLICE LIEUTENANT,Houston Police Department-HPD,86534.0,White,Male,16,Experienced
+ADMINISTRATION MANAGER,Health & Human Services,82915.0,Black,Female,14,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,26,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,Hispanic,Male,7,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Black,Male,14,Experienced
+UTILITY WORKER,Public Works & Engineering-PWE,40518.0,Hispanic,Male,21,Veteran
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,Hispanic,Male,1,Novice
+ENVIRONMENTAL INVESTIGATOR V,Public Works & Engineering-PWE,79953.0,Asian,Male,28,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,33,Veteran
+INSPECTOR,Public Works & Engineering-PWE,46238.0,Hispanic,Male,8,Novice
+CAPTAIN,Houston Fire Department (HFD),70181.0,White,Male,26,Veteran
+SURVEILLANCE INVESTIGATOR-EPIDEMIOLOGY,Health & Human Services,46384.0,Black,Female,25,Veteran
+UTILITY MECHANIC,Public Works & Engineering-PWE,30597.0,Black,Male,4,Novice
+DEPUTY DIRECTOR-AVIATION (EX LVL),Houston Airport System (HAS),186192.0,Black,Male,3,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,22,Veteran
+"POLICE OFFICER,PROBATIONARY",Houston Police Department-HPD,28169.0,Asian,Male,1,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),43528.0,Hispanic,Male,2,Novice
+DWI TECHNICIAN,Houston Police Department-HPD,43035.0,Hispanic,Female,3,Novice
+SENIOR PLANT OPERATOR,Public Works & Engineering-PWE,46550.0,White,Male,23,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,Hispanic,Male,14,Experienced
+INVESTIGATOR,Houston Fire Department (HFD),70181.0,White,Male,37,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,25,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Native American,Male,25,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),45791.0,White,Male,3,Novice
+STAFF ANALYST,Public Works & Engineering-PWE,70565.0,White,Female,7,Novice
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Hispanic,Male,26,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,32,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,9,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,16,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,32,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,18,Experienced
+OFFICE SUPERVISOR,Houston Police Department-HPD,50378.0,Asian,Male,16,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Hispanic,Male,21,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,White,Male,13,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),61921.0,White,Male,10,Experienced
+UTILITY WORKER,Public Works & Engineering-PWE,30139.0,Hispanic,Male,2,Novice
+ASSISTANT PUBLIC WORKS MAINTENANCE MANAG,Public Works & Engineering-PWE,66310.0,Black,Male,0,Novice
+PROGRAMMER ANALYST IV,Houston Police Department-HPD,69661.0,White,Male,19,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,26,Veteran
+CAPTAIN,Houston Fire Department (HFD),70181.0,White,Male,36,Veteran
+SENIOR CUSTOMER SERVICE CLERK,Health & Human Services,31782.0,Black,Female,9,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Female,17,Experienced
+PUBLIC WORKS OPERATIONS MANAGER,Public Works & Engineering-PWE,86288.0,White,Male,25,Veteran
+ENGINEER,Public Works & Engineering-PWE,87236.0,Asian,Male,23,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,White,Male,30,Veteran
+GROUND TRANSPORTATION REPRESENTATIVE,Houston Airport System (HAS),29640.0,Hispanic,Female,25,Veteran
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Black,Male,4,Novice
+DEPUTY ASSISTANT DIRECTOR (EXECUTIVE LEV,Public Works & Engineering-PWE,105354.0,White,Male,6,Novice
+AIRPORT OPERATIONS SPECIALIST,Houston Airport System (HAS),47237.0,Black,Male,32,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,23,Veteran
+SENIOR IMAGING TECHNICIAN,Houston Police Department-HPD,34528.0,Black,Female,37,Veteran
+RECREATION FACILITY MANAGER,Parks & Recreation,50028.0,Black,Male,18,Experienced
+AIRPORT OPERATIONS SPECIALIST,Houston Airport System (HAS),48568.0,Black,Male,12,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,22,Veteran
+DATA ENTRY OPERATOR,Houston Police Department-HPD,26125.0,Black,Female,23,Veteran
+UTILITY WORKER,Public Works & Engineering-PWE,34320.0,Black,Male,4,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Hispanic,Male,8,Novice
+SUPERINTENDENT,Houston Airport System (HAS),62650.0,Black,Male,3,Novice
+EQUIPMENT WORKER,Public Works & Engineering-PWE,32968.0,Black,Male,2,Novice
+SYSTEMS SUPPORT ANALYST I,Public Works & Engineering-PWE,44096.0,Asian,Male,12,Experienced
+INSPECTOR,Public Works & Engineering-PWE,54600.0,Hispanic,Male,9,Experienced
+CUSTOMER SERVICE SUPERVISOR,Public Works & Engineering-PWE,45178.0,Hispanic,Female,13,Experienced
+SENIOR PUBLIC HEALTH INVESTIGATOR,Health & Human Services,40976.0,Hispanic,Female,25,Veteran
+FINANCIAL ANALYST IV,Health & Human Services,70762.0,Black,Female,18,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,White,Male,7,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),43528.0,White,Male,2,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,25,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Black,Female,9,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,24,Veteran
+UTILITY WORKER,Public Works & Engineering-PWE,36213.0,Black,Male,12,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,77076.0,Black,Male,17,Experienced
+SYSTEMS SUPPORT ANALYST IV,Public Works & Engineering-PWE,71170.0,Black,Male,11,Experienced
+SANITARIAN III,Health & Human Services,52624.0,Asian,Male,17,Experienced
+EQUIPMENT WORKER,Public Works & Engineering-PWE,37211.0,White,Male,22,Veteran
+ADMINISTRATIVE ASSOCIATE,Houston Police Department-HPD,37336.0,Black,Female,16,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,23,Veteran
+OFFICE SERVICE MANAGER,Houston Police Department-HPD,60653.0,Black,Male,11,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Black,Female,22,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),43528.0,Black,Male,2,Novice
+ADMINISTRATIVE ASSISTANT,Health & Human Services,40144.0,Black,Female,2,Novice
+"POLICE OFFICER,PROBATIONARY",Houston Police Department-HPD,42000.0,White,Male,1,Novice
+COMMUNICATIONS CAPTAIN,Houston Fire Department (HFD),70181.0,Hispanic,Male,19,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,White,Male,16,Experienced
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Hispanic,Male,3,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Asian,Male,27,Veteran
+ADMINISTRATIVE COORDINATOR,Public Works & Engineering-PWE,66449.0,Hispanic,Female,24,Veteran
+SENIOR CAPTAIN,Houston Fire Department (HFD),74270.0,White,Male,14,Experienced
+POLICE OFFICER,Houston Police Department-HPD,45279.0,Asian,Male,3,Novice
+LABORER,Houston Airport System (HAS),27082.0,Black,Male,1,Novice
+MANAGEMENT ANALYST II,Health & Human Services,47632.0,White,Male,1,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),43528.0,White,Male,1,Novice
+POLICE LIEUTENANT,Houston Police Department-HPD,91181.0,White,Female,26,Veteran
+FIELD SUPERVISOR,Public Works & Engineering-PWE,42640.0,Black,Male,8,Novice
+MANAGEMENT ANALYST IV,Public Works & Engineering-PWE,62426.0,Hispanic,Female,11,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,20,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,26,Veteran
+TECHNICAL HARDWARE ANALYST I,Public Works & Engineering-PWE,44429.0,Black,Male,11,Experienced
+POLICE OFFICER,Houston Police Department-HPD,52514.0,Asian,Male,6,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,31,Veteran
+HUMAN RESOURCES MANAGER,Public Works & Engineering-PWE,86763.0,Black,Female,36,Veteran
+INSPECTOR,Public Works & Engineering-PWE,47382.0,Asian,Male,7,Novice
+CUSTOMER SERVICE CLERK,Houston Police Department-HPD,31907.0,Black,Female,27,Veteran
+COMMUNITY LIAISON,Health & Human Services,48027.0,Black,Female,24,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,13,Experienced
+POLICE OFFICER,Houston Police Department-HPD,60347.0,Hispanic,Male,10,Experienced
+PLANT OPERATOR SUPERVISOR,Public Works & Engineering-PWE,54995.0,Black,Male,21,Veteran
+CAPTAIN,Houston Fire Department (HFD),70181.0,White,Male,26,Veteran
+SENIOR POLICE SERVICE OFFICER,Houston Police Department-HPD,30888.0,White,Male,11,Experienced
+POLICE OFFICER,Houston Police Department-HPD,60347.0,Black,Male,7,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,Black,Male,20,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,3,Novice
+JAIL MEDICAL SPECIALIST,Health & Human Services,46363.0,Hispanic,Male,3,Novice
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,24,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),52644.0,Hispanic,Male,9,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,25,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,31,Veteran
+PUBLIC WORKS MAINTENANCE SECTION CHIEF,Public Works & Engineering-PWE,57470.0,Hispanic,Male,7,Novice
+SUPERINTENDENT,Parks & Recreation,56014.0,Black,Male,16,Experienced
+ADMINISTRATION MANAGER,Public Works & Engineering-PWE,77899.0,Black,Female,28,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,77076.0,Black,Male,11,Experienced
+DATA ENTRY OPERATOR,Houston Police Department-HPD,26125.0,Hispanic,Female,1,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,Black,Male,14,Experienced
+WORD PROCESSOR,Houston Police Department-HPD,31845.0,Black,Female,25,Veteran
+TECHNICAL HARDWARE ANALYST I,Public Works & Engineering-PWE,39666.0,Black,Male,3,Novice
+SANITARIAN I,Health & Human Services,38709.0,Black,Male,4,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,38,Veteran
+SPECIAL SERVICE REPRESENTATIVE,Houston Airport System (HAS),35256.0,White,Female,10,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,32,Veteran
+EQUIPMENT WORKER,Public Works & Engineering-PWE,34632.0,White,Male,3,Novice
+SENIOR UTILITY MECHANIC,Public Works & Engineering-PWE,37128.0,Black,Male,10,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,21,Veteran
+ADMINISTRATIVE COORDINATOR,Health & Human Services,53832.0,Black,Male,2,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,7,Novice
+SENIOR POLICE SERVICE OFFICER,Houston Police Department-HPD,30888.0,Black,Female,23,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,White,Male,20,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,24,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,White,Male,35,Veteran
+AIRPORT OPERATIONS COORDINATOR,Houston Airport System (HAS),51501.0,White,Male,10,Experienced
+MAINTENANCE MECHANIC I,Houston Airport System (HAS),31158.0,Hispanic,Male,26,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),61226.0,White,Male,18,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Asian,Male,15,Experienced
+INFRASTRUCTURE ASSESSMENT TECHNICIAN II,Public Works & Engineering-PWE,41683.0,Hispanic,Male,23,Veteran
+EQUIPMENT WORKER,Parks & Recreation,30347.0,Black,Male,7,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Female,25,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,27,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55453.0,White,Male,10,Experienced
+SENIOR CAPTAIN,Houston Fire Department (HFD),78355.0,White,Male,32,Veteran
+ASSISTANT DIRECTOR (EXECUTIVE LEVEL),Health & Human Services,120799.0,White,Male,8,Novice
+POLICE OFFICER,Houston Police Department-HPD,43443.0,Hispanic,Male,1,Novice
+RECREATION SPECIALIST,Parks & Recreation,28766.0,Black,Male,1,Novice
+DISTRICT CHIEF,Houston Fire Department (HFD),89590.0,White,Male,22,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Female,21,Veteran
+SENIOR CAPTAIN,Houston Fire Department (HFD),74270.0,White,Male,16,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),57815.0,Hispanic,Male,15,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,19,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Hispanic,Female,10,Experienced
+PARTY CHIEF,Public Works & Engineering-PWE,53435.0,Hispanic,Male,10,Experienced
+COMMUNITY LIAISON,Health & Human Services,49379.0,Native American,Female,13,Experienced
+ELECTRICIAN,Public Works & Engineering-PWE,48776.0,Hispanic,Male,23,Veteran
+POLICE LIEUTENANT,Houston Police Department-HPD,91181.0,White,Male,18,Experienced
+DISTRICT CHIEF,Houston Fire Department (HFD),89590.0,Hispanic,Male,20,Veteran
+CAPTAIN,Houston Fire Department (HFD),70181.0,White,Male,23,Veteran
+ENGINEER,Public Works & Engineering-PWE,78076.0,White,Male,8,Novice
+CAPTAIN,Houston Fire Department (HFD),70181.0,White,Male,31,Veteran
+ASSISTANT ARSON INVESTIGATOR,Houston Fire Department (HFD),89590.0,Hispanic,Male,22,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,23,Veteran
+INVENTORY MANAGEMENT SUPERVISOR,Public Works & Engineering-PWE,40186.0,Black,Male,22,Veteran
+GRADUATE ENGINEER,Public Works & Engineering-PWE,69493.0,Hispanic,Male,11,Experienced
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Hispanic,Female,4,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,Hispanic,Male,13,Experienced
+CUSTODIAN,Parks & Recreation,26125.0,Black,Female,2,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),61921.0,White,Male,10,Experienced
+JAIL ATTENDANT,Houston Police Department-HPD,35318.0,Black,Female,8,Novice
+FIELD SUPERVISOR,Public Works & Engineering-PWE,45989.0,Hispanic,Male,12,Experienced
+ADMINISTRATION MANAGER,Public Works & Engineering-PWE,70115.0,Hispanic,Male,23,Veteran
+STAFF ANALYST,Houston Police Department-HPD,74961.0,White,Female,7,Novice
+SENIOR INSPECTOR,Public Works & Engineering-PWE,65853.0,Hispanic,Male,23,Veteran
+ASSISTANT DIRECTOR-PUBLIC WORKS (EXECUTI,Public Works & Engineering-PWE,146141.0,White,Female,18,Experienced
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Female,9,Experienced
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,8,Novice
+POLICE OFFICER,Houston Police Department-HPD,45279.0,Black,Male,3,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),43528.0,Hispanic,Male,2,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,9,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,White,Male,27,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,12,Experienced
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,Black,Male,0,Novice
+STAFF ANALYST,Houston Airport System (HAS),80791.0,Black,Female,11,Experienced
+PROJECT TECHNICIAN IV,Public Works & Engineering-PWE,50586.0,White,Male,2,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,20,Veteran
+SURVEILLANCE INVESTIGATOR-EPIDEMIOLOGY,Health & Human Services,43909.0,Black,Female,10,Experienced
+POLICE OFFICER,Houston Police Department-HPD,43443.0,Asian,Male,1,Novice
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,Hispanic,Male,1,Novice
+CUSTOMER SERVICE CLERK,Houston Police Department-HPD,27872.0,Black,Female,14,Experienced
+PROJECT MANAGER,Houston Airport System (HAS),67671.0,Hispanic,Female,7,Novice
+CUSTOMER SERVICE REPRESENTATIVE III,Public Works & Engineering-PWE,45490.0,Hispanic,Female,37,Veteran
+SUPERVISING ENGINEER,Public Works & Engineering-PWE,102297.0,Asian,Male,8,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Female,23,Veteran
+AIRPORT OPERATIONS ASSISTANT,Houston Airport System (HAS),37669.0,Black,Male,12,Experienced
+POLICE OFFICER,Houston Police Department-HPD,47650.0,White,Female,3,Novice
+AIRPORT SECURITY INVESTIGATOR,Houston Airport System (HAS),61589.0,White,Male,12,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,White,Male,14,Experienced
+FIRE FIGHTER TRAINEE,Houston Fire Department (HFD),28024.0,White,Male,1,Novice
+SUPERVISING ENGINEER,Houston Airport System (HAS),103686.0,White,Male,2,Novice
+FIRE FIGHTER TRAINEE,Houston Fire Department (HFD),28024.0,White,Male,0,Novice
+SENIOR CAPTAIN,Houston Fire Department (HFD),78355.0,Hispanic,Male,20,Veteran
+POLICE OFFICER,Houston Police Department-HPD,60347.0,Asian,Male,14,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,30,Veteran
+FIELD SUPERVISOR,Public Works & Engineering-PWE,49109.0,Black,Male,38,Veteran
+SENIOR INSPECTOR,Public Works & Engineering-PWE,66560.0,White,Male,18,Experienced
+CUSTOMER SERVICE REPRESENTATIVE III,Public Works & Engineering-PWE,42453.0,Hispanic,Female,19,Veteran
+RECREATION SUPERVISOR,Parks & Recreation,35339.0,Black,Female,17,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,23,Veteran
+BREASTFEEDING PEER COUNSELOR,Health & Human Services,28600.0,Hispanic,Female,1,Novice
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,23,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,12,Experienced
+POLICE OFFICER,Houston Police Department-HPD,60347.0,Black,Male,18,Experienced
+CAPTAIN,Houston Fire Department (HFD),70181.0,Hispanic,Male,23,Veteran
+POLICE CAPTAIN,Houston Police Department-HPD,104455.0,White,Female,25,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),57815.0,White,Male,15,Experienced
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Hispanic,Male,9,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),48190.0,White,Male,4,Novice
+LABORER,Houston Airport System (HAS),26125.0,Hispanic,Female,11,Experienced
+COUNSELOR,Health & Human Services,47382.0,Black,Female,2,Novice
+ADMINISTRATIVE ASSISTANT,Houston Police Department-HPD,47278.0,Black,Female,23,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),45791.0,Black,Male,2,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,35,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,White,Male,12,Experienced
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Hispanic,Male,9,Experienced
+CUSTOMER SERVICE REPRESENTATIVE II,Houston Fire Department (HFD),34902.0,Black,Female,27,Veteran
+SEMI-SKILLED LABORER,Houston Airport System (HAS),33467.0,Black,Female,18,Experienced
+POLICE OFFICER,Houston Police Department-HPD,52514.0,Asian,Male,6,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Black,Male,9,Experienced
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,9,Experienced
+SENIOR BUYER,Public Works & Engineering-PWE,47008.0,Hispanic,Female,10,Experienced
+LABORATORY SUPERVISOR,Public Works & Engineering-PWE,74097.0,Asian,Male,28,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),45791.0,White,Male,2,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),52644.0,Black,Male,9,Experienced
+ADMINISTRATIVE SPECIALIST,Public Works & Engineering-PWE,43888.0,White,Female,1,Novice
+POLICE OFFICER,Houston Police Department-HPD,45279.0,White,Male,3,Novice
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,White,Male,1,Novice
+REAL ESTATE MANAGER,Public Works & Engineering-PWE,97626.0,White,Male,22,Veteran
+"POLICE OFFICER,PROBATIONARY",Houston Police Department-HPD,42000.0,White,Male,1,Novice
+FIELD SUPERVISOR,Parks & Recreation,36920.0,White,Male,18,Experienced
+ADMINISTRATIVE ASSISTANT,Houston Police Department-HPD,41704.0,Black,Female,24,Veteran
+SENIOR CAPTAIN,Houston Fire Department (HFD),78355.0,White,Male,23,Veteran
+ADMINISTRATIVE SPECIALIST,Public Works & Engineering-PWE,57842.0,White,Female,34,Veteran
+AIRPORT SUPERVISOR,Houston Airport System (HAS),45698.0,Black,Male,12,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,Black,Male,12,Experienced
+POLICE OFFICER,Houston Police Department-HPD,45279.0,White,Female,3,Novice
+ENGINEER,Public Works & Engineering-PWE,71680.0,Black,Female,8,Novice
+ACCOUNTANT ASSOCIATE,Public Works & Engineering-PWE,35027.0,White,Female,26,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,White,Male,31,Veteran
+IRM MANAGER,Public Works & Engineering-PWE,124861.0,Asian,Male,17,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,34,Veteran
+CUSTOMER SERVICE REPRESENTATIVE II,Houston Fire Department (HFD),36400.0,Black,Female,3,Novice
+TECHNICAL HARDWARE ANALYST II,Public Works & Engineering-PWE,49587.0,Black,Male,11,Experienced
+SENIOR CUSTOMER SERVICE CLERK,Health & Human Services,33654.0,Hispanic,Male,1,Novice
+JAIL ATTENDANT,Houston Police Department-HPD,35318.0,Hispanic,Female,1,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,18,Experienced
+SENIOR UTILITY MECHANIC,Public Works & Engineering-PWE,38688.0,Black,Male,10,Experienced
+SENIOR REAL ESTATE ANALYST,Public Works & Engineering-PWE,76085.0,White,Female,1,Novice
+UTILITY WORKER,Public Works & Engineering-PWE,32864.0,Hispanic,Male,8,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,19,Veteran
+CAPTAIN,Houston Fire Department (HFD),66523.0,White,Male,12,Experienced
+POLICE OFFICER,Houston Police Department-HPD,60347.0,White,Male,10,Experienced
+COMMUNICATIONS SENIOR CAPTAIN,Houston Fire Department (HFD),78355.0,Black,Female,23,Veteran
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,Hispanic,Male,1,Novice
+POLICE OFFICER,Houston Police Department-HPD,60347.0,White,Female,10,Experienced
+POLICE LIEUTENANT,Houston Police Department-HPD,91181.0,White,Male,36,Veteran
+ADMINISTRATIVE ASSOCIATE,Houston Police Department-HPD,30618.0,Black,Male,0,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,Black,Male,26,Veteran
+CUSTOMER SERVICE CASHIER,Public Works & Engineering-PWE,30493.0,Hispanic,Female,1,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),48190.0,Hispanic,Male,4,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Asian,Male,25,Veteran
+PUBLIC WORKS MAINTENANCE MANAGER,Public Works & Engineering-PWE,92028.0,Black,Female,3,Novice
+TECHNICAL HARDWARE ANALYST I,Public Works & Engineering-PWE,44429.0,Black,Male,20,Veteran
+SUPERINTENDENT,Parks & Recreation,72280.0,Hispanic,Male,22,Veteran
+UTILITY WORKER,Public Works & Engineering-PWE,40227.0,Black,Male,23,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,33,Veteran
+PLANT OPERATOR,Public Works & Engineering-PWE,39478.0,White,Male,11,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,Black,Male,12,Experienced
+"POLICE OFFICER,PROBATIONARY",Houston Police Department-HPD,42000.0,Asian,Male,1,Novice
+FINANCIAL ANALYST IV,Public Works & Engineering-PWE,80433.0,Asian,Female,11,Experienced
+SENIOR POLICE TELECOMMUNICATOR,Houston Police Department-HPD,52333.0,Black,Female,26,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,21,Veteran
+SURVEILLANCE INVESTIGATOR EPIDEMIOLOGY,Health & Human Services,41870.0,Black,Male,3,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,12,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,23,Veteran
+SENIOR HUMAN RESOURCES SPECIALIST,Houston Police Department-HPD,55378.0,Asian,Female,30,Veteran
+EQUIPMENT WORKER,Public Works & Engineering-PWE,30347.0,Black,Female,0,Novice
+LABORER,Houston Airport System (HAS),26125.0,Black,Female,9,Experienced
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Hispanic,Male,8,Novice
+STAFF ANALYST,Public Works & Engineering-PWE,62400.0,White,Female,4,Novice
+POLICE SERGEANT,Houston Police Department-HPD,77076.0,Hispanic,Male,15,Experienced
+SENIOR COMMUNITY LIAISON,Houston Police Department-HPD,65416.0,White,Male,9,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,White,Male,8,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,Hispanic,Male,13,Experienced
+UTILITY WORKER,Public Works & Engineering-PWE,31450.0,Black,Male,2,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Black,Female,8,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),43528.0,Hispanic,Male,2,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,Hispanic,Male,12,Experienced
+DEPUTY DIRECTOR-PUBLIC WORKS (EXECUTIVE,Public Works & Engineering-PWE,178331.0,White,Female,25,Veteran
+SENIOR CAPTAIN,Houston Fire Department (HFD),78355.0,White,Male,26,Veteran
+IRM MANAGER,Public Works & Engineering-PWE,104389.0,Black,Male,13,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),57815.0,Hispanic,Male,15,Experienced
+MANAGEMENT ANALYST IV,Houston Airport System (HAS),74420.0,White,Male,15,Experienced
+ADMINISTRATIVE AIDE,Houston Police Department-HPD,26229.0,Black,Female,1,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),61921.0,Hispanic,Male,9,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,White,Male,7,Novice
+ADMINISTRATION MANAGER,Health & Human Services,90305.0,Black,Male,10,Experienced
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,7,Novice
+SYSTEMS SUPPORT ANALYST II,Health & Human Services,54509.0,Black,Female,3,Novice
+POLICE SERGEANT,Houston Police Department-HPD,77076.0,Hispanic,Female,15,Experienced
+COMMUNICATIONS CAPTAIN,Houston Fire Department (HFD),66523.0,Black,Male,13,Experienced
+SEMI-SKILLED LABORER,Public Works & Engineering-PWE,27352.0,Black,Male,0,Novice
+REAL ESTATE ANALYST,Public Works & Engineering-PWE,53173.0,Black,Female,1,Novice
+INSPECTOR,Houston Airport System (HAS),54080.0,White,Male,3,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,15,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,24,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,13,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Female,34,Veteran
+INSPECTOR,Public Works & Engineering-PWE,54683.0,Hispanic,Male,13,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,25,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Black,Female,15,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Female,30,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,Hispanic,Male,23,Veteran
+"POLICE OFFICER,PROBATIONARY",Houston Police Department-HPD,42000.0,White,Female,1,Novice
+WATER SERVICE INSPECTOR II,Public Works & Engineering-PWE,38251.0,Black,Male,8,Novice
+CUSTOMER SERVICE REPRESENTATIVE II,Public Works & Engineering-PWE,36837.0,Black,Female,15,Experienced
+CUSTOMER SERVICE CLERK,Health & Human Services,30410.0,Hispanic,Female,1,Novice
+INSPECTOR,Public Works & Engineering-PWE,51584.0,White,Male,3,Novice
+INSPECTOR,Public Works & Engineering-PWE,57450.0,White,Male,15,Experienced
+TECHNICAL HARDWARE ANALYST III,Public Works & Engineering-PWE,57200.0,Asian,Male,8,Novice
+ELECTRICIAN,Public Works & Engineering-PWE,44096.0,Hispanic,Female,4,Novice
+POLICE OFFICER,Houston Police Department-HPD,60347.0,White,Male,13,Experienced
+DISTRICT CHIEF,Houston Fire Department (HFD),89590.0,White,Male,34,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,7,Novice
+INSPECTOR,Public Works & Engineering-PWE,51085.0,Black,Male,3,Novice
+SENIOR AIRPORT COMMUNICATIONS OPERATOR,Houston Airport System (HAS),36587.0,Black,Female,8,Novice
+EQUIPMENT WORKER,Public Works & Engineering-PWE,33613.0,Black,Female,18,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,26,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,77076.0,White,Male,16,Experienced
+UTILITY WORKER,Public Works & Engineering-PWE,32635.0,Asian,Male,20,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Hispanic,Male,8,Novice
+FIELD SUPERVISOR,Public Works & Engineering-PWE,45989.0,Black,Male,25,Veteran
+POLICE LIEUTENANT,Houston Police Department-HPD,91181.0,White,Male,30,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,33,Veteran
+POLICE OFFICER,Houston Police Department-HPD,47650.0,White,Male,4,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),52644.0,Black,Male,9,Experienced
+SENIOR INVENTORY MANAGEMENT CLERK,Public Works & Engineering-PWE,37357.0,Black,Female,23,Veteran
+POLICE OFFICER,Houston Police Department-HPD,50621.0,Hispanic,Male,5,Novice
+EQUIPMENT WORKER,Public Works & Engineering-PWE,39021.0,Black,Male,19,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,77076.0,Black,Male,16,Experienced
+UTILITY WORKER,Public Works & Engineering-PWE,40810.0,Asian,Male,20,Veteran
+UTILITY WORKER,Public Works & Engineering-PWE,30160.0,Black,Male,23,Veteran
+SECURITY OFFICER,Houston Airport System (HAS),29286.0,Black,Female,2,Novice
+AIRPORT OPERATIONS ASSISTANT,Houston Airport System (HAS),33176.0,Black,Male,8,Novice
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Black,Male,3,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,32,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Female,23,Veteran
+SENIOR BUYER,Houston Police Department-HPD,50190.0,Hispanic,Female,25,Veteran
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,White,Male,1,Novice
+SENIOR EVIDENCE TECHNICIAN,Houston Police Department-HPD,41059.0,Hispanic,Male,19,Veteran
+FIRE FIGHTER TRAINEE,Houston Fire Department (HFD),28024.0,Hispanic,Male,0,Novice
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Black,Male,37,Veteran
+CUSTOMER SERVICE REPRESENTATIVE III,Public Works & Engineering-PWE,36629.0,Black,Female,7,Novice
+POLICE OFFICER,Houston Police Department-HPD,50621.0,Hispanic,Male,5,Novice
+EQUIPMENT OPERATOR II,Houston Airport System (HAS),38730.0,Hispanic,Male,11,Experienced
+SYSTEMS ACCOUNTANT III,Houston Airport System (HAS),89416.0,Black,Female,9,Experienced
+ADMINISTRATIVE ASSISTANT,Houston Police Department-HPD,36920.0,Hispanic,Female,24,Veteran
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,Black,Male,1,Novice
+POLICE OFFICER,Houston Police Department-HPD,60347.0,Hispanic,Male,11,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Female,20,Veteran
+INSPECTOR,Public Works & Engineering-PWE,60715.0,White,Male,9,Experienced
+POLICE OFFICER,Houston Police Department-HPD,60347.0,White,Male,10,Experienced
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,10,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,19,Veteran
+SENIOR CONTRACT COMPLIANCE OFFICER,Houston Airport System (HAS),53518.0,Hispanic,Female,8,Novice
+SENIOR CAPTAIN,Houston Fire Department (HFD),74270.0,White,Male,16,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),61921.0,Hispanic,Male,6,Novice
+SUPERVISING ENGINEER,Public Works & Engineering-PWE,98748.0,Asian,Male,32,Veteran
+SYSTEMS ACCOUNTANT II,Houston Airport System (HAS),73635.0,Hispanic,Female,16,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),45791.0,White,Male,3,Novice
+SENIOR DATA ENTRY OPERATOR,Public Works & Engineering-PWE,29453.0,Hispanic,Female,9,Experienced
+POLICE OFFICER,Houston Police Department-HPD,50621.0,Asian,Female,6,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,Hispanic,Male,6,Novice
+POLICE OFFICER,Houston Police Department-HPD,50621.0,White,Male,5,Novice
+INSPECTOR,Public Works & Engineering-PWE,53123.0,White,Male,5,Novice
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,White,Male,0,Novice
+POLICE OFFICER,Houston Police Department-HPD,45279.0,White,Male,3,Novice
+PROJECT TECHNICIAN III,Public Works & Engineering-PWE,43867.0,Black,Female,10,Experienced
+"POLICE OFFICER,PROBATIONARY",Houston Police Department-HPD,42000.0,Black,Male,1,Novice
+EQUIPMENT WORKER,Public Works & Engineering-PWE,35318.0,Black,Male,23,Veteran
+SEMI-SKILLED LABORER,Parks & Recreation,26125.0,Black,Male,8,Novice
+CAPTAIN,Houston Fire Department (HFD),70181.0,White,Male,20,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,20,Veteran
+SECURITY OFFICER INVESTIGATOR,Public Works & Engineering-PWE,34382.0,Black,Male,1,Novice
+MAINTENANCE MECHANIC III,Houston Fire Department (HFD),37918.0,White,Male,21,Veteran
+COMMUNICATIONS CAPTAIN,Houston Fire Department (HFD),66523.0,Black,Male,17,Experienced
+MANAGEMENT ANALYST IV,Health & Human Services,70864.0,Asian,Male,11,Experienced
+UTILITY WORKER,Public Works & Engineering-PWE,36754.0,Black,Female,24,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),52644.0,White,Male,9,Experienced
+ASSISTANT PUBLIC WORKS OPERATIONS MANAGE,Public Works & Engineering-PWE,78728.0,White,Female,35,Veteran
+STAFF EPIDEMIOLOGIST,Health & Human Services,60082.0,White,Male,1,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),61921.0,White,Male,6,Novice
+SENIOR CAPTAIN,Houston Fire Department (HFD),78355.0,White,Male,18,Experienced
+FINGERPRINT TECHNICIAN SUPERVISOR,Houston Police Department-HPD,55016.0,Black,Female,31,Veteran
+POLICE LIEUTENANT,Houston Police Department-HPD,86534.0,Black,Male,13,Experienced
+INSPECTOR,Public Works & Engineering-PWE,51563.0,Hispanic,Male,0,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,7,Novice
+MANAGING ENGINEER,Public Works & Engineering-PWE,113930.0,Asian,Male,11,Experienced
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Hispanic,Male,4,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,Hispanic,Male,33,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,24,Veteran
+ELECTRICAL SUPERVISOR,Public Works & Engineering-PWE,67038.0,Hispanic,Male,10,Experienced
+EQUIPMENT WORKER,Public Works & Engineering-PWE,33613.0,Black,Female,15,Experienced
+SEMI-SKILLED LABORER,Houston Airport System (HAS),28579.0,Hispanic,Female,4,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Hispanic,Male,16,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),61921.0,White,Male,9,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,44,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Asian,Male,20,Veteran
+INVENTORY MANAGEMENT SUPERVISOR,Houston Fire Department (HFD),40165.0,White,Male,3,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),61921.0,Hispanic,Male,9,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Female,27,Veteran
+SENIOR CAPTAIN,Houston Fire Department (HFD),78355.0,White,Male,34,Veteran
+POLICE OFFICER,Houston Police Department-HPD,47650.0,White,Male,3,Novice
+DATA ENTRY OPERATOR,Houston Police Department-HPD,27414.0,Black,Male,16,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,Hispanic,Male,13,Experienced
+POLICE OFFICER,Houston Police Department-HPD,60347.0,Hispanic,Male,10,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,White,Male,22,Veteran
+POLICE SERVICE OFFICER,Houston Police Department-HPD,31907.0,Hispanic,Male,5,Novice
+ADMINISTRATIVE ASSOCIATE,Houston Police Department-HPD,30618.0,Black,Female,1,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),48190.0,White,Male,5,Novice
+FIRE FIGHTER TRAINEE,Houston Fire Department (HFD),28024.0,Black,Male,1,Novice
+CUSTOMER SERVICE REPRESENTATIVE II,Public Works & Engineering-PWE,33488.0,Hispanic,Female,13,Experienced
+POLICE OFFICER,Houston Police Department-HPD,47650.0,White,Male,5,Novice
+FIRE FIGHTER TRAINEE,Houston Fire Department (HFD),28024.0,White,Male,1,Novice
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,31,Veteran
+TECHNICAL HARDWARE ANALYST II,Public Works & Engineering-PWE,50606.0,Hispanic,Male,9,Experienced
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Hispanic,Male,4,Novice
+INSPECTOR FIRE,Houston Fire Department (HFD),70181.0,White,Male,30,Veteran
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Hispanic,Male,3,Novice
+GRADUATE ENGINEER,Public Works & Engineering-PWE,54122.0,White,Female,0,Novice
+EMS EDUCATOR COORDINATOR,Houston Fire Department (HFD),71174.0,Black,Male,11,Experienced
+CUSTOMER SERVICE REPRESENTATIVE II,Public Works & Engineering-PWE,33488.0,Black,Female,10,Experienced
+MANAGEMENT ANALYST II,Public Works & Engineering-PWE,44575.0,Hispanic,Female,8,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,35,Veteran
+POLICE OFFICER,Houston Police Department-HPD,60347.0,Black,Female,11,Experienced
+CAPTAIN,Houston Fire Department (HFD),66523.0,White,Male,16,Experienced
+CRIMINAL INTELLIGENCE ANALYST,Houston Police Department-HPD,53186.0,Black,Female,8,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,White,Male,18,Experienced
+CUSTOMER SERVICE REPRESENTATIVE II,Public Works & Engineering-PWE,38418.0,Black,Male,24,Veteran
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Asian,Male,3,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),45791.0,Hispanic,Male,3,Novice
+CHEMIST III,Public Works & Engineering-PWE,58816.0,White,Male,28,Veteran
+SEMI-SKILLED LABORER,Houston Airport System (HAS),33301.0,Black,Male,32,Veteran
+SEMI-SKILLED LABORER,Parks & Recreation,26125.0,Hispanic,Male,2,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,Black,Male,12,Experienced
+CUSTOMER SERVICE REPRESENTATIVE I,Public Works & Engineering-PWE,30347.0,Black,Female,2,Novice
+"BUREAU CHIEF,PUBLIC HEALTH",Health & Human Services,103270.0,Black,Female,31,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,23,Veteran
+SANITARIAN II,Health & Human Services,47050.0,Asian,Male,25,Veteran
+INVESTIGATOR,Houston Fire Department (HFD),70181.0,White,Male,22,Veteran
+CAPTAIN,Houston Fire Department (HFD),66523.0,White,Male,13,Experienced
+CUSTODIAN,Parks & Recreation,26125.0,Hispanic,Male,26,Veteran
+LABORER,Houston Airport System (HAS),26125.0,Asian,Female,12,Experienced
+INFRASTRUCTURE ASSESSMENT TECHNICIAN I,Public Works & Engineering-PWE,27102.0,Black,Male,7,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,12,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,24,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Hispanic,Female,15,Experienced
+MAINTENANCE MECHANIC III,Houston Airport System (HAS),39125.0,Hispanic,Male,0,Novice
+MAINTENANCE MECHANIC III,Houston Airport System (HAS),39125.0,Black,Male,6,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),48190.0,Hispanic,Male,4,Novice
+ELECTRICIAN,Public Works & Engineering-PWE,43514.0,White,Male,4,Novice
+CUSTOMER SERVICE REPRESENTATIVE III,Public Works & Engineering-PWE,35485.0,Hispanic,Female,4,Novice
+SENIOR DISPATCHER,Parks & Recreation,29682.0,Black,Female,8,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Black,Female,8,Novice
+STAFF ANALYST,Houston Airport System (HAS),73065.0,Hispanic,Male,14,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Female,21,Veteran
+AIRPORT OPERATIONS SPECIALIST,Houston Airport System (HAS),49275.0,White,Male,13,Experienced
+INSPECTOR,Public Works & Engineering-PWE,49691.0,White,Male,6,Novice
+ADMINISTRATIVE ASSISTANT,Public Works & Engineering-PWE,39208.0,Black,Female,20,Veteran
+SECURITY OFFICER,Houston Airport System (HAS),29286.0,White,Male,19,Veteran
+DISTRICT CHIEF,Houston Fire Department (HFD),89590.0,Black,Male,48,Veteran
+POLICE OFFICER,Houston Police Department-HPD,52514.0,Black,Male,6,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,Black,Male,13,Experienced
+DIVISION MANAGER,Parks & Recreation,85055.0,White,Male,19,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Hispanic,Male,16,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,11,Experienced
+AIRPORT BUSINESS DEVELOPMENT COORDINATOR,Houston Airport System (HAS),96325.0,Black,Male,4,Novice
+CUSTOMER SERVICE REPRESENTATIVE III,Public Works & Engineering-PWE,35485.0,Black,Female,1,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,25,Veteran
+MICROBIOLOGIST I,Health & Human Services,33821.0,White,Female,1,Novice
+ADMINISTRATIVE COORDINATOR,Public Works & Engineering-PWE,60248.0,Hispanic,Female,15,Experienced
+EQUIPMENT WORKER,Public Works & Engineering-PWE,33987.0,Black,Male,5,Novice
+ADMINISTRATIVE ASSISTANT,Houston Fire Department (HFD),41995.0,Hispanic,Female,2,Novice
+WATER SERVICE INSPECTOR I,Public Works & Engineering-PWE,32240.0,Hispanic,Male,0,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,10,Experienced
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Hispanic,Male,9,Experienced
+POLICE OFFICER,Houston Police Department-HPD,60347.0,White,Male,10,Experienced
+SENIOR STAFF ANALYST (EXECUTIVE LEVEL),Parks & Recreation,83916.0,Hispanic,Female,17,Experienced
+MAINTENANCE MECHANIC III,Houston Airport System (HAS),39125.0,Black,Female,9,Experienced
+SENIOR PROCUREMENT SPECIALIST,Houston Airport System (HAS),77535.0,Asian,Male,22,Veteran
+EXECUTIVE OFFICE ASSISTANT,Houston Fire Department (HFD),43014.0,White,Female,21,Veteran
+CAPTAIN,Houston Fire Department (HFD),70181.0,White,Male,20,Veteran
+SENIOR UTILITY MECHANIC,Public Works & Engineering-PWE,36130.0,Hispanic,Male,2,Novice
+INSPECTOR,Houston Airport System (HAS),57782.0,Hispanic,Male,27,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Asian,Male,9,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,White,Male,22,Veteran
+ENGINEER,Public Works & Engineering-PWE,75224.0,White,Female,7,Novice
+CAPTAIN,Houston Fire Department (HFD),66523.0,White,Male,12,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,26,Veteran
+DISTRICT CHIEF,Houston Fire Department (HFD),89590.0,White,Male,27,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,8,Novice
+FIXED ASSET MANAGER,Public Works & Engineering-PWE,65000.0,Black,Male,36,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,White,Male,19,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,11,Experienced
+ADMINISTRATION MANAGER,Public Works & Engineering-PWE,74384.0,Black,Female,10,Experienced
+DEPUTY CHIEF,Houston Fire Department (HFD),99480.0,White,Male,35,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),48190.0,White,Male,4,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,34,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,24,Veteran
+POLICE OFFICER,Houston Police Department-HPD,60347.0,Hispanic,Male,11,Experienced
+SENIOR COUNSELOR,Health & Human Services,54857.0,Black,Male,9,Experienced
+AIRPORT OPERATIONS COORDINATOR,Houston Airport System (HAS),51501.0,Black,Male,10,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),43528.0,Hispanic,Male,1,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,White,Male,13,Experienced
+POLICE LIEUTENANT,Houston Police Department-HPD,91181.0,Black,Female,23,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Black,Female,16,Experienced
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,Black,Male,1,Novice
+DISTRICT CHIEF,Houston Fire Department (HFD),89590.0,White,Male,37,Veteran
+OFFICE SUPERVISOR,Houston Police Department-HPD,45677.0,Black,Female,28,Veteran
+JAIL ATTENDANT,Houston Police Department-HPD,35318.0,Black,Female,8,Novice
+RECREATION SUPERVISOR,Parks & Recreation,40706.0,Black,Female,28,Veteran
+MANAGEMENT ANALYST IV,Health & Human Services,67782.0,Black,Female,6,Novice
+CAPTAIN,Houston Fire Department (HFD),66523.0,White,Male,15,Experienced
+JAIL ATTENDANT,Houston Police Department-HPD,35318.0,Black,Female,2,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,8,Novice
+STAFF EPIDEMIOLOGIST,Health & Human Services,51861.0,Asian,Female,4,Novice
+"POLICE OFFICER,PROBATIONARY",Houston Police Department-HPD,28169.0,White,Male,1,Novice
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,Black,Male,1,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Hispanic,Male,16,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,Hispanic,Male,15,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,77076.0,White,Male,11,Experienced
+SENIOR INSPECTOR,Houston Fire Department (HFD),74270.0,Black,Male,16,Experienced
+CUSTODIAN,Houston Police Department-HPD,26229.0,Hispanic,Female,17,Experienced
+FIRE FIGHTER TRAINEE,Houston Fire Department (HFD),28024.0,White,Male,1,Novice
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Hispanic,Female,4,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,9,Experienced
+SENIOR NUTRITIONIST,Health & Human Services,47445.0,Black,Female,6,Novice
+POLICE OFFICER,Houston Police Department-HPD,43443.0,White,Male,1,Novice
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,19,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,8,Novice
+MAINTENANCE MECHANIC III,Houston Airport System (HAS),39333.0,White,Male,10,Experienced
+CUSTOMER SERVICE REPRESENTATIVE III,Health & Human Services,36150.0,White,Female,12,Experienced
+FIELD SUPERVISOR,Public Works & Engineering-PWE,51397.0,Black,Male,37,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,9,Experienced
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,10,Experienced
+INVESTIGATOR,Houston Fire Department (HFD),70181.0,White,Male,23,Veteran
+LABORER,Houston Airport System (HAS),26125.0,Hispanic,Female,12,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Hispanic,Male,19,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,2,Novice
+COUNSELOR,Health & Human Services,42890.0,Black,Female,2,Novice
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Female,2,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,20,Veteran
+LABORER,Public Works & Engineering-PWE,26125.0,Black,Male,4,Novice
+"POLICE OFFICER,PROBATIONARY",Houston Police Department-HPD,28169.0,Hispanic,Male,1,Novice
+ASSISTANT FIRE MARSHAL,Houston Fire Department (HFD),99480.0,Hispanic,Male,30,Veteran
+HEATING & AIR CONDITIONING LEADER,Parks & Recreation,48651.0,Asian,Male,26,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Asian,Male,9,Experienced
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Native American,Male,8,Novice
+PROJECT MANAGER,Public Works & Engineering-PWE,61564.0,Hispanic,Male,12,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),43528.0,Hispanic,Male,2,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Asian,Male,13,Experienced
+MEDICAL RECORDS SUPERVISOR,Health & Human Services,58406.0,Hispanic,Male,10,Experienced
+SENIOR NUTRITIONIST,Health & Human Services,47445.0,Hispanic,Female,6,Novice
+SENIOR ACCOUNTANT,Parks & Recreation,55462.0,Black,Male,12,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,14,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),43528.0,White,Male,1,Novice
+UTILITY WORKER,Public Works & Engineering-PWE,41184.0,Hispanic,Male,28,Veteran
+SENIOR PROJECT MANAGER,Public Works & Engineering-PWE,89955.0,Asian,Male,11,Experienced
+SUPERINTENDENT,Parks & Recreation,57824.0,White,Male,1,Novice
+SENIOR STAFF ANALYST,Health & Human Services,88361.0,Black,Female,8,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Black,Male,7,Novice
+CAPTAIN,Houston Fire Department (HFD),66523.0,White,Male,16,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,26,Veteran
+SYSTEMS SUPPORT ANALYST III,Houston Airport System (HAS),68299.0,Native American,Female,21,Veteran
+IT PROJECT MANAGER,Houston Airport System (HAS),90832.0,White,Male,12,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Female,20,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,Black,Male,8,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,17,Experienced
+CUSTOMER SERVICE CLERK,Health & Human Services,30846.0,Black,Female,13,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),61226.0,Black,Male,30,Veteran
+GRADUATE ENGINEER,Public Works & Engineering-PWE,52562.0,White,Female,1,Novice
+SECURITY OFFICER,Houston Airport System (HAS),29286.0,Black,Male,5,Novice
+SEMI-SKILLED LABORER,Public Works & Engineering-PWE,27352.0,White,Male,0,Novice
+PUBLIC WORKS MAINTENANCE SECTION CHIEF,Public Works & Engineering-PWE,60840.0,Black,Male,30,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,Black,Male,18,Experienced
+PROCUREMENT SPECIALIST,Houston Police Department-HPD,63551.0,Black,Female,28,Veteran
+CAPTAIN,Houston Fire Department (HFD),70181.0,White,Male,32,Veteran
+POLICE OFFICER,Houston Police Department-HPD,60347.0,Black,Male,13,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,31,Veteran
+RECREATION FACILITY MANAGER,Parks & Recreation,46566.0,White,Male,2,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,35,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Hispanic,Male,21,Veteran
+SENIOR GIS ANALYST,Public Works & Engineering-PWE,66867.0,White,Female,7,Novice
+CAPTAIN,Houston Fire Department (HFD),66523.0,White,Male,15,Experienced
+SENIOR CAPTAIN,Houston Fire Department (HFD),78355.0,Black,Male,26,Veteran
+POLICE LIEUTENANT,Houston Police Department-HPD,91181.0,Black,Female,22,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,Hispanic,Male,22,Veteran
+INSPECTOR TRAINEE,Public Works & Engineering-PWE,32136.0,Hispanic,Male,0,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,White,Male,26,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,22,Veteran
+JAIL ATTENDANT,Houston Police Department-HPD,35318.0,Black,Female,8,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,23,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,31,Veteran
+AIRPORT OPERATIONS SPECIALIST,Houston Airport System (HAS),45240.0,Black,Male,32,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Hispanic,Male,38,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),57815.0,Black,Male,15,Experienced
+SANITARIAN III,Public Works & Engineering-PWE,53373.0,Asian,Male,22,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),43528.0,Hispanic,Male,2,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,Hispanic,Male,7,Novice
+SUPERVISING ENGINEER,Public Works & Engineering-PWE,98895.0,White,Male,0,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Female,7,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,25,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,30,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,25,Veteran
+SENIOR CUSTOMER SERVICE CLERK,Health & Human Services,33675.0,Black,Female,3,Novice
+CUSTOMER SERVICE REPRESENTATIVE III,Public Works & Engineering-PWE,36629.0,Black,Female,17,Experienced
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Hispanic,Male,4,Novice
+SENIOR AIRCRAFT MECHANIC,Houston Police Department-HPD,61755.0,White,Male,36,Veteran
+INSPECTOR,Houston Fire Department (HFD),70181.0,White,Male,20,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Hispanic,Male,10,Experienced
+INVESTIGATOR,Houston Fire Department (HFD),70181.0,Hispanic,Male,33,Veteran
+SANITARIAN III,Health & Human Services,54288.0,Asian,Male,19,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,14,Experienced
+INSPECTOR,Public Works & Engineering-PWE,53123.0,White,Male,4,Novice
+POLICE CAPTAIN,Houston Police Department-HPD,104455.0,White,Male,31,Veteran
+PUBLIC WORKS MAINTENANCE MANAGER,Public Works & Engineering-PWE,83734.0,White,Male,10,Experienced
+CARPENTER,Houston Airport System (HAS),42099.0,Hispanic,Male,7,Novice
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,White,Male,0,Novice
+CAPTAIN,Houston Fire Department (HFD),70181.0,White,Male,20,Veteran
+RECREATION ASSISTANT,Parks & Recreation,26125.0,White,Male,8,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,White,Male,14,Experienced
+FINANCIAL ANALYST III,Public Works & Engineering-PWE,52832.0,Black,Male,10,Experienced
+ADMINISTRATIVE SPECIALIST,Parks & Recreation,54607.0,Hispanic,Female,19,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Hispanic,Male,17,Experienced
+CUSTOMER SERVICE SECTION CHIEF,Public Works & Engineering-PWE,53061.0,White,Female,8,Novice
+SENIOR PLANT OPERATOR,Public Works & Engineering-PWE,45926.0,Black,Male,10,Experienced
+POLICE OFFICER,Houston Police Department-HPD,60347.0,Black,Female,10,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,31,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,27,Veteran
+INSPECTOR,Public Works & Engineering-PWE,57928.0,White,Male,20,Veteran
+"POLICE OFFICER,PROBATIONARY",Houston Police Department-HPD,42000.0,White,Male,1,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,White,Male,18,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),57815.0,Black,Male,15,Experienced
+CRIMINAL INTELLIGENCE ANALYST,Houston Police Department-HPD,55411.0,White,Female,2,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Black,Male,9,Experienced
+UTILITY WORKER,Public Works & Engineering-PWE,31450.0,Black,Male,4,Novice
+INSPECTOR,Public Works & Engineering-PWE,54600.0,White,Male,8,Novice
+EQUIPMENT WORKER,Public Works & Engineering-PWE,33987.0,Black,Male,9,Experienced
+SENIOR GIS TECHNICIAN,Houston Police Department-HPD,45344.0,White,Male,23,Veteran
+INSPECTOR,Public Works & Engineering-PWE,51584.0,White,Male,3,Novice
+JAIL ATTENDANT,Houston Police Department-HPD,37336.0,Black,Female,8,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,24,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),52644.0,White,Male,9,Experienced
+ADMINISTRATIVE ASSISTANT,Public Works & Engineering-PWE,39270.0,Black,Female,7,Novice
+FIELD SUPERVISOR,Parks & Recreation,38147.0,Black,Male,17,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,15,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),57815.0,White,Male,15,Experienced
+POLICE OFFICER,Houston Police Department-HPD,60347.0,Hispanic,Male,9,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,35,Veteran
+SENIOR CAPTAIN,Houston Fire Department (HFD),78355.0,White,Male,34,Veteran
+GRADUATE ENGINEER,Public Works & Engineering-PWE,52582.0,White,Male,1,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),52644.0,Hispanic,Male,10,Experienced
+AIRPORT BUSINESS DEVELOPMENT COORDINATOR,Houston Airport System (HAS),96157.0,Hispanic,Female,7,Novice
+MANAGING ENGINEER,Public Works & Engineering-PWE,91063.0,White,Male,25,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,7,Novice
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Hispanic,Male,5,Novice
+SENIOR CUSTOMER SERVICE CLERK,Health & Human Services,36941.0,Black,Female,7,Novice
+EXECUTIVE OFFICE ASSISTANT,Public Works & Engineering-PWE,45240.0,Black,Female,16,Experienced
+AIRPORT OPERATIONS ASSISTANT,Houston Airport System (HAS),37752.0,Black,Female,13,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Hispanic,Male,24,Veteran
+MANAGING ENGINEER,Houston Airport System (HAS),103427.0,White,Male,4,Novice
+EQUIPMENT WORKER,Parks & Recreation,30347.0,Black,Female,8,Novice
+FIELD SUPERVISOR,Public Works & Engineering-PWE,43326.0,Black,Male,4,Novice
+FIELD SUPERVISOR,Public Works & Engineering-PWE,44658.0,Hispanic,Male,35,Veteran
+SENIOR INVENTORY MANAGEMENT CLERK,Houston Fire Department (HFD),33405.0,Black,Female,1,Novice
+CAPTAIN,Houston Fire Department (HFD),66523.0,White,Male,13,Experienced
+SENIOR INSPECTOR,Public Works & Engineering-PWE,53373.0,Black,Male,25,Veteran
+UTILITY WORKER,Public Works & Engineering-PWE,31450.0,Black,Male,3,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,15,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Black,Male,30,Veteran
+UTILITY WORKER,Public Works & Engineering-PWE,34320.0,Black,Male,3,Novice
+POLICE SERGEANT,Houston Police Department-HPD,77076.0,White,Female,15,Experienced
+AIRPORT OPERATIONS ASSISTANT,Houston Airport System (HAS),33613.0,Black,Female,10,Experienced
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Hispanic,Female,5,Novice
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Asian,Male,5,Novice
+LABORER,Public Works & Engineering-PWE,26125.0,Black,Male,1,Novice
+URBAN PARK RANGER,Parks & Recreation,29682.0,White,Male,8,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Hispanic,Male,9,Experienced
+JAIL ATTENDANT,Houston Police Department-HPD,37024.0,Black,Male,9,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,Hispanic,Male,13,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,White,Male,26,Veteran
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Hispanic,Male,20,Veteran
+SENIOR PROJECT MANAGER,Public Works & Engineering-PWE,73193.0,Black,Male,23,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,Black,Male,7,Novice
+UTILITY WORKER,Public Works & Engineering-PWE,30139.0,Black,Male,8,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Black,Male,20,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),48190.0,White,Male,4,Novice
+DISTRICT CHIEF,Houston Fire Department (HFD),89590.0,White,Male,27,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,19,Veteran
+AIRPORT OPERATIONS ASSISTANT,Houston Airport System (HAS),35485.0,Hispanic,Male,19,Veteran
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,Hispanic,Male,1,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,27,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Female,19,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,32,Veteran
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Hispanic,Male,3,Novice
+SENIOR INVESTIGATOR,Houston Fire Department (HFD),74270.0,Hispanic,Male,17,Experienced
+PROJECT TECHNICIAN III,Public Works & Engineering-PWE,45074.0,Asian,Male,21,Veteran
+IT PROJECT MANAGER,Public Works & Engineering-PWE,97581.0,Black,Male,12,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),52644.0,Hispanic,Male,9,Experienced
+SENIOR UTILITY MECHANIC,Public Works & Engineering-PWE,36130.0,Black,Male,7,Novice
+SENIOR OFFICE ASSISTANT,Public Works & Engineering-PWE,29931.0,Black,Female,14,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,29,Veteran
+ADMINISTRATIVE ASSOCIATE,Health & Human Services,36358.0,Black,Female,32,Veteran
+COMMUNICATIONS CAPTAIN,Houston Fire Department (HFD),70181.0,Black,Male,18,Experienced
+CUSTODIAN,Parks & Recreation,26125.0,Black,Female,1,Novice
+PLANT OPERATOR TRAINEE,Public Works & Engineering-PWE,31158.0,Hispanic,Male,1,Novice
+POLICE SERGEANT,Houston Police Department-HPD,74511.0,Hispanic,Male,8,Novice
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,24,Veteran
+CAPTAIN,Houston Fire Department (HFD),70181.0,Black,Male,20,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,22,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Asian,Male,9,Experienced
+SENIOR DATA ENTRY OPERATOR,Public Works & Engineering-PWE,29016.0,Black,Female,5,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),43528.0,Hispanic,Male,2,Novice
+LABORER,Public Works & Engineering-PWE,26125.0,Black,Male,13,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,White,Male,18,Experienced
+ASSISTANT PROJECT MANAGER,Public Works & Engineering-PWE,49150.0,Black,Male,1,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,7,Novice
+JAIL ATTENDANT,Houston Police Department-HPD,35318.0,Black,Female,8,Novice
+OFFICE SERVICE MANAGER,Houston Police Department-HPD,63165.0,Black,Female,26,Veteran
+MANAGEMENT ANALYST IV,Public Works & Engineering-PWE,70717.0,Black,Female,24,Veteran
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Hispanic,Male,3,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,White,Female,13,Experienced
+NUTRITION SERVICES CHIEF,Health & Human Services,66178.0,Black,Female,23,Veteran
+CAPTAIN,Houston Fire Department (HFD),70181.0,Hispanic,Male,26,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,34,Veteran
+GRADUATE ENGINEER,Public Works & Engineering-PWE,52562.0,Hispanic,Female,1,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),52644.0,White,Male,9,Experienced
+POLICE CAPTAIN,Houston Police Department-HPD,104455.0,White,Male,21,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Black,Male,17,Experienced
+UTILITY WORKER,Public Works & Engineering-PWE,32178.0,Black,Female,11,Experienced
+PROGRAMMER ANALYST IV,Houston Police Department-HPD,72332.0,White,Male,3,Novice
+POLICE LIEUTENANT,Houston Police Department-HPD,91181.0,White,Male,22,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Black,Male,7,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,9,Experienced
+EQUIPMENT OPERATOR III,Houston Airport System (HAS),40435.0,Hispanic,Male,20,Veteran
+"FIRE FIGHTER,PROBATIONARY",Houston Fire Department (HFD),40170.0,White,Male,1,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),48190.0,Black,Male,3,Novice
+DISTRICT CHIEF,Houston Fire Department (HFD),89590.0,White,Male,31,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,9,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,61643.0,Hispanic,Male,16,Experienced
+MANAGING ENGINEER,Public Works & Engineering-PWE,114671.0,Asian,Male,26,Veteran
+INSPECTOR,Public Works & Engineering-PWE,43264.0,Black,Male,5,Novice
+POLICE OFFICER,Houston Police Department-HPD,60347.0,Hispanic,Male,11,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,23,Veteran
+FIELD SUPERVISOR,Public Works & Engineering-PWE,49608.0,Black,Male,26,Veteran
+SPECIAL SERVICE REPRESENTATIVE,Houston Airport System (HAS),32323.0,Asian,Male,1,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,White,Male,13,Experienced
+STAFF PHARMACIST,Health & Human Services,83466.0,Black,Female,14,Experienced
+SENIOR BUYER,Public Works & Engineering-PWE,47008.0,Black,Female,10,Experienced
+FIRE FIGHTER TRAINEE,Houston Fire Department (HFD),28024.0,Hispanic,Male,1,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,31,Veteran
+SENIOR CLERK,Health & Human Services,26125.0,Hispanic,Female,18,Experienced
+CHEMIST II,Public Works & Engineering-PWE,47840.0,Asian,Male,1,Novice
+ENVIRONMENTAL INVESTIGATOR III,Health & Human Services,55806.0,Black,Male,29,Veteran
+PROJECT MANAGER,Houston Airport System (HAS),76097.0,Hispanic,Male,13,Experienced
+STAFF EPIDEMIOLOGIST,Health & Human Services,48672.0,Asian,Female,6,Novice
+CUSTOMER SERVICE REPRESENTATIVE III,Public Works & Engineering-PWE,36629.0,Hispanic,Male,21,Veteran
+POLICE OFFICER,Houston Police Department-HPD,43443.0,Black,Male,1,Novice
+SENIOR INVENTORY MANAGEMENT CLERK,Public Works & Engineering-PWE,28766.0,Hispanic,Male,9,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,24,Veteran
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Hispanic,Male,9,Experienced
+ADMINISTRATIVE ASSISTANT,Public Works & Engineering-PWE,38750.0,Black,Female,2,Novice
+CAPTAIN,Houston Fire Department (HFD),66523.0,Hispanic,Male,15,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,Black,Male,20,Veteran
+SEMI-SKILLED LABORER,Public Works & Engineering-PWE,27352.0,Black,Female,0,Novice
+TECHNICAL HARDWARE ANALYST III,Public Works & Engineering-PWE,57200.0,Hispanic,Male,7,Novice
+CAPTAIN,Houston Fire Department (HFD),70181.0,Hispanic,Male,18,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,Hispanic,Male,14,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),61226.0,Hispanic,Male,19,Veteran
+UTILITY WORKER,Public Works & Engineering-PWE,29557.0,Black,Male,0,Novice
+SENIOR CAPTAIN,Houston Fire Department (HFD),78355.0,White,Male,30,Veteran
+CHIEF ARCHITECT,Houston Airport System (HAS),115416.0,Hispanic,Male,1,Novice
+SENIOR POLICE TELECOMMUNICATOR,Houston Police Department-HPD,43722.0,Black,Female,9,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),61226.0,White,Male,26,Veteran
+UTILITY WORKER,Public Works & Engineering-PWE,39666.0,Black,Male,32,Veteran
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,23,Veteran
+EQUIPMENT OPERATOR I,Houston Airport System (HAS),29453.0,Black,Male,10,Experienced
+FINANCIAL ANALYST IV,Health & Human Services,68432.0,Black,Female,4,Novice
+SANITARIAN II,Health & Human Services,47050.0,Black,Male,2,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),61921.0,Hispanic,Male,10,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,31,Veteran
+SEMI-SKILLED LABORER,Houston Airport System (HAS),32906.0,Hispanic,Female,7,Novice
+SENIOR POLICE SERVICE OFFICER,Houston Police Department-HPD,30888.0,White,Female,24,Veteran
+FACILITIES TECHNICIAN I,Public Works & Engineering-PWE,31158.0,Black,Male,1,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,24,Veteran
+INSPECTOR,Public Works & Engineering-PWE,53123.0,White,Male,4,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),61226.0,Black,Male,23,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),62540.0,Black,Male,16,Experienced
+EQUIPMENT WORKER,Parks & Recreation,29307.0,White,Male,2,Novice
+BREASTFEEDING PEER COUNSELOR,Health & Human Services,27310.0,Hispanic,Female,1,Novice
+ENGINEER,Public Works & Engineering-PWE,83036.0,White,Female,18,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Hispanic,Male,22,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,Hispanic,Male,18,Experienced
+ASSISTANT SUPERINTENDENT,Parks & Recreation,47466.0,Hispanic,Male,22,Veteran
+JAIL ATTENDANT,Houston Police Department-HPD,37211.0,Black,Female,8,Novice
+NUTRITIONIST CONSULTANT,Health & Human Services,58855.0,Native American,Female,17,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,Black,Female,20,Veteran
+ENGINEER/OPERATOR,Houston Fire Department (HFD),61921.0,White,Male,9,Experienced
+SURVEILLANCE INVESTIGATOR EPIDEMIOLOGY,Health & Human Services,38563.0,Black,Female,17,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,31,Veteran
+PUBLIC WORKS MAINTENANCE MANAGER,Public Works & Engineering-PWE,83734.0,Black,Male,27,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,Hispanic,Male,14,Experienced
+FIRE FIGHTER,Houston Fire Department (HFD),48190.0,White,Male,4,Novice
+CAPTAIN,Houston Fire Department (HFD),66523.0,White,Male,15,Experienced
+MAINTENANCE MECHANIC III,Houston Airport System (HAS),39707.0,White,Male,6,Novice
+SUPERINTENDENT,Houston Airport System (HAS),75462.0,Black,Male,20,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,White,Male,14,Experienced
+UTILITY WORKER,Public Works & Engineering-PWE,28995.0,Asian,Male,1,Novice
+"POLICE OFFICER,PROBATIONARY",Houston Police Department-HPD,42000.0,Black,Male,1,Novice
+UTILITY WORKER,Public Works & Engineering-PWE,39666.0,Hispanic,Male,17,Experienced
+ADMINISTRATION MANAGER,Health & Human Services,87222.0,Black,Female,10,Experienced
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Black,Female,4,Novice
+JAIL ATTENDANT,Houston Police Department-HPD,35838.0,Black,Female,4,Novice
+LABORER,Houston Airport System (HAS),26125.0,Black,Male,10,Experienced
+CAPTAIN,Houston Fire Department (HFD),66523.0,White,Male,15,Experienced
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Hispanic,Male,9,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,Black,Male,22,Veteran
+LABORER,Houston Airport System (HAS),26125.0,Black,Female,9,Experienced
+SENIOR PAYROLL CLERK,Houston Police Department-HPD,34216.0,Hispanic,Female,8,Novice
+INVESTIGATOR,Houston Fire Department (HFD),66523.0,White,Male,13,Experienced
+SENIOR CUSTOMER SERVICE CLERK,Houston Police Department-HPD,33550.0,Black,Female,2,Novice
+SENIOR PUBLIC HEALTH EDUCATOR,Health & Human Services,44366.0,Asian,Female,1,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Male,25,Veteran
+CUSTOMER SERVICE CLERK,Houston Police Department-HPD,26250.0,Black,Female,9,Experienced
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,7,Novice
+SENIOR PLAN ANALYST,Public Works & Engineering-PWE,51584.0,Black,Male,1,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Female,21,Veteran
+FIELD SUPERVISOR,Public Works & Engineering-PWE,41267.0,Black,Male,10,Experienced
+ASSISTANT DIRECTOR (EXECUTIVE LEVEL),Houston Airport System (HAS),128606.0,White,Female,23,Veteran
+DIVISION MANAGER,Public Works & Engineering-PWE,93089.0,Black,Female,11,Experienced
+SENIOR REGULATORY INVESTIGATOR,Houston Airport System (HAS),43826.0,Hispanic,Male,24,Veteran
+ADMINISTRATIVE SPECIALIST,Public Works & Engineering-PWE,56489.0,Black,Male,15,Experienced
+ADMINISTRATIVE ASSISTANT,Parks & Recreation,41330.0,Hispanic,Female,28,Veteran
+POLICE OFFICER,Houston Police Department-HPD,47650.0,Black,Female,4,Novice
+TECHNICAL HARDWARE ANALYST I,Public Works & Engineering-PWE,39666.0,White,Female,3,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,9,Experienced
+SENIOR MICROCOMPUTER ANALYST,Houston Police Department-HPD,62481.0,Hispanic,Male,7,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,White,Male,9,Experienced
+JAIL ATTENDANT,Houston Police Department-HPD,37461.0,Black,Female,8,Novice
+UTILITY WORKER,Public Works & Engineering-PWE,37606.0,Black,Male,10,Experienced
+SENIOR UTILITY MECHANIC,Public Works & Engineering-PWE,36962.0,Hispanic,Male,9,Experienced
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,White,Female,35,Veteran
+ADMINISTRATIVE SPECIALIST,Houston Fire Department (HFD),52000.0,Black,Female,9,Experienced
+INSPECTOR,Public Works & Engineering-PWE,43264.0,Black,Male,1,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Asian,Male,8,Novice
+ADMINISTRATIVE SPECIALIST,Houston Police Department-HPD,47996.0,Black,Female,7,Novice
+SYSTEMS SUPPORT ANALYST IV,Houston Police Department-HPD,78286.0,White,Male,18,Experienced
+MANAGEMENT ANALYST IV,Health & Human Services,65338.0,White,Female,3,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,26,Veteran
+POLICE OFFICER,Houston Police Department-HPD,45279.0,Hispanic,Female,3,Novice
+ENGINEER/OPERATOR,Houston Fire Department (HFD),63166.0,White,Male,26,Veteran
+SENIOR PROJECT MANAGER,Public Works & Engineering-PWE,77325.0,White,Male,8,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Black,Male,23,Veteran
+GROUND TRANSPORTATION REPRESENTATIVE,Houston Airport System (HAS),32157.0,Asian,Female,23,Veteran
+POLICE OFFICER,Houston Police Department-HPD,45279.0,White,Male,3,Novice
+POLICE SERVICE OFFICER,Houston Police Department-HPD,27914.0,Black,Female,5,Novice
+SENIOR POLICE OFFICER,Houston Police Department-HPD,66614.0,Hispanic,Male,23,Veteran
+CAPTAIN,Houston Fire Department (HFD),70181.0,Black,Male,22,Veteran
+FIRE FIGHTER,Houston Fire Department (HFD),55437.0,Black,Male,12,Experienced
+ENGINEER/OPERATOR,Houston Fire Department (HFD),61921.0,White,Male,10,Experienced
+POLICE SERGEANT,Houston Police Department-HPD,77076.0,White,Male,15,Experienced
+EQUIPMENT WORKER,Public Works & Engineering-PWE,37211.0,Black,Male,32,Veteran
+BUILDING MAINTENANCE SUPERVISOR,Parks & Recreation,30347.0,Black,Female,21,Veteran
+MOBILITY SERVICE OFFICER,Houston Police Department-HPD,44429.0,Hispanic,Female,11,Experienced
+SECURITY OFFICER,Houston Airport System (HAS),29286.0,Hispanic,Male,5,Novice
+POLICE SERGEANT,Houston Police Department-HPD,81239.0,White,Male,34,Veteran
+POLICE CAPTAIN,Houston Police Department-HPD,104455.0,Black,Male,33,Veteran
+POLICE OFFICER,Houston Police Department-HPD,43443.0,White,Male,2,Novice
+COMMUNICATIONS CAPTAIN,Houston Fire Department (HFD),66523.0,Black,Male,13,Experienced
+POLICE OFFICER,Houston Police Department-HPD,43443.0,White,Male,2,Novice
+POLICE OFFICER,Houston Police Department-HPD,55461.0,Asian,Male,7,Novice
+FIRE FIGHTER,Houston Fire Department (HFD),51194.0,Hispanic,Male,7,Novice

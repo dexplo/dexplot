@@ -44,16 +44,6 @@ There are 7 primary parameters to `aggplot`:
 To get started, we will use City of Houston employee data collected from the year 2016. It contains public information from about 1500 employees and is located in Dexplot's GitHub repository.
 
 
-```python
-cd ..
-```
-
-
-```python
-%load_ext autoreload
-%autoreload 2
-```
-
 
 ```python
 import pandas as pd
@@ -62,7 +52,7 @@ import dexplot as dxp
 
 
 ```python
-emp = pd.read_csv('notebooks/data/employee.csv')
+emp = pd.read_csv('data/employee.csv')
 emp.head()
 ```
 
@@ -188,7 +178,7 @@ dxp.aggplot(agg='salary', groupby='dept', data=emp, orient='h')
 
 
 
-![png](images/images/output_8_1.png)
+![png](images/output_8_1.png)
 
 
 ### Controlling the figure size
