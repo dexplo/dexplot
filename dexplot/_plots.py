@@ -86,7 +86,7 @@ class CommonPlotter:
 class AggPlot:
 
     def __init__(self, agg, groupby, data, hue, row, col, kind, orient, sort, aggfunc, normalize,
-                 wrap, figsize, rot, title, sharex, sharey, xlabel, ylabel, xlim, ylim,
+                 wrap, stacked, figsize, rot, title, sharex, sharey, xlabel, ylabel, xlim, ylim,
                  xscale, yscale, kwargs):
         self.col_params = ['agg', 'groupby', 'hue', 'row', 'col']
         self.validate_figsize(figsize)
@@ -99,6 +99,7 @@ class AggPlot:
         self.validate_diff_col_names()
         self.validate_kde_hist()
         self.validate_normalize(normalize)
+        self.validate_stacked(stacked)
         self.validate_kwargs(kwargs)
         self.validate_rot(rot)
         self.validate_mpl_args(title, sharex, sharey, xlabel, ylabel, xlim, ylim, xscale, yscale)
@@ -244,6 +245,12 @@ class AggPlot:
             # TODO: force normalziation for numerics
             self.normalize = False
 
+    def validate_stacked(self, stacked):
+        if not isinstance(stacked, bool):
+            raise TypeError("`stacked` must be a boolean")
+        else:
+            self.stacked = stacked
+
     def validate_kwargs(self, kwargs):
         if kwargs is None:
             self.kwargs = {}
@@ -320,7 +327,6 @@ class AggPlot:
         if self.col:
             self.all_cols = np.sort(self.data[self.col].unique())
 
-
     def get_normalize_counts(self):
         if self.agg_kind != 'O' or not self.normalize:
             return None
@@ -393,15 +399,14 @@ class AggPlot:
     def set_single_plot_labels(self, ax):
         if self.kind in ('bar', 'line', 'box'):
             if self.orient == 'v' and self.agg_kind != 'O':
-                ax.set_xlabel(self.xlabel)
                 ax.set_ylabel(self.ylabel or self.agg)
-                if not (self.groupby or self.hue):
+                if not self.groupby:
                     ax.set_xticklabels([])
                     ax.set_xticks([])
                 else:
                     ax.tick_params(axis='x', labelrotation=self.rot)
             elif self.orient == 'h' and self.agg_kind != 'O':
-                if not (self.groupby or self.hue or self.normalize):
+                if not (self.groupby or self.normalize):
                     ax.set_yticklabels([])
                     ax.set_yticks([])
                     ax.set_xlabel(self.xlabel or self.agg)
@@ -409,12 +414,9 @@ class AggPlot:
                     ax.set_xlabel(self.xlabel or self.agg)
             elif self.orient == 'v' and self.agg_kind == 'O':
                 pass
-                # ax.tick_params(axis='x', labelrotation=self.rot)
 
-            if self.groupby and self.hue and self.no_legend:
-                ax.legend()
-            if self.agg_kind == 'O' and self.hue and self.no_legend:
-                ax.legend()
+            if self.hue and self.no_legend:
+                ax.figure.legend(bbox_to_anchor=(1.02, .5), loc='center left')
         else:
             if self.orient == 'v':
                 ax.set_xlabel(self.xlabel or self.agg)
@@ -473,15 +475,18 @@ class AggPlot:
 
     def barplot(self, ax, data, **kwargs):
         n_rows, n_cols = data.shape
-        width = self.width / n_cols
-        bar_start = (n_cols - 1) / 2 * width
+        not_stacked = 1 - self.stacked
+        width = self.width / n_cols ** not_stacked
+        bar_start = (n_cols - 1) / 2 * width * not_stacked
         x_range = np.arange(n_rows)
+        bottom = 0
         for i, (height, col) in enumerate(zip(data.values.T, data.columns)):
-            x_data = x_range - bar_start + i * width
+            x_data = x_range - bar_start + i * width * not_stacked
             if self.orient == 'v':
-                ax.bar(x_data, height, width, label=col, tick_label=data.index)
+                ax.bar(x_data, height, width, bottom, label=col, tick_label=data.index)
             else:
-                ax.barh(x_data, height, width, label=col, tick_label=data.index)
+                ax.barh(x_data, height, width, bottom, label=col, tick_label=data.index)
+            bottom += height * (1 - not_stacked)
         if self.orient == 'v':
             ax.set_xticks(x_range)
         else:
@@ -787,10 +792,19 @@ class AggPlot:
                         data_array.append(g.get_group(hue)[self.agg].values)
                     else:
                         data_array.append([])
-                self.plot_func(ax, data_array, labels=self.all_hues)
+                bp = self.plot_func(ax, data_array, labels=self.all_hues)
+                if self.kind == 'box':
+                    patches = bp['boxes']
+                    for i, patch in enumerate(patches):
+                        patch.set(facecolor=plt.cm.tab10(i))
+                    if self.no_legend:
+                        ax.figure.legend(handles=patches, labels=self.all_hues.tolist(),
+                                         bbox_to_anchor=(1, .5), loc='center left')
+                        self.no_legend = False
             else:
-                final_data = data.groupby(self.hue).agg({self.agg: self.aggfunc})
-                self.plot_func(ax, final_data.reindex(self.all_hues))
+                final_data = data.pivot_table(columns=self.hue, values=self.agg, aggfunc=self.aggfunc)
+                final_data = final_data.reindex(columns=self.all_hues)
+                self.plot_func(ax, final_data)
         return ax
 
     def plot_groupby_agg(self, ax, data):
@@ -808,6 +822,7 @@ class AggPlot:
                 else:
                     data_array.append([])
             self.plot_func(ax, data_array, labels=self.all_groups)
+
         return ax
 
     def plot_groupby_hue_agg(self, ax, data):
@@ -896,9 +911,9 @@ class AggPlot:
 
 
 def aggplot(agg, groupby=None, data=None, hue=None, row=None, col=None, kind='bar', orient='v',
-            sort=False, aggfunc='mean', normalize=None, wrap=None, figsize=None, rot=0,
-            title=None, sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None,
-            xscale='linear', yscale='linear', kwargs=None):
+            sort=False, aggfunc='mean', normalize=None, wrap=None, stacked=False, figsize=None,
+            rot=0, title=None, sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None,
+            ylim=None, xscale='linear', yscale='linear', kwargs=None):
     """
     The `aggplot` function aggregates a single column of data. To begin,
     choose the column you would like to aggregate and set it as the `agg`
@@ -981,6 +996,9 @@ def aggplot(agg, groupby=None, data=None, hue=None, row=None, col=None, kind='ba
         When using either `row` or either `col` and not both, determines the
         maximum number of rows/cols before a new row/col is used.
 
+    stacked: bool
+        Determines whether barr or lines will be stacked on top of each other
+
     figsize: tuple
         Use a tuple of integers. Passed directly to Matplotlib to set the
         size of the figure in inches.
@@ -1031,7 +1049,7 @@ def aggplot(agg, groupby=None, data=None, hue=None, row=None, col=None, kind='ba
     # TODO: Allow user to pass in ax to put plot in own figure
 
     return AggPlot(agg, groupby, data, hue, row, col, kind, orient, sort, aggfunc, normalize,
-                    wrap, figsize, rot, title, sharex, sharey, xlabel, ylabel, xlim, ylim,
+                    wrap, stacked, figsize, rot, title, sharex, sharey, xlabel, ylabel, xlim, ylim,
                     xscale, yscale, kwargs).plot()
 
 
