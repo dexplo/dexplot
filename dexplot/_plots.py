@@ -707,6 +707,14 @@ class AggPlot:
             vc.iloc[:, -1] = vc.iloc[:, -1] / cur_count
             vc = vc.set_index(vc.columns[:-1].tolist())
             return vc
+        elif set(self.normalize) == {self.row, self.col}:
+            cur_group1, cur_group2 = data.iloc[0].loc[[self.row, self.col]].values
+            df = self.normalize_counts
+            b = (df[self.row] == cur_group1) & (df[self.col] == cur_group2)
+            cur_count = df[b].iloc[0, -1]
+            vc.iloc[:, -1] = vc.iloc[:, -1] / cur_count
+            vc = vc.set_index(vc.columns[:-1].tolist())
+            return vc
         elif self.row in self.normalize or self.col in self.normalize:
             # self.normalize must be a tuple
             col_names = []
@@ -723,6 +731,9 @@ class AggPlot:
             join_keys = [name for name in self.normalize if name not in (self.row, self.col)]
             vc1 = vc.copy()
             vc1.columns = vc1.columns.tolist()[:-1] + [unique_col_name]
+            print(vc1)
+            print(cur_counts)
+            print("\n\n\n")
             vc1 = vc1.merge(cur_counts, on=join_keys)
             vc1.iloc[:, -1] = vc1[unique_col_name + '_x'].values / vc1[unique_col_name + '_y'].values
             int_cols = list(range(vc.shape[1] - 1)) + [-1]
