@@ -1,1 +1,1 @@
-from ._plots import aggplot, scatterplot
+from ._plots import aggplot, scatterplot, heatmap

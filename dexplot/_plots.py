@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import matplotlib
 import pandas as pd
 import numpy as np
 import statsmodels.api as sm
@@ -6,9 +7,9 @@ from statsmodels.stats.outliers_influence import summary_table
 import textwrap
 from scipy.stats import gaussian_kde
 
-NORMALIZE_ERROR_MSG = '`normalize` can only be None, "all", one of the parameter names "agg", ' \
-                      '"hue", "row", "col", or a combination of those parameter names ' \
-                      'in a tuple, if they are defined.'
+NORMALIZE_ERROR_MSG = '`normalize` can only be None, "all", one of the values passed to ' \
+                      ' the parameter names "agg", "hue", "row", "col", or a combination' \
+                      ' of those parameter names in a tuple, if they are defined.'
 
 
 def _get_fig_shape(n, wrap, is_row):
@@ -94,7 +95,6 @@ class AggPlot:
         self.validate_column_names(agg, groupby, hue, row, col)
         self.validate_orient_wrap_kind_sort(orient, wrap, kind, sort)
         self.validate_agg_kind()
-        self.init_column_data()
         self.validate_groupby_agg()
         self.validate_diff_col_names()
         self.validate_kde_hist()
@@ -140,14 +140,16 @@ class AggPlot:
 
     def validate_column_names(self, agg, groupby, hue, row, col):
         param_vals = [agg, groupby, hue, row, col]
+        self.col_name_dict = {}
         for arg_name, col_name in zip(self.col_params, param_vals):
             if col_name and col_name not in self.data.columns:
                 raise KeyError(f'You passed {col_name} to parameter {arg_name} which is not a '
                                  'column name')
             self.__dict__[arg_name] = col_name
+            if col_name:
+                self.col_name_dict[col_name] = arg_name
 
     def validate_orient_wrap_kind_sort(self, orient, wrap, kind, sort):
-
         if orient not in ['v', 'h']:
             raise ValueError('`orient` must be either "v" or "h".')
 
@@ -157,7 +159,7 @@ class AggPlot:
                                 f'You passed {type(wrap)}')
 
         if kind not in {'bar', 'line', 'box', 'hist', 'kde'}:
-            raise ValueError('`kind` must be either "bar", "line", "box", "hist", or "kde"')
+            raise ValueError('`kind` must be either "bar", "line", "box", "hist", "kde"')
 
         if not isinstance(sort, bool):
             raise TypeError('`sort` must be a bool')
@@ -177,23 +179,6 @@ class AggPlot:
                 raise ValueError('When the `agg` variable is object/categorical, `kind` can '
                                  'only be "bar" or "line"')
 
-    def init_column_data(self):
-        if self.groupby is not None:
-            self.groupby_data = self.data[self.groupby]
-            self.groupby_kind = self.groupby_data.dtype.kind
-
-        if self.hue is not None:
-            self.hue_data = self.data[self.hue]
-            self.hue_kind = self.hue_data.dtype.kind
-
-        if self.row is not None:
-            self.row_data = self.data[self.row]
-            self.row_kind = self.row_data.dtype.kind
-
-        if self.col is not None:
-            self.col_data = self.data[self.col]
-            self.col_kind = self.col_data.dtype.kind
-
     def validate_groupby_agg(self):
         if self.groupby:
             if self.agg_kind == 'O' and self.groupby_kind == 'O':
@@ -205,7 +190,7 @@ class AggPlot:
         param_names = ['agg', 'groupby', 'hue', 'row', 'col']
         seen = set()
         for name in param_names:
-            val = self.__dict__[name]
+            val = getattr(self, name)
             if val is not None:
                 if val in seen:
                     raise ValueError(f'Duplicate column found in parameter `{name}` with "{val}". '
@@ -223,8 +208,9 @@ class AggPlot:
         if self.agg_kind == 'O':
             valid_normalize = ['all']
             for cp in ['agg', 'hue', 'row', 'col']:
-                if self.__dict__[cp] is not None:
-                    valid_normalize.append(cp)
+                attr = getattr(self, cp)
+                if attr:
+                    valid_normalize.append(attr)
             if isinstance(normalize, str):
                 if normalize not in valid_normalize:
                     raise ValueError(NORMALIZE_ERROR_MSG)
@@ -331,25 +317,17 @@ class AggPlot:
         if self.agg_kind != 'O' or not self.normalize:
             return None
         if self.normalize == 'all':
-            return self.data[self.agg].count()
-        if self.normalize == 'agg':
-            return self.data[self.agg].value_counts() \
-                       .rename_axis(self.agg).rename(None).reset_index()
-        if self.normalize == 'hue':
-            return self.data[self.hue].value_counts()\
-                       .rename_axis(self.hue).rename(None).reset_index()
-        if self.normalize == 'row':
-            return self.data[self.row].value_counts() \
-                       .rename_axis(self.row).rename(None).reset_index()
-        if self.normalize == 'col':
-            return self.data[self.col].value_counts() \
-                       .rename_axis(self.col).rename(None).reset_index()
+            return self.data.groupby(list(self.col_name_dict)).size().sum()
+        if isinstance(self.normalize, str):
+            return self.data[self.normalize].value_counts() \
+                       .rename_axis(self.normalize).rename(None).reset_index()
         if isinstance(self.normalize, tuple):
-            group_cols = [self.__dict__[col] for col in self.normalize]
+            group_cols = list(self.normalize)
             uniques, names = [], []
             for val in self.normalize:
-                uniques.append(getattr(self, f'all_{val}s'))
-                names.append(self.__dict__[val])
+                param_name = self.col_name_dict[val]
+                uniques.append(getattr(self, f'all_{param_name}s'))
+                names.append(val)
 
             df = self.data.groupby(group_cols).size()
             mi = pd.MultiIndex.from_product(uniques, names=names)
@@ -416,14 +394,14 @@ class AggPlot:
                 pass
 
             if self.hue and self.no_legend:
-                ax.figure.legend(bbox_to_anchor=(1.02, .5), loc='center left')
+                ax.figure.legend(bbox_to_anchor=(1.01, .5), loc='center left')
         else:
             if self.orient == 'v':
                 ax.set_xlabel(self.xlabel or self.agg)
             else:
                 ax.set_ylabel(self.ylabel or self.agg)
             if (self.groupby or self.hue) and self.no_legend:
-                ax.legend()
+                ax.figure.legend(bbox_to_anchor=(1.01, .5), loc='center left')
 
     def set_figure_plot_labels(self, fig):
         label_fontsize = plt.rcParams['font.size'] * 1.5
@@ -455,8 +433,8 @@ class AggPlot:
                 fig.text(-.02, .5, self.agg, rotation=90, fontsize=label_fontsize,
                          ha='center', va='center')
         if (is_numeric_split or is_cat_split or is_numeric_split_hue) and not fig.legends:
-            handles, labels = fig.axes[-1].get_legend_handles_labels()
-            fig.legend(handles, labels, bbox_to_anchor=(1.04, .5), loc='center left')
+            handles, labels = fig.axes[0].get_legend_handles_labels()
+            fig.legend(handles, labels, bbox_to_anchor=(1.01, .5), loc='center left')
 
     def apply_single_plot_changes(self, ax):
         if self.title:
@@ -486,7 +464,7 @@ class AggPlot:
                 ax.bar(x_data, height, width, bottom, label=col, tick_label=data.index)
             else:
                 ax.barh(x_data, height, width, bottom, label=col, tick_label=data.index)
-            bottom += height * (1 - not_stacked)
+            bottom += np.nan_to_num(height) * (1 - not_stacked)
         if self.orient == 'v':
             ax.set_xticks(x_range)
         else:
@@ -715,26 +693,26 @@ class AggPlot:
             return vc
 
         if isinstance(self.normalize, tuple):
-            join_key = [self.__dict__[col] for col in self.normalize]
+            join_key = list(self.normalize)
         else:
-            join_key = self.__dict__[self.normalize]
+            join_key = self.normalize
 
         unique_col_name = "@@@@@count"
 
-        if self.normalize in ('row', 'col'):
-            col_name = self.__dict__[self.normalize]
+        if self.normalize in (self.row, self.col):
+            col_name = self.normalize
             cur_group = data.iloc[0].loc[col_name]
             df = self.normalize_counts
             cur_count = df[df[col_name] == cur_group].iloc[0, -1]
             vc.iloc[:, -1] = vc.iloc[:, -1] / cur_count
             vc = vc.set_index(vc.columns[:-1].tolist())
             return vc
-        elif 'row' in self.normalize or 'col' in self.normalize:
+        elif self.row in self.normalize or self.col in self.normalize:
             # self.normalize must be a tuple
             col_names = []
-            for val in ('row', 'col'):
+            for val in (self.row, self.col):
                 if val in self.normalize:
-                    col_names.append(self.__dict__[val])
+                    col_names.append(val)
             cur_groups = [data.iloc[0].loc[col_name] for col_name in col_names]
             df = self.normalize_counts.copy()
             b = df[col_names[0]] == cur_groups[0]
@@ -742,14 +720,15 @@ class AggPlot:
                 b = b & (df[col_names[1]] == cur_groups[1])
             cur_counts = df[b].copy()
             cur_counts.columns = cur_counts.columns.tolist()[:-1] + [unique_col_name]
-            join_keys = [self.__dict__[name] for name in self.normalize
-                         if name not in ('row', 'col')]
+            join_keys = [name for name in self.normalize if name not in (self.row, self.col)]
             vc1 = vc.copy()
             vc1.columns = vc1.columns.tolist()[:-1] + [unique_col_name]
             vc1 = vc1.merge(cur_counts, on=join_keys)
-            vc.iloc[:, -1] = vc1[unique_col_name + '_x'].values / vc1[unique_col_name + '_y'].values
-            vc = vc.set_index(vc.columns[:-1].tolist())
-            return vc
+            vc1.iloc[:, -1] = vc1[unique_col_name + '_x'].values / vc1[unique_col_name + '_y'].values
+            int_cols = list(range(vc.shape[1] - 1)) + [-1]
+            vc1 = vc1.iloc[:, int_cols]
+            vc1 = vc1.set_index(vc1.columns[:-1].tolist())
+            return vc1
         else:
             norms = vc.merge(self.normalize_counts, on=join_key)
             norms['pct'] = norms.iloc[:, -2] / norms.iloc[:, -1]
@@ -857,11 +836,9 @@ class AggPlot:
                                     boxprops={'facecolor': color}, medianprops={'color': 'black'})
                 patch = bp['boxes'][0]
                 box_plots.append(patch)
-            if self.is_single_plot():
-                ax.legend(handles=box_plots, labels=hue_labels)
-            else:
-                ax.figure.legend(handles=box_plots, labels=hue_labels,
-                                 bbox_to_anchor=(1.02, .5), loc='center left')
+
+            ax.figure.legend(handles=box_plots, labels=hue_labels,
+                             bbox_to_anchor=(1.02, .5), loc='center left')
             if self.orient == 'v':
                 ax.set_xlim(min(positions) - .5, max(positions) + .5)
                 ax.set_xticks(positions)
@@ -911,9 +888,9 @@ class AggPlot:
 
 
 def aggplot(agg, groupby=None, data=None, hue=None, row=None, col=None, kind='bar', orient='v',
-            sort=False, aggfunc='mean', normalize=None, wrap=None, stacked=False, figsize=None,
-            rot=0, title=None, sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None,
-            ylim=None, xscale='linear', yscale='linear', kwargs=None):
+            sort=False, aggfunc='mean', normalize=None, wrap=None, stacked=False,
+            figsize=None, rot=0, title=None, sharex=True, sharey=True, xlabel=None,
+            ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', kwargs=None):
     """
     The `aggplot` function aggregates a single column of data. To begin,
     choose the column you would like to aggregate and set it as the `agg`
@@ -947,7 +924,7 @@ def aggplot(agg, groupby=None, data=None, hue=None, row=None, col=None, kind='ba
         variable is numeric.
 
     data: DataFrame
-        A Pandas or Dexplo DataFrame that typically has non-aggregated data.
+        A Pandas DataFrame that typically has non-aggregated data.
         This type of data is often referred to as "tidy" or "long" data.
 
     hue: str
@@ -997,7 +974,7 @@ def aggplot(agg, groupby=None, data=None, hue=None, row=None, col=None, kind='ba
         maximum number of rows/cols before a new row/col is used.
 
     stacked: bool
-        Determines whether barr or lines will be stacked on top of each other
+        Controls whether bars will be stacked on top of each other
 
     figsize: tuple
         Use a tuple of integers. Passed directly to Matplotlib to set the
@@ -1358,12 +1335,193 @@ def scatterplot(x, y, data=None, hue=None, row=None, col=None, figsize=None, wra
         return fig,
 
 
-def columnplot(kind='line', data=None):
+def heatmap(x= None, y=None, values=None, aggfunc=None, data=None, normalize=None, corr=False,
+            annot=False, fmt='.2f', ax=None, figsize=None, title=None, cmap='RdYlBu_r',
+            cbarlabel="", cbar_kw={}, **kwargs):
     """
-    Plots all columns of dataframe similar to how pandas does it. The x-axis is used as the index
-    Supports line plots, bar, kde, hist
+    Create a heatmap from a Pandas DataFrame. This function works with either
+    tidy data or aggregated data.
+
+    If using tidy data, pass it categorical/string variables to `x` and `y`
+    and a numeric variable to `values`. Pass an aggregation function
+    as a string to `aggfunc`.  You may also choose to leave `values` as None
+    which result in a raw frequency count for the co-occurence of the `x` and
+    `y` variables. Set normalize to True to get relative percentages.
+
+    If using aggregated data, only use the `data` parameter. The index and
+    columns will label the x and y. The values of the DataFrame will form
+    will be used for the heat map.
+
+    Parameters
+    ----------
+    x: str
+        Column name who's unique values will be used to form groups. Can
+        only be used with tidy data and should be a categorical/string.
+
+    y: str
+        Column name who's unique values will be used to form groups. Can
+        only be used with tidy data and should be a categorical/string.
+
+    values: str
+        Column name who's values will be aggregated across the groups
+        formed by `x` and `y`.
+
+    aggfunc: str or function
+        Used to aggregate `agg` variable. Use any of the strings that Pandas
+        can understand. You can also use a custom function as long as it
+        aggregates, i.e. returns a single value.
+
+    data: DataFrame
+        A Pandas DataFrame containing either tidy or aggregated data
+
+    normalize: str
+        Must be one of three strings, "all" or the name of one of the column
+        names provided to `x` or `y`.
+
+    corr: bool - Default False
+        When set to True, will calcaulte the correlation of the co-occurence
+        between each of the unique values in `x` and `y`.  Only works with
+        tidy data.
+
+    annot: bool - Default False
+        Controls whether the aggregated values will be plotted as
+        text in the heatmap.
+
+    fmt: str
+        Formatting style for annotations
+
+    ax: Matplotlib Axes
+        The Matplotlib Axes object to use for plotting. If not given, then
+        create a new Figure and Axes
+
+    figsize: tuple
+        A two item tuple of ints used to control the figure size
+
+    title: str
+        Sets the title of the figure
+
+    cmap: str
+        Matplotlib colormap name
+
+    cbarlabel: str
+        Labels the colorbar
+
+    cbar_kw: dict
+        Keyword arguments passed to the `colorbar` Figure function
+
+    kwargs: dict
+        Keyword arguments passed to the `imshow` Axes function
+
     Returns
     -------
+    A one-item tuple containing a Matplotlib Figure
 
+    References
+    ----------
+    Code was inspired from Matplotlib page
+    https://matplotlib.org/gallery/images_contours_and_fields/image_annotated_heatmap.html
     """
-    return data.plot(kind=kind)
+
+    if figsize is None:
+        figsize = (10, 8)
+
+    if not isinstance(data, pd.DataFrame):
+        raise TypeError('`data` must be a DataFrame')
+
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+        if title:
+            fig.suptitle(title)
+    else:
+        fig = ax.figure
+
+    if aggfunc:
+        if not values:
+            raise ValueError('If you are setting `aggfunc`, you need to set `values` as well.')
+
+    if not normalize:
+        normalize = False
+
+    if x or y:
+        if not (x and y):
+            raise ValueError('If you supply one of x or y, you must both of them')
+
+        if normalize not in (False, 'all', x, y):
+            raise ValueError('If you are setting `normalize`, it must be either '
+                             f'"all", "{x}" or "{y}"')
+        elif normalize == x:
+            normalize = 'columns'
+        elif normalize == y:
+            normalize = 'index'
+
+        if values:
+            data_values = data[values]
+            if not aggfunc:
+                aggfunc = 'mean'
+        else:
+            data_values = None
+
+        agg_data = pd.crosstab(index=data[y], columns=data[x], values=data_values, aggfunc=aggfunc,
+                               normalize=normalize)
+        if corr:
+            agg_data = agg_data.corr()
+    else:
+        agg_data = data
+
+    agg_values = agg_data.values
+    col_labels = agg_data.columns.tolist()
+    row_labels = agg_data.index.tolist()
+
+    # Plot the heatmap
+    im = ax.imshow(agg_values, cmap=cmap, **kwargs)
+
+    # Create colorbar
+    cbar = fig.colorbar(im, ax=ax, **cbar_kw)
+    cbar.ax.set_ylabel(cbarlabel, rotation=-90, va='bottom')
+
+    x_range, y_range = np.arange(agg_data.shape[1]), np.arange(agg_data.shape[0])
+    ax.set_xticks(x_range)
+    ax.set_yticks(y_range)
+
+    ax.set_xticklabels(col_labels)
+    ax.set_yticklabels(row_labels)
+
+    # Let the horizontal axes labeling appear on top.
+    ax.tick_params(top=True, bottom=False,
+                   labeltop=True, labelbottom=False)
+
+    # Rotate the tick labels and set their alignment.
+    plt.setp(ax.get_xticklabels(), rotation=-30, ha='right', rotation_mode='anchor')
+
+    # Turn spines off and create white grid.
+    for edge, spine in ax.spines.items():
+        spine.set_visible(False)
+
+    ax.set_xticks(x_range - .5, minor=True)
+    ax.set_yticks(y_range - .5, minor=True)
+    ax.grid(which='minor', color='w', linestyle='-', linewidth=3)
+    ax.tick_params(which='minor', bottom=False, left=False)
+
+    if annot:
+        annotate_heatmap(im, agg_values, fmt='{0:' + fmt + '}')
+
+    return fig,
+
+
+def annotate_heatmap(im, values, fmt="{0:.2f}", **textkw):
+    """
+    Annotates the heatmap
+
+    https://matplotlib.org/gallery/images_contours_and_fields/image_annotated_heatmap.html
+    """
+
+    kw = dict(horizontalalignment="center",
+              verticalalignment="center")
+    kw.update(textkw)
+    n_rows, n_cols = values.shape
+
+    for i in range(n_rows):
+        for j in range(n_cols):
+            val = values[i, j]
+            if not np.isnan(val):
+                im.axes.text(j, i, fmt.format(val), **kw)
