@@ -116,15 +116,15 @@ class AggPlot(CommonPlot):
 
     def get_uniques(self):
         if self.hue:
-            self.all_hues = np.sort(self.data[self.hue].unique())
+            self.all_hues = np.sort(self.data[self.hue].dropna().unique())
         if self.groupby:
-            self.all_groupbys = np.sort(self.data[self.groupby].unique())
+            self.all_groupbys = np.sort(self.data[self.groupby].dropna().unique())
         if self.agg_kind == 'O':
-            self.all_aggs = np.sort(self.data[self.agg].unique())
+            self.all_aggs = np.sort(self.data[self.agg].dropna().unique())
         if self.row:
-            self.all_rows = np.sort(self.data[self.row].unique())
+            self.all_rows = np.sort(self.data[self.row].dropna().unique())
         if self.col:
-            self.all_cols = np.sort(self.data[self.col].unique())
+            self.all_cols = np.sort(self.data[self.col].dropna().unique())
 
     def get_normalize_counts(self):
         if self.agg_kind != 'O' or not self.normalize:
