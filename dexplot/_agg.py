@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-import textwrap
 from . import _utils
 from ._common_plot import CommonPlot
 
@@ -13,8 +12,8 @@ NORMALIZE_ERROR_MSG = '`normalize` can only be None, "all", one of the values pa
 class AggPlot(CommonPlot):
 
     def __init__(self, agg, groupby, data, hue, row, col, kind, orient, sort, aggfunc, normalize,
-                 wrap, stacked, figsize, rot, title, sharex, sharey, xlabel, ylabel, xlim, ylim,
-                 xscale, yscale, kwargs):
+                 wrap, stacked, figsize, rot, title, sharex, sharey, xlabel, ylabel, xlim,
+                 ylim,xscale, yscale, kwargs):
         self.validate_figsize(figsize)
         self.validate_data(data)
 
@@ -78,7 +77,7 @@ class AggPlot(CommonPlot):
 
     def validate_groupby_agg(self):
         if self.groupby:
-            if self.agg_kind == 'O' and self.groupby_kind == 'O':
+            if self.agg_kind == 'O' and self.data[self.groupby].dtype.kind == 'O':
                 raise TypeError('When the `agg` column is categorical, you cannot use `groupby`. '
                                 'Instead, place the groupby column as either '
                                 ' `hue`, `row`, or `col`.')
@@ -265,13 +264,20 @@ class AggPlot(CommonPlot):
     def histplot(self, ax, data, **kwargs):
         orientation = 'vertical' if self.orient == 'v' else 'horizontal'
         labels = kwargs['labels']
-        return ax.hist(data, orientation=orientation, label=labels, **self.kwargs)
+        try:
+            data = data.dropna().values
+        except AttributeError:
+            data = [d[~np.isnan(d)] for d in data]
+
+        return ax.hist(data, orientation=orientation, label=labels, stacked=self.stacked,
+                       **self.kwargs)
 
     def kdeplot(self, ax, data, **kwargs):
         labels = kwargs['labels']
         if not isinstance(data, list):
             data = [data]
         for label, cur_data in zip(labels, data):
+            cur_data = cur_data[~np.isnan(cur_data)]
             if len(cur_data) > 1:
                 x, density = _utils._calculate_density(cur_data)
             else:
