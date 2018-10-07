@@ -10,7 +10,7 @@ long_description = re.sub(pat, repl, long_description)
 
 setuptools.setup(
     name="dexplot",
-    version="0.0.8",
+    version="0.0.9",
     author="Ted Petrou",
     author_email="petrou.theodore@gmail.com",
     description="Simple plotting library for both long and wide data integrated with DataFrames",
