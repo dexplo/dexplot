@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
-def heatmap(x= None, y=None, values=None, aggfunc=None, data=None, normalize=None, corr=False,
+
+def heatmap(x=None, y=None, agg=None, aggfunc=None, data=None, normalize=None, corr=False,
             annot=False, fmt='.2f', ax=None, figsize=None, title=None, cmap=None,
             cbarlabel="", cbar_kw={}, **kwargs):
     """
@@ -29,7 +30,7 @@ def heatmap(x= None, y=None, values=None, aggfunc=None, data=None, normalize=Non
         Column name who's unique values will be used to form groups. Can
         only be used with tidy data and should be a categorical/string.
 
-    values: str
+    agg: str
         Column name who's values will be aggregated across the groups
         formed by `x` and `y`.
 
@@ -103,8 +104,8 @@ def heatmap(x= None, y=None, values=None, aggfunc=None, data=None, normalize=Non
         fig = ax.figure
 
     if aggfunc:
-        if not values:
-            raise ValueError('If you are setting `aggfunc`, you need to set `values` as well.')
+        if not agg:
+            raise ValueError('If you are setting `aggfunc`, you need to set `agg` as well.')
 
     if not normalize:
         normalize = False
@@ -124,8 +125,8 @@ def heatmap(x= None, y=None, values=None, aggfunc=None, data=None, normalize=Non
         elif normalize == y:
             normalize = 'index'
 
-        if values:
-            data_values = data[values]
+        if agg:
+            data_values = data[agg]
             if not aggfunc:
                 aggfunc = 'mean'
         else:
@@ -133,10 +134,11 @@ def heatmap(x= None, y=None, values=None, aggfunc=None, data=None, normalize=Non
 
         agg_data = pd.crosstab(index=data[y], columns=data[x], values=data_values, aggfunc=aggfunc,
                                normalize=normalize)
-        if corr:
-            agg_data = agg_data.corr()
     else:
         agg_data = data
+
+    if corr:
+        agg_data = agg_data.corr()
 
     agg_values = agg_data.values
     col_labels = agg_data.columns.tolist()
