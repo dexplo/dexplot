@@ -7,106 +7,121 @@ import numpy as np
 from . import _utils
 
 
+NONETYPE = type(None)
+
 class CommonPlot:
 
-    def validate_figsize(self, figsize):
-        self.orig_figsize = figsize
-        if figsize is None:
-            self.figsize = plt.rcParams['figure.figsize']
-        elif isinstance(figsize, tuple):
-            if len(figsize) != 2:
+    def validate_args(self):
+        self.validate_figsize()
+        self.validate_data()
+        self.validate_column_names()
+        self.validate_plot_args()
+        self.validate_mpl_args()
+
+    def validate_figsize(self):
+        if isinstance(self.figsize, tuple):
+            if len(self.figsize) != 2:
                 raise ValueError('figsize must be a two-item tuple')
-            for val in figsize:
+            for val in self.figsize:
                 if not isinstance(val, (int, float)):
                     raise ValueError('Each item in figsize must be an integer or a float')
-            self.figsize = figsize
         else:
             raise TypeError('figsize must be a two-item tuple')
 
-    def validate_data(self, data):
-        if not isinstance(data, pd.DataFrame):
+    def validate_data(self):
+        if not isinstance(self.data, pd.DataFrame):
             raise TypeError('`data` must be a DataFrame')
         elif len(data) == 0:
-            raise ValueError('DataFrame contains no  data')
-        else:
-            self.data = data
+            raise ValueError('DataFrame contains no data')
 
-    def validate_column_names(self, param_dict):
-        self.col_name_dict = {}
-        for arg_name, col_name in param_dict.items():
-            if col_name:
-                if col_name not in self.data.columns:
-                    raise KeyError(f'You passed {col_name} to parameter {arg_name} which is not a '
+    def validate_column_names(self):
+        cols = self.data.columns
+        used_cols = set()
+        for param in self.COLUMN_PARAMS:
+            col = getattr(self, param)
+            if col:
+                if col not in cols:
+                    raise KeyError(f'You passed {col} to parameter {param} which is not a '
                                    'column name')
-                if col_name in self.col_name_dict:
-                    param = self.col_name_dict[col_name]
-                    raise ValueError(f'The column {col_name} was already used for '
-                                     f'parameter {param}.')
-                self.col_name_dict[col_name] = arg_name
-            self.__dict__[arg_name] = col_name
+                if col in use_cols:
+                    raise ValueError(f'The column {col} was already used.')
+                used_cols.add(col)
 
-    def validate_mpl_args(self, rot, title, sharex, sharey,
-                          xlabel, ylabel, xlim, ylim, xscale, yscale):
-        NoneType = type(None)
-        if not isinstance(rot, (int, float)):
-            raise ValueError('`rot` must be an int or float')
-        if not isinstance(title, (NoneType, str)):
+    def validate_plot_args(self):
+        if self.orientation not in ('v', 'h'):
+            raise ValueError('`orientation` must be either "v" or "h".')
+
+        if not isinstance(self.wrap, (np.integer, int, NONETYPE)):
+            raise TypeError(f'`wrap` must either be None or an integer, not {type(wrap)}')
+        if self.groupby_row and self.groupby_col and self.wrap is not None:
+            raise ValueError('You cannot provide a value for `wrap` if `groupby_row` '
+                             'and `groupby_col` are also provided')
+
+        if not isinstance(self.sort, bool):
+            raise TypeError('`sort` must be a bool')
+
+    def validate_mpl_args(self):
+        if not isinstance(self.title, (NONETYPE, str)):
             raise TypeError('`title` must be either None or a str')
-        if sharex not in [False, True, None, 'row', 'col']:
+        if self.sharex not in (False, True, None, 'row', 'col'):
             raise ValueError('`sharex` must be one of `False`, `True`, `None`, "row", or "col"')
-        if sharey not in [False, True, None, 'row', 'col']:
+        if self.sharey not in (False, True, None, 'row', 'col'):
             raise ValueError('`sharex` must be one of `False`, `True`, `None`, "row", or "col"')
 
-        if not isinstance(xlabel, (NoneType, str)):
+        if not isinstance(self.xlabel, (NONETYPE, str)):
             raise TypeError('`xlabel` must be either None or a str')
-        elif xlabel is None:
-            xlabel = ''
-        if not isinstance(ylabel, (NoneType, str)):
+        if not isinstance(self.ylabel, (NONETYPE, str)):
             raise TypeError('`ylabel` must be either None or a str')
-        elif ylabel is None:
-            ylabel = ''
 
-        if not isinstance(xlim, (NoneType, tuple)):
+        if not isinstance(self.xlim, (NONETYPE, tuple)):
             raise TypeError('`xlim` must be a two-item tuple of numerics or `None`')
-        if not isinstance(ylim, (NoneType, tuple)):
+        if not isinstance(self.ylim, (NONETYPE, tuple)):
             raise TypeError('`xlim` must be a two-item tuple of numerics or `None`')
-        if xscale not in {'linear', 'log', 'symlog', 'logit'}:
+        if self.xscale not in ('linear', 'log', 'symlog', 'logit'):
             raise ValueError("`xscale must be one of 'linear', 'log', 'symlog', 'logit'")
-        if yscale not in {'linear', 'log', 'symlog', 'logit'}:
+        if self.yscale not in ('linear', 'log', 'symlog', 'logit'):
             raise ValueError("`xscale must be one of 'linear', 'log', 'symlog', 'logit'")
-        self.rot = rot
-        self.title = title
-        self.sharex = sharex
-        self.sharey = sharey
-        self.xlabel = xlabel
-        self.ylabel = ylabel
-        self.xlim = xlim
-        self.ylim = ylim
-        self.xscale = xscale
-        self.yscale = yscale
 
-    def is_single_plot(self):
-        return not (self.row or self.col)
+    def get_plot_type(self):
+        if self.groupby_row and self.groupby_col:
+            return 'square'
+        if self.groupby_row:
+            return 'row_only'
+        if self.groupby_col:
+            return 'col_only'
+        return 'single'
 
-    def validate_kwargs(self, kwargs, has_lines=True):
-        if kwargs is None:
-            self.kwargs = {}
-        elif not isinstance(kwargs, dict):
-            raise TypeError('`kwargs` must be `None` or a dict')
+    def get_column_data(self):
+        column_data = {}
+        for param in self.COLUMN_PARAMS:
+            col = getattr(self, param)
+            if col:
+                column_data[col] = self.data[col]
+        return column_data
+
+    def get_fig_shape(self):
+        # get the number of rows and columns in the figure
+        if self.plot_type == 'single':
+            return 1, 1
+            
+        nr = self.uniques.get(self.groupby_row)
+        nc = self.uniques.get(self.groupby_col)
+        if self.plot_type == 'row_only':
+            n = len(row_uniques)
+            wrap = self.wrap or n
+            rows = wrap
+            cols = (n - 1) // wrap + 1
+        elif self.plot_type == 'col_only':
+            n = len(col_uniques)
+            wrap = self.wrap or n
+            rows = (n - 1) // wrap + 1
+            cols = wrap
         else:
-            self.kwargs = kwargs
-
-        if has_lines:
-            if self.kind == 'line':
-                if 'lw' not in self.kwargs:
-                    self.kwargs['lw'] = 3
-                if 'marker' not in self.kwargs:
-                    self.kwargs['marker'] = 'o'
+            rows, cols = len(row_uniques), len(col_uniques)
+        return rows, cols
 
     def create_figure(self):
         if not (self.row or self.col):
-            if self.orig_figsize is None:
-                self.figsize = (12, 6)
             self.nrows, self.ncols = 1, 1
             return plt.subplots(figsize=self.figsize)
         if bool(self.row) != bool(self.col):
