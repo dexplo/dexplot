@@ -23,17 +23,13 @@ class CommonPlot:
         self.x = self.get_col(x)
         self.y = self.get_col(y)
         self.validate_x_y()
-        self.groupby = self.get_col_data(groupby, True)
+        self.groupby = self.get_col(groupby, True)
         self.aggfunc = aggfunc
-        self.split = self.get_col_data(split, True)
-        self.row = self.get_col_data(row, True)
-        self.col = self.get_col_data(col, True)
+        self.split = self.get_col(split, True)
+        self.row = self.get_col(row, True)
+        self.col = self.get_col(col, True)
         self.orientation = orientation
         self.agg = self.set_agg()
-        self.has_agg = self.agg is not None
-        self.has_split = self.split is not None
-        self.has_row = self.row is not None
-        self.has_col = self.col is not None
         
         self.sort = sort
         self.wrap = wrap
@@ -52,11 +48,10 @@ class CommonPlot:
         self.plot_type = self.get_plot_type()
         self.agg_kind = self.get_agg_kind()
         self.data = self.set_index()
+        self.unique_rows, self.unique_cols = self.get_uniques()
         self.fig_shape = self.get_fig_shape()
         self.data_for_plots = self.get_data_for_every_plot()
-        self.grouped = self.get_grouped()
         self.fig, self.axs = self.create_figure()
-        self.no_legend = True
 
     def get_data(self, data):
         if not isinstance(data, pd.DataFrame):
@@ -81,7 +76,7 @@ class CommonPlot:
             return col
 
     def validate_x_y(self):
-        if self.x = self.y
+        if self.x == self.y:
             raise ValueError('`x` and `y` cannot be the same column name')
 
     def set_agg(self):
@@ -162,9 +157,9 @@ class CommonPlot:
         return 'single'
 
     def get_agg_kind(self):
-        if self.has_agg:
+        if self.agg:
             # string and category use 'O'
-            agg_kind = self.agg.dtype.kind
+            agg_kind = self.data[self.agg].dtype.kind
 
             if agg_kind not in ['i', 'f', 'b', 'O']:
                 raise TypeError('The data type for the `agg` column must either be boolean, integer, '
@@ -174,20 +169,30 @@ class CommonPlot:
     def set_index(self):
         data = self.data
         rc = []
-        if self.has_row:
+        if self.row:
             rc.append(self.row)
-        if self.has_col:
+        if self.col:
             rc.append(self.col)
         if rc:
             data = data.set_index(rc)
         return data
 
+    def get_uniques(self):
+        if self.plot_type == 'single':
+            return None, None
+        elif self.plot_type == 'row_only':
+            return self.data.index.unique(), None
+        elif self.plot_type == 'col_only':
+            return None, self.data.index.unique()
+        else:
+            return self.data.index.levels
+        
     def get_fig_shape(self):
         if self.plot_type == 'single':
             return 1, 1
 
-        nrows = len(self.data.index.levels[0])
-        ncols = len(self.data.index.levels[-1])
+        nrows = len(self.unique_rows)
+        ncols = len(self.unique_cols)
         if self.plot_type == 'row_only':
             ncols = 1
             if self.wrap:
@@ -201,18 +206,22 @@ class CommonPlot:
         return nrows, ncols
 
     def get_data_for_every_plot(self):
-        vals = self.data.index.levels[0]
+        rows, cols = self.unique_rows, self.unique_cols
+        if self.plot_type == 'row_only':
+            return [(row, self.data.loc[row]) for row in rows]
         if self.plot_type in ('row_only', 'col_only'):
-            return [(val, self.data.loc[val]) for val in vals]
+            return [(col, self.data.loc[col]) for col in cols]
         elif self.plot_type == 'square':
-            rows, cols = vals, self.data.index.levels[1]
             return [((row, col), self.data.loc[(row, col)]) for row in rows for col in cols]
         else:
             return [(None, self.data)]
 
     def create_figure(self):
-        fig, ax_array = plt.subplots(*self.fig_shape, tight_layout=True, dpi=144)
-        axs = ax_array.flatten(order='F')
+        fig, axs = plt.subplots(*self.fig_shape, tight_layout=True, dpi=144, figsize=self.figsize)
+        if self.fig_shape != (1, 1):
+            axs = axs.flatten(order='F')
+        else:
+            axs = [axs]
         return fig, axs
 
 
@@ -230,21 +239,21 @@ def line(x, y, data, groupby=None, aggfunc=None, split=None, row=None, col=None,
                              'variable is string/categorical')
 
         
-        for (labels, data), ax in zip(self.data_for_plots, axs):
-            if self.has_split:
+        for (labels, data), ax in zip(self.data_for_plots, self.axs):
+            if self.split:
                 for grp, data_grp in data.groupby(self.split):
-                    if self.has_agg:
-                        s = data_grp.groupby(self.groupby).agg(self.aggfunc)
+                    if self.agg:
+                        s = data_grp.groupby(self.groupby)[self.agg].agg(self.aggfunc)
                         x, y = s.index, s.values
                     else:
                         x, y = data_grp[self.x], data_grp[self.y]
-                    ax.plot(x, y)
-            elif self.has_agg:
-                if self.has_agg:
-                    s = data.groupby(self.groupby).agg(self.aggfunc)
-                    x, y = s.index, s.values
-                else:
-                    x, y = data[self.x], data[self.y]
+                    ax.plot(x, y, label=grp)
+            elif self.agg:
+                s = data.groupby(self.groupby)[self.agg].agg(self.aggfunc)
+                x, y = s.index, s.values
+                ax.plot(x, y)
+            else:
+                x, y = data[self.x], data[self.y]
                 ax.plot(x, y)
 
 
