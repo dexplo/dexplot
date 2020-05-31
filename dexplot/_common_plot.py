@@ -1,11 +1,8 @@
 import textwrap
-from collections import defaultdict
 
 import matplotlib.pyplot as plt
 import pandas as pd
-import numpy as np
 
-from . import _utils
 
 NONETYPE = type(None)
 _NORMALIZE_ERROR_MSG = '`normalize` can only be None, "all", one of the values passed to ' \
@@ -52,6 +49,7 @@ class CommonPlot:
         self.fig_shape = self.get_fig_shape()
         self.data_for_plots = self.get_data_for_every_plot()
         self.fig, self.axs = self.create_figure()
+        self.final_data = self.get_final_data()
 
     def get_data(self, data):
         if not isinstance(data, pd.DataFrame):
@@ -224,6 +222,38 @@ class CommonPlot:
             axs = [axs]
         return fig, axs
 
+    def get_labels(self, labels):
+        if isinstance(labels, tuple):
+            return labels
+        elif labels is None:
+            return None, None
+        elif self.plot_type == 'row_only':
+            return labels, None
+        else:
+            return None, labels
+
+    def get_final_data(self):
+        # row_label, col_label, ax, x, y
+        final_data = []
+        for (labels, data), ax in zip(self.data_for_plots, self.axs):
+            row_label, col_label = self.get_labels(labels)
+            if self.split:
+                for grp, data_grp in data.groupby(self.split):
+                    if self.agg:
+                        s = data_grp.groupby(self.groupby)[self.agg].agg(self.aggfunc)
+                        x, y = s.index, s.values
+                    else:
+                        x, y = data_grp[self.x], data_grp[self.y]
+                    final_data.append((x, y, ax, grp, row_label, col_label))
+            elif self.agg:
+                s = data.groupby(self.groupby)[self.agg].agg(self.aggfunc)
+                x, y = s.index, s.values
+                final_data.append((x, y, ax, None, row_label, col_label))
+            else:
+                x, y = data[self.x], data[self.y]
+                final_data.append((x, y, ax, None, row_label, col_label))
+        return final_data
+
 
 def line(x, y, data, groupby=None, aggfunc=None, split=None, row=None, col=None, 
          orientation='v', sort=False, wrap=None, figsize=None, title=None, sharex=True, 
@@ -238,23 +268,13 @@ def line(x, y, data, groupby=None, aggfunc=None, split=None, row=None, col=None,
             raise ValueError('Cannot do line plot when the aggregating '
                              'variable is string/categorical')
 
+        for x, y, ax, label, row_label, col_label in self.final_data:
+            ax.plot(x, y, label=label)
+            ax.set_xlabel(self.x)
+            ax.set_ylabel(self.y)
+
         
-        for (labels, data), ax in zip(self.data_for_plots, self.axs):
-            if self.split:
-                for grp, data_grp in data.groupby(self.split):
-                    if self.agg:
-                        s = data_grp.groupby(self.groupby)[self.agg].agg(self.aggfunc)
-                        x, y = s.index, s.values
-                    else:
-                        x, y = data_grp[self.x], data_grp[self.y]
-                    ax.plot(x, y, label=grp)
-            elif self.agg:
-                s = data.groupby(self.groupby)[self.agg].agg(self.aggfunc)
-                x, y = s.index, s.values
-                ax.plot(x, y)
-            else:
-                x, y = data[self.x], data[self.y]
-                ax.plot(x, y)
+        
 
 
 # """
