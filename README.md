@@ -3,7 +3,7 @@
 
 A Python library for making data visualizations.
 
-The current aim of Dexplot is to make data visualization creation in Python more robust and straightforward. Dexplot is built on top of Matplotlib and accepts Pandas DataFrames as inputs. 
+The current aim of Dexplot is to make data visualization creation in Python more robust and straightforward. Dexplot is built on top of Matplotlib and accepts Pandas DataFrames as inputs.
 
 ## Installation
 
@@ -16,11 +16,12 @@ The primary goals for Dexplot are:
 * Maintain a very consistent API with as few functions as necessary to make the desired statistical plots
 * Allow the user to tweak the plots without digging into Matplotlib
 
-
 ## Tidy Data from Pandas
+
 Dexplot only accepts Pandas DataFrames as input for its plotting functions that are in "tidy" form. 
 
 ## Sample plots
+
 Dexplot currently maintains two primary functions, `aggplot` which is used to aggregate data and `jointplot`, which is used to plot raw values from two variables against each other. `heatmap` is another function available that produces just a single heatmap.
 
 `aggplot` can create five different kinds of plots.
@@ -54,21 +55,12 @@ There are 7 primary parameters to `aggplot`:
 
 To get started, we will use City of Houston employee data collected from the year 2016. It contains public information from about 1500 employees and is located in Dexplot's GitHub repository.
 
-
-
 ```python
 import pandas as pd
 import dexplot as dxp
-```
-
-
-```python
 emp = pd.read_csv('notebooks/data/employee.csv')
 emp.head()
 ```
-
-
-
 
 <div>
 <table border="1" class="dataframe">
@@ -140,29 +132,20 @@ emp.head()
 </div>
 
 
-
 ### Plotting the average salary by department
-The `agg` parameter is very important and is what will be aggregated (summarized by a single point statistic, like the mean or median). It is the first parameter and only parameter you must specify (besides `data`). If this column is numeric, then by default, the mean of it will be calculated. Here, we specify the `groupby` parameter, who's unique values form the independent groups and label the x-axis.
 
+The `agg` parameter is very important and is what will be aggregated (summarized by a single point statistic, like the mean or median). It is the first parameter and only parameter you must specify (besides `data`). If this column is numeric, then by default, the mean of it will be calculated. Here, we specify the `groupby` parameter, who's unique values form the independent groups and label the x-axis.
 
 ```python
 dxp.aggplot(agg='salary', groupby='dept', data=emp)
 ```
 
-
-
-
-    <matplotlib.axes._subplots.AxesSubplot at 0x1190d2128>
-
-
-
-
 ![png](images/output_6_1.png)
 
 
 ### Make horizontal with the `orient` parameter
-The `orient` parameter controls whether the plot will be horizontal or vertical. By default it is set to `'h'`.
 
+The `orient` parameter controls whether the plot will be horizontal or vertical. By default it is set to `'h'`.
 
 ```python
 dxp.aggplot(agg='salary', groupby='dept', data=emp, orient='h')
@@ -1046,6 +1029,7 @@ fig, = dxp.heatmap(data=housing, corr=True, figsize=(16, 16))
 
 
 # Comparison with Seaborn
+
 If you have used the Seaborn library, then you should notice a lot of similarities. Much of Dexplot was inspired by Seaborn. Below is a list of the extra features in Dexplot not found in Seaborn
 
 * The ability to graph relative frequency percentage and normalize over any number of variables
