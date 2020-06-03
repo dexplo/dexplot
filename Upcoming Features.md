@@ -1,3 +1,11 @@
+# Bugs
+
+* x and y label position - not centered if 
+  * ax.get_position() after fig.canvas.draw()
+* size figure by number of bars/boxes/etc
+* allow user to set by axes
+
+
 # Upcoming Features
 
 * [ ] kde with annotations, allow for binning
