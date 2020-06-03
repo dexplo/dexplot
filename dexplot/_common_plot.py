@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib import ticker, category
+from matplotlib.colors import Colormap
 from scipy import stats
 
 
@@ -17,7 +18,8 @@ class CommonPlot:
     def __init__(self, x, y, data, groupby, aggfunc, split, row, col, 
                  x_order, y_order, split_order, row_order, col_order,
                  orientation, sort, wrap, figsize, title, sharex, sharey, 
-                 xlabel, ylabel, xlim, ylim, xscale, yscale):
+                 xlabel, ylabel, xlim, ylim, xscale, yscale, cmap):
+
         self.orig_fontsize = plt.rcParams['font.size']
         plt.rcParams['font.size'] = 7
         self.groups = []
@@ -32,9 +34,8 @@ class CommonPlot:
         self.col = self.get_col(col, True)
         self.orientation = orientation
         self.agg = self.set_agg()
-        self.make_groupby_categorical()
+        self.make_groups_categorical()
         
-
         self.x_order = x_order
         self.y_order = y_order
         self.split_order = split_order
@@ -52,6 +53,7 @@ class CommonPlot:
         self.ylim = ylim
         self.xscale = xscale
         self.yscale = yscale
+        self.colors = self.get_colors(cmap)
 
         self.validate_args(figsize)
         self.plot_type = self.get_plot_type()
@@ -61,6 +63,7 @@ class CommonPlot:
         self.fig_shape = self.get_fig_shape()
         self.figsize = self.get_figsize(figsize)
         self.fig, self.axs = self.create_figure()
+        self.set_color_cycle()
         self.data_for_plots = self.get_data_for_every_plot()
         self.final_data = self.get_final_data()
         self.style_fig()
@@ -110,11 +113,39 @@ class CommonPlot:
         else:
             return self.x
 
-    def make_groupby_categorical(self):
-        if self.groupby:
-            if self.data[self.groupby].dtype.name != 'category':
-                self.data = self.data.copy()
-                self.data[self.groupby] = self.data[self.groupby].astype('category')
+    def make_groups_categorical(self):
+        category_cols = [self.groupby, self.split, self.row, self.col]
+        copied = False
+        for col in category_cols:
+            if col:
+                if self.data[col].dtype.name != 'category':
+                    if not copied:
+                        self.data = self.data.copy()
+                        copied = True
+                    self.data[col] = self.data[col].astype('category')
+
+    def get_colors(self, cmap):
+        if cmap is None:
+            cmap = 'dark12'
+            
+        if isinstance(cmap, str):
+            from .colors._colormaps import colormaps
+            try:
+                return colormaps[cmap.lower()]
+            except KeyError:
+                raise KeyError(f'Colormap {cmap} does not exist. Here are the '
+                               f'possible colormaps: {colormaps.keys()}')
+        elif isinstance(cmap, Colormap):
+            return cmap(range(cmap.N)).tolist()
+        elif isinstance(cmap, list):
+            return cmap
+        elif isinstance(cmap, tuple):
+            return list(cmap)
+        elif hasattr(cmap, 'tolist'):
+            return cmap.tolist()
+        else:
+            raise TypeError('`cmap` must be a string name of a colormap, a matplotlib colormap '
+                            'instance, list, or tuple of colors')
         
     def validate_args(self, figsize):
         self.validate_figsize(figsize)
@@ -251,7 +282,7 @@ class CommonPlot:
         if figsize:
             return figsize
         else:
-            return self.fig_shape[1] * 3, self.fig_shape[0] * 2
+            return self.fig_shape[1] * 4, self.fig_shape[0] * 3
 
     def create_figure(self):
         fig, axs = plt.subplots(*self.fig_shape, tight_layout=True, dpi=144, 
@@ -261,6 +292,10 @@ class CommonPlot:
         else:
             axs = [axs]
         return fig, axs
+
+    def set_color_cycle(self):
+        for ax in self.axs:
+            ax.set_prop_cycle(color=self.colors)
 
     def get_correct_data_order(self, x, y=None):
         if y is None:
@@ -277,7 +312,15 @@ class CommonPlot:
             row_label, col_label = self.get_labels(labels)
             if self.split:
                 for grp, data_grp in data.groupby(self.split):
-                    if self.agg:
+                    if self.aggfunc == '__ignore__':
+                        # no aggregation - splitting data into groups (for distribution plots)
+                        column_data = []
+                        labels = []
+                        for grp_grp, data_grp_grp in data_grp.groupby(self.groupby):
+                            column_data.append(data_grp_grp[self.agg])
+                            labels.append(grp_grp)
+                        x, y = column_data, labels
+                    elif self.agg:
                         s = data_grp.groupby(self.groupby)[self.agg].agg(self.aggfunc)
                         x, y = self.get_correct_data_order(s)
                     else:
@@ -331,12 +374,12 @@ def line(x, y, data, groupby=None, aggfunc=None, split=None, row=None, col=None,
          x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
          orientation='v', sort=False, wrap=None, figsize=None, title=None, sharex=True, 
          sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
-         yscale='linear'):
+         yscale='linear', cmap=None):
 
         self = CommonPlot(x, y, data, groupby, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, sort, wrap, figsize, title, sharex, 
-                          sharey, xlabel, ylabel, xlim, ylim, xscale, yscale)
+                          sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap)
 
         if self.agg_kind == 'O':
             raise ValueError('Cannot do line plot when the aggregating '
@@ -365,7 +408,7 @@ def line(x, y, data, groupby=None, aggfunc=None, split=None, row=None, col=None,
                 
         if self.split:
             handles, labels = self.axs[0].get_legend_handles_labels()
-            self.fig.legend(handles, labels, loc='upper left', bbox_to_anchor=(1, .6))
+            self.fig.legend(handles, labels, loc='center left', bbox_to_anchor=(1, .6))
         return self.fig
 
 
@@ -373,12 +416,12 @@ def scatter(x, y, data, groupby=None, aggfunc=None, split=None, row=None, col=No
             x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
             orientation='v', sort=False, wrap=None, figsize=None, title=None, sharex=True, 
             sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
-            yscale='linear', regression=False):
+            yscale='linear', cmap=None, regression=False):
 
         self = CommonPlot(x, y, data, groupby, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, sort, wrap, figsize, title, sharex, 
-                          sharey, xlabel, ylabel, xlim, ylim, xscale, yscale)
+                          sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap)
 
         if self.agg_kind == 'O':
             raise ValueError('Cannot do line plot when the aggregating '
@@ -410,12 +453,12 @@ def bar(x, y, data, groupby=None, aggfunc=None, split=None, row=None, col=None,
         x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
         orientation='v', sort=False, wrap=None, figsize=None, title=None, sharex=True, 
         sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
-        yscale='linear', size=.92):
+        yscale='linear', cmap=None, size=.92):
 
         self = CommonPlot(x, y, data, groupby, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, sort, wrap, figsize, title, sharex, 
-                          sharey, xlabel, ylabel, xlim, ylim, xscale, yscale)
+                          sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap)
 
         if self.agg_kind == 'O':
             raise ValueError('Cannot do line plot when the aggregating '
@@ -454,7 +497,7 @@ def bar(x, y, data, groupby=None, aggfunc=None, split=None, row=None, col=None,
 
         if self.split:
             handles, labels = self.axs[0].get_legend_handles_labels()
-            self.fig.legend(handles, labels, loc='upper left', bbox_to_anchor=(1, .6))
+            self.fig.legend(handles, labels, loc='center left', bbox_to_anchor=(1, .6))
         plt.rcParams['font.size'] = self.orig_fontsize
         return self.fig
 
@@ -462,7 +505,12 @@ def bar(x, y, data, groupby=None, aggfunc=None, split=None, row=None, col=None,
 def box(x, y, data, split=None, row=None, col=None, x_order=None, y_order=None, 
         split_order=None, row_order=None, col_order=None, orientation='h', sort=False, 
         wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
-        ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear'):
+        ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
+        notch=None, sym=None, whis=None, positions=None, widths=None, patch_artist=None,
+        bootstrap=None, usermedians=None, conf_intervals=None, meanline=None, showmeans=None, 
+        showcaps=None, showbox=None, showfliers=None, boxprops=None, labels=None, flierprops=None,
+        medianprops=None, meanprops=None, capprops=None, whiskerprops=None, manage_ticks=True,
+        autorange=False, zorder=None):
 
         groupby = y if orientation == 'h' else x
         aggfunc = '__ignore__'
@@ -470,18 +518,31 @@ def box(x, y, data, split=None, row=None, col=None, x_order=None, y_order=None,
         self = CommonPlot(x, y, data, groupby, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, sort, wrap, figsize, title, sharex, 
-                          sharey, xlabel, ylabel, xlim, ylim, xscale, yscale)
+                          sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap)
 
         vert = self.orientation == 'v'
         for ax, info in self.final_data.items():
-            box_data = []
+            handles = []
             labels = []
-            for x, y, label, row_label, col_label in info:        
-                ax.boxplot(x, vert=vert, labels=y)
+            widths = .9 / len(info)
+            for i, (x, y, label, row_label, col_label) in enumerate(info):
+                positions = np.arange(len(x)) + i * widths
+                box = ax.boxplot(x, vert=vert, positions=positions, widths=widths, 
+                                 patch_artist=True, 
+                                 boxprops={'facecolor': self.colors[i] ,'edgecolor': 'black'},
+                                 medianprops={'color': '.2'}, 
+                                 flierprops={'markersize': np.sqrt(widths) * 6})
+                handles.append(box['boxes'][0])
+                labels.append(label)
+            if vert:
+                ax.set_xticks(positions // 1 + .45)
+                ax.set_xticklabels(y)
+            else:
+                ax.set_yticks(positions // 1 + .45)
+                ax.set_yticklabels(y)
 
         if self.split:
-            handles, labels = self.axs[0].get_legend_handles_labels()
-            self.fig.legend(handles, labels, loc='upper left', bbox_to_anchor=(1, .6))
+            self.fig.legend(handles, labels, loc='upper left', bbox_to_anchor=(1, .8))
         return self.fig
 
         
