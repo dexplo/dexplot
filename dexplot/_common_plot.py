@@ -33,6 +33,7 @@ class CommonPlot:
         self.orientation = orientation
         self.agg = self.set_agg()
         self.make_groupby_categorical()
+        
 
         self.x_order = x_order
         self.y_order = y_order
@@ -282,6 +283,15 @@ class CommonPlot:
                     else:
                         x, y = self.get_correct_data_order(data_grp[self.x], data_grp[self.y])
                     final_data[ax].append((x, y, grp, row_label, col_label))
+            elif self.aggfunc == '__ignore__':
+                # no aggregation - splitting data into groups (for distribution plots)
+                column_data = []
+                labels = []
+                for grp, data_grp in data.groupby(self.groupby):
+                    column_data.append(data_grp[self.agg])
+                    labels.append(grp)
+                x, y = column_data, labels
+                final_data[ax].append((x, y, None, row_label, col_label))
             elif self.agg:
                 s = data.groupby(self.groupby)[self.agg].agg(self.aggfunc)
                 x, y = self.get_correct_data_order(s)
@@ -454,26 +464,20 @@ def box(x, y, data, split=None, row=None, col=None, x_order=None, y_order=None,
         wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
         ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear'):
 
-        groupby, aggfunc = None, None
+        groupby = y if orientation == 'h' else x
+        aggfunc = '__ignore__'
 
         self = CommonPlot(x, y, data, groupby, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, sort, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale)
-        vert = self.orientation == 'v'
-        if self.agg_kind == 'O':
-            raise ValueError('Cannot do line plot when the aggregating '
-                             'variable is string/categorical')
 
+        vert = self.orientation == 'v'
         for ax, info in self.final_data.items():
             box_data = []
-            for x, y, label, row_label, col_label in info:
-                if self.orientation == 'h':
-                    box_data.append(x)
-                else:
-                    box_data.append(y)
-                
-            ax.boxplot(box_data, vert=vert)
+            labels = []
+            for x, y, label, row_label, col_label in info:        
+                ax.boxplot(x, vert=vert, labels=y)
 
         if self.split:
             handles, labels = self.axs[0].get_legend_handles_labels()
