@@ -1,20 +1,24 @@
 import textwrap
+import warnings
 
-import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib import ticker, category
+from scipy import stats
 
 
 NONETYPE = type(None)
-_NORMALIZE_ERROR_MSG = '`normalize` can only be None, "all", one of the values passed to ' \
-                      ' the parameter names "agg", "split", "row", "col", or a combination' \
-                      ' of those parameter names in a tuple, if they are defined.'
 
 class CommonPlot:
 
+
     def __init__(self, x, y, data, groupby, aggfunc, split, row, col, 
+                 x_order, y_order, split_order, row_order, col_order,
                  orientation, sort, wrap, figsize, title, sharex, sharey, 
                  xlabel, ylabel, xlim, ylim, xscale, yscale):
-
+        self.orig_fontsize = plt.rcParams['font.size']
+        plt.rcParams['font.size'] = 7
         self.groups = []
         self.data = self.get_data(data)
         self.x = self.get_col(x)
@@ -27,10 +31,16 @@ class CommonPlot:
         self.col = self.get_col(col, True)
         self.orientation = orientation
         self.agg = self.set_agg()
+        self.make_groupby_categorical()
+
+        self.x_order = x_order
+        self.y_order = y_order
+        self.split_order = split_order
+        self.row_order = row_order
+        self.col_order = col_order
         
         self.sort = sort
         self.wrap = wrap
-        self.figsize = figsize or plt.rcParams['figure.figsize']
         self.title = title
         self.sharex = sharex
         self.sharey = sharey
@@ -41,15 +51,19 @@ class CommonPlot:
         self.xscale = xscale
         self.yscale = yscale
 
-        self.validate_args()
+        self.validate_args(figsize)
         self.plot_type = self.get_plot_type()
         self.agg_kind = self.get_agg_kind()
         self.data = self.set_index()
         self.unique_rows, self.unique_cols = self.get_uniques()
         self.fig_shape = self.get_fig_shape()
-        self.data_for_plots = self.get_data_for_every_plot()
+        self.figsize = self.get_figsize(figsize)
         self.fig, self.axs = self.create_figure()
+        self.data_for_plots = self.get_data_for_every_plot()
         self.final_data = self.get_final_data()
+        self.style_fig()
+        self.add_x_y_labels()
+        self.add_ax_titles()
 
     def get_data(self, data):
         if not isinstance(data, pd.DataFrame):
@@ -93,20 +107,26 @@ class CommonPlot:
             raise ValueError('When grouping with horizontal orientation, `y` and `groupby` must be the same columns')
         else:
             return self.x
+
+    def make_groupby_categorical(self):
+        if self.groupby:
+            if self.data[self.groupby].dtype.name != 'category':
+                self.data = self.data.copy()
+                self.data[self.groupby] = self.data[self.groupby].astype('category')
         
-    def validate_args(self):
-        self.validate_figsize()
+    def validate_args(self, figsize):
+        self.validate_figsize(figsize)
         self.validate_plot_args()
         self.validate_mpl_args()
 
-    def validate_figsize(self):
-        if isinstance(self.figsize, (list, tuple)):
-            if len(self.figsize) != 2:
+    def validate_figsize(self, figsize):
+        if isinstance(figsize, (list, tuple)):
+            if len(figsize) != 2:
                 raise ValueError('figsize must be a two-item tuple/list')
-            for val in self.figsize:
+            for val in figsize:
                 if not isinstance(val, (int, float)):
                     raise ValueError('Each item in figsize must be an integer or a float')
-        else:
+        elif figsize is not None:
             raise TypeError('figsize must be a two-item tuple')
 
     def validate_plot_args(self):
@@ -189,18 +209,19 @@ class CommonPlot:
         if self.plot_type == 'single':
             return 1, 1
 
-        nrows = len(self.unique_rows)
-        ncols = len(self.unique_cols)
-        if self.plot_type == 'row_only':
-            ncols = 1
-            if self.wrap:
-                nrows = min(nrows, self.wrap)
+        nrows = ncols = 1
+        if self.unique_rows is not None:
+            nrows = len(self.unique_rows)
+        if self.unique_cols is not None:
+            ncols = len(self.unique_cols) 
+
+        if self.wrap:
+            if self.plot_type == 'row_only':
                 ncols = (nrows - 1) // self.wrap + 1
-        elif self.plot_type == 'col_only':
-            nrows = 1
-            if self.wrap:
-                ncols = min(ncols, self.wrap)
+                nrows = min(nrows, self.wrap)
+            elif self.plot_type == 'col_only':
                 nrows = (ncols - 1) // self.wrap + 1
+                ncols = min(ncols, self.wrap)
         return nrows, ncols
 
     def get_data_for_every_plot(self):
@@ -214,14 +235,6 @@ class CommonPlot:
         else:
             return [(None, self.data)]
 
-    def create_figure(self):
-        fig, axs = plt.subplots(*self.fig_shape, tight_layout=True, dpi=144, figsize=self.figsize)
-        if self.fig_shape != (1, 1):
-            axs = axs.flatten(order='F')
-        else:
-            axs = [axs]
-        return fig, axs
-
     def get_labels(self, labels):
         if isinstance(labels, tuple):
             return labels
@@ -232,35 +245,78 @@ class CommonPlot:
         else:
             return None, labels
 
+    def get_figsize(self, figsize):
+        if figsize:
+            return figsize
+        else:
+            return self.fig_shape[1] * 3, self.fig_shape[0] * 2
+
+    def create_figure(self):
+        fig, axs = plt.subplots(*self.fig_shape, tight_layout=True, dpi=144, 
+                                figsize=self.figsize, sharex=self.sharex, sharey=self.sharey)
+        if self.fig_shape != (1, 1):
+            axs = axs.flatten(order='F')
+        else:
+            axs = [axs]
+        return fig, axs
+
     def get_final_data(self):
-        # row_label, col_label, ax, x, y
         final_data = []
+        self.total_splits = 1
         for (labels, data), ax in zip(self.data_for_plots, self.axs):
             row_label, col_label = self.get_labels(labels)
             if self.split:
-                for grp, data_grp in data.groupby(self.split):
+                for i, (grp, data_grp) in enumerate(data.groupby(self.split)):
+                    # use i as split number
                     if self.agg:
                         s = data_grp.groupby(self.groupby)[self.agg].agg(self.aggfunc)
                         x, y = s.index, s.values
                     else:
                         x, y = data_grp[self.x], data_grp[self.y]
-                    final_data.append((x, y, ax, grp, row_label, col_label))
+                    final_data.append((x, y, ax, grp, row_label, col_label, i))
+                self.total_splits = i + 1
             elif self.agg:
                 s = data.groupby(self.groupby)[self.agg].agg(self.aggfunc)
                 x, y = s.index, s.values
-                final_data.append((x, y, ax, None, row_label, col_label))
+                final_data.append((x, y, ax, None, row_label, col_label, 0))
             else:
                 x, y = data[self.x], data[self.y]
-                final_data.append((x, y, ax, None, row_label, col_label))
+                final_data.append((x, y, ax, None, row_label, col_label, 0))
         return final_data
+
+    def style_fig(self):
+        for ax in self.axs:
+            ax.tick_params(length=0)
+            ax.set_facecolor('.9')
+            ax.grid(True)
+            ax.set_axisbelow(True)
+            for spine in ax.spines.values():
+                spine.set_visible(False)
+
+    def add_x_y_labels(self):
+        self.fig.text(0, .5, self.y, rotation=90, ha='center', va='center', size='larger')
+        self.fig.text(.6, 0, self.x, ha='center', va='center', size='larger')
+
+    def add_ax_titles(self):
+        for x, y, ax, label, row_label, col_label, split_num in self.final_data:
+            row_label = row_label or ''
+            col_label = col_label or ''
+            if row_label and col_label:
+                title = row_label + ' - ' + col_label
+            else:
+                title = row_label or col_label
+            title = textwrap.fill(title, 30)
+            ax.set_title(title)
 
 
 def line(x, y, data, groupby=None, aggfunc=None, split=None, row=None, col=None, 
+         x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
          orientation='v', sort=False, wrap=None, figsize=None, title=None, sharex=True, 
          sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
          yscale='linear'):
 
         self = CommonPlot(x, y, data, groupby, aggfunc, split, row, col, 
+                          x_order, y_order, split_order, row_order, col_order,
                           orientation, sort, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale)
 
@@ -268,15 +324,105 @@ def line(x, y, data, groupby=None, aggfunc=None, split=None, row=None, col=None,
             raise ValueError('Cannot do line plot when the aggregating '
                              'variable is string/categorical')
 
-        for x, y, ax, label, row_label, col_label in self.final_data:
+        for x, y, ax, label, row_label, col_label, split_num in self.final_data:
+            if x.values.dtype.kind == 'O':
+                categories = [textwrap.fill(cat, 10) for cat in x]
+                x = np.arange(len(x))
+                d = dict(zip(categories, x))
+                formatter = category.StrCategoryFormatter(d)
+                ax.xaxis.set_major_formatter(formatter)
+                
             ax.plot(x, y, label=label)
-            ax.set_xlabel(self.x)
-            ax.set_ylabel(self.y)
+
+        if self.split:
+            handles, labels = self.axs[0].get_legend_handles_labels()
+            self.fig.legend(handles, labels, loc='upper left', bbox_to_anchor=(1, .6))
+        return self.fig
+
+
+def scatter(x, y, data, groupby=None, aggfunc=None, split=None, row=None, col=None, 
+         x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
+         orientation='v', sort=False, wrap=None, figsize=None, title=None, sharex=True, 
+         sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
+         yscale='linear', regression=False):
+
+        self = CommonPlot(x, y, data, groupby, aggfunc, split, row, col, 
+                          x_order, y_order, split_order, row_order, col_order,
+                          orientation, sort, wrap, figsize, title, sharex, 
+                          sharey, xlabel, ylabel, xlim, ylim, xscale, yscale)
+
+        if self.agg_kind == 'O':
+            raise ValueError('Cannot do line plot when the aggregating '
+                             'variable is string/categorical')
+
+        for x, y, ax, label, row_label, col_label, split_num in self.final_data:
+            if x.values.dtype.kind == 'O':
+                categories = [textwrap.fill(cat, 10) for cat in x]
+                x = np.arange(len(x))
+                d = dict(zip(categories, x))
+                formatter = category.StrCategoryFormatter(d)
+                ax.xaxis.set_major_formatter(formatter)
+                
+            ax.scatter(x, y, label=label, alpha=.7)
+            if regression:
+                slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
+                x_line = np.array([x.min(), x.max()])
+                y_line = x_line * slope + intercept
+                ax.plot(x_line, y_line)
+
+        if self.split:
+            handles, labels = self.axs[0].get_legend_handles_labels()
+            self.fig.legend(handles, labels, loc='center left', bbox_to_anchor=(1, .6))
+        return self.fig
+
+
+def bar(x, y, data, groupby=None, aggfunc=None, split=None, row=None, col=None, 
+         x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
+         orientation='v', sort=False, wrap=None, figsize=None, title=None, sharex=True, 
+         sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
+         yscale='linear', size=.92):
+
+        self = CommonPlot(x, y, data, groupby, aggfunc, split, row, col, 
+                          x_order, y_order, split_order, row_order, col_order,
+                          orientation, sort, wrap, figsize, title, sharex, 
+                          sharey, xlabel, ylabel, xlim, ylim, xscale, yscale)
+
+        if self.agg_kind == 'O':
+            raise ValueError('Cannot do line plot when the aggregating '
+                             'variable is string/categorical')
+
+        cur_size = size / self.total_splits
+        for x, y, ax, label, row_label, col_label, split_num in self.final_data:
+            if x.values.dtype.kind == 'O':
+                x = np.arange(len(x)) + cur_size * split_num
+            if len(x) > 200:
+                warnings.warn('You are plotting more than 200 bars. Did you forget to use groupby and aggfunc?')
+            if self.orientation == 'v':
+                ax.bar(x, y, label=label, width=cur_size, align='edge')
+            else:
+                ax.barh(x, y, label=label, height=cur_size, align='edge')
+
+        x, y, ax = self.final_data[0][:3]
+        ncols = self.fig_shape[1]
+        if self.orientation == 'v':
+            categories = [textwrap.fill(cat, 10) for cat in x]
+            x = np.arange(len(x)) + size / 2
+            d = dict(zip(categories, x))
+            for ax in self.fig.axes[-ncols:]:
+                ax.set_xticks(x)
+                ax.set_xticklabels(categories)
+        else:
+            for ax in self.fig.axes[::ncols]:
+                ax.set_yticks(np.arange(len(x)) + size / 2)
+                ax.set_yticklabels(x)
+
+        if self.split:
+            handles, labels = self.axs[0].get_legend_handles_labels()
+            self.fig.legend(handles, labels, loc='upper left', bbox_to_anchor=(1, .6))
+        plt.rcParams['font.size'] = self.orig_fontsize
+        return self.fig
 
         
-        
-
-
 # """
 # The `aggplot` function aggregates a single column of data. To begin,
 # choose the column you would like to aggregate and set it as the `agg`
