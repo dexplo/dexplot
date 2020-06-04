@@ -15,24 +15,23 @@ NONETYPE = type(None)
 class CommonPlot:
 
 
-    def __init__(self, x, y, data, groupby, aggfunc, split, row, col, 
+    def __init__(self, x, y, data, aggfunc, split, row, col, 
                  x_order, y_order, split_order, row_order, col_order,
                  orientation, sort, wrap, figsize, title, sharex, sharey, 
                  xlabel, ylabel, xlim, ylim, xscale, yscale, cmap):
 
-        self.orig_fontsize = plt.rcParams['font.size']
-        plt.rcParams['font.size'] = 7
         self.groups = []
         self.data = self.get_data(data)
         self.x = self.get_col(x)
         self.y = self.get_col(y)
         self.validate_x_y()
-        self.groupby = self.get_col(groupby, True)
+        self.orientation = orientation
+        self.groupby = self.get_col(self.get_groupby(), True)
         self.aggfunc = aggfunc
         self.split = self.get_col(split, True)
         self.row = self.get_col(row, True)
         self.col = self.get_col(col, True)
-        self.orientation = orientation
+        
         self.agg = self.set_agg()
         self.make_groups_categorical()
         
@@ -62,6 +61,8 @@ class CommonPlot:
         self.unique_rows, self.unique_cols = self.get_uniques()
         self.fig_shape = self.get_fig_shape()
         self.figsize = self.get_figsize(figsize)
+        self.original_rcParams = plt.rcParams.copy()
+        self.set_rcParams()
         self.fig, self.axs = self.create_figure()
         self.set_color_cycle()
         self.data_for_plots = self.get_data_for_every_plot()
@@ -69,7 +70,7 @@ class CommonPlot:
         self.style_fig()
         self.add_x_y_labels()
         self.add_ax_titles()
-
+        
     def get_data(self, data):
         if not isinstance(data, pd.DataFrame):
             raise TypeError('`data` must be a pandas DataFrame')
@@ -93,25 +94,16 @@ class CommonPlot:
             return col
 
     def validate_x_y(self):
-        if self.x == self.y:
+        if self.x == self.y and self.x is not None and self.y is not None:
             raise ValueError('`x` and `y` cannot be the same column name')
 
-    def set_agg(self):
-        if self.groupby is None:
-            if self.aggfunc is not None:
-                raise ValueError('You can only set `aggfunc` when `groupby` is given')
+    def get_groupby(self):
+        if self.x is None or self.y is None:
             return
-        elif self.aggfunc is None:
-            raise ValueError('If you provide `groupby`, then you must also provide `aggfunc`')
-        
-        if self.orientation == 'v':
-            if self.x != self.groupby:
-                raise ValueError('When grouping with vertical orientation, `x` and `groupby` must be the same columns')
-            return self.y
-        elif self.y != self.groupby:
-            raise ValueError('When grouping with horizontal orientation, `y` and `groupby` must be the same columns')
-        else:
-            return self.x
+        return self.x if self.orientation == 'v' else self.y
+
+    def set_agg(self):
+        return self.y if self.orientation == 'v' else self.x
 
     def make_groups_categorical(self):
         category_cols = [self.groupby, self.split, self.row, self.col]
@@ -211,10 +203,6 @@ class CommonPlot:
         if self.agg:
             # string and category use 'O'
             agg_kind = self.data[self.agg].dtype.kind
-
-            if agg_kind not in ['i', 'f', 'b', 'O']:
-                raise TypeError('The data type for the `agg` column must either be boolean, integer, '
-                                f'float, or categorical/object/string and not {agg_data.dtype}')
             return agg_kind
 
     def set_index(self):
@@ -285,8 +273,8 @@ class CommonPlot:
             return self.fig_shape[1] * 4, self.fig_shape[0] * 3
 
     def create_figure(self):
-        fig, axs = plt.subplots(*self.fig_shape, tight_layout=True, dpi=144, 
-                                figsize=self.figsize, sharex=self.sharex, sharey=self.sharey)
+        fig = plt.Figure(tight_layout=True, dpi=144, figsize=self.figsize)
+        axs = fig.subplots(*self.fig_shape, sharex=self.sharex, sharey=self.sharey)
         if self.fig_shape != (1, 1):
             axs = axs.flatten(order='F')
         else:
@@ -306,42 +294,68 @@ class CommonPlot:
             x, y = y, x
         return x, y
 
+    def get_wide_data(self, data):
+        x = data.index.values
+        y = {col: data[col].values for col in data.columns}
+        if self.orientation == 'h':
+            x, y = y, x
+        return x, y
+
+    def get_wide_columns(self, data):
+        cols = []
+        used_cols = [self.groupby, self.split, self.row, self.col]
+        for col in data.columns:
+            if col not in used_cols:
+                cols.append(col)
+        return cols
+
     def get_final_data(self):
         final_data = defaultdict(list)
         for (labels, data), ax in zip(self.data_for_plots, self.axs):
             row_label, col_label = self.get_labels(labels)
             if self.split:
                 for grp, data_grp in data.groupby(self.split):
-                    if self.aggfunc == '__ignore__':
+                    if self.x is None or self.y is None:
+                        # wide data
+                        for col in self.get_wide_columns(data_grp):
+                            x, y = self.get_correct_data_order(data_grp[col])
+                            final_data[ax].append((x, y, grp, col, row_label, col_label))
+                    elif self.aggfunc is None:
                         # no aggregation - splitting data into groups (for distribution plots)
                         column_data = []
                         labels = []
                         for grp_grp, data_grp_grp in data_grp.groupby(self.groupby):
-                            column_data.append(data_grp_grp[self.agg])
-                            labels.append(grp_grp)
-                        x, y = column_data, labels
+                            x, y = self.get_correct_data_order(data_grp_grp[self.agg])
+                            final_data[ax].append((x, y, grp, grp_grp, row_label, col_label))
                     elif self.agg:
                         s = data_grp.groupby(self.groupby)[self.agg].agg(self.aggfunc)
                         x, y = self.get_correct_data_order(s)
+                        final_data[ax].append((x, y, grp, None, row_label, col_label))
                     else:
                         x, y = self.get_correct_data_order(data_grp[self.x], data_grp[self.y])
-                    final_data[ax].append((x, y, grp, row_label, col_label))
-            elif self.aggfunc == '__ignore__':
-                # no aggregation - splitting data into groups (for distribution plots)
-                column_data = []
-                labels = []
-                for grp, data_grp in data.groupby(self.groupby):
-                    column_data.append(data_grp[self.agg])
-                    labels.append(grp)
-                x, y = column_data, labels
-                final_data[ax].append((x, y, None, row_label, col_label))
+                        final_data[ax].append((x, y, grp, None, row_label, col_label))
+            elif self.aggfunc is None:
+                if self.x is None or self.y is None:
+                        # wide data
+                        for col in self.get_wide_columns(data):
+                            x, y = self.get_correct_data_order(data[col])
+                            final_data[ax].append((x, y, None, col, row_label, col_label))
+                elif self.groupby is None:
+                    # simple raw plot - make sure to warn when lots of data for bar/box/hist
+                    # one graph per row - OK for scatterplots and line plots
+                    x, y = self.get_correct_data_order(data[self.x], data[self.y])
+                    final_data[ax].append((x, y, None, None, row_label, col_label))
+                else:
+                    for grp, data_grp in data.groupby(self.groupby):
+                        x, y = self.get_correct_data_order(data_grp[self.agg])
+                        final_data[ax].append((x, y, None, grp, row_label, col_label))
             elif self.agg:
                 s = data.groupby(self.groupby)[self.agg].agg(self.aggfunc)
                 x, y = self.get_correct_data_order(s)
-                final_data[ax].append((x, y, None, row_label, col_label))
+                final_data[ax].append((x, y, None, None, row_label, col_label))
             else:
-                x, y = self.get_correct_data_order(data[self.x], data[self.y])
-                final_data[ax].append((x, y, ax, None, row_label, col_label))
+                raise ValueError('SHOULD NOT ERROR. Please report this issue '
+                                 'on github.com/dexplo/dexplot')
         return final_data
 
     def style_fig(self):
@@ -359,7 +373,7 @@ class CommonPlot:
 
     def add_ax_titles(self):
         for ax, info in self.final_data.items():
-            x, y, label, row_label, col_label = info[0]
+            row_label, col_label = info[0][-2:]
             row_label = row_label or ''
             col_label = col_label or ''
             if row_label and col_label:
@@ -369,14 +383,50 @@ class CommonPlot:
             title = textwrap.fill(title, 30)
             ax.set_title(title)
 
+    def set_rcParams(self):
+        plt.rcParams['font.size'] = 6
+        plt.rcParams['font.family'] = 'Helvetica'
 
-def line(x, y, data, groupby=None, aggfunc=None, split=None, row=None, col=None, 
+    def get_x_y_plot(self, x, y):
+        x_plot, y_plot = x, y
+        if x_plot.dtype.kind == 'O':
+            x_plot = np.arange(len(x_plot))
+        if y_plot.dtype.kind == 'O':
+            y_plot = np.arange(len(y_plot))
+        return x_plot, y_plot
+
+    def add_ticklabels(self, x, y, ax, delta=0):
+        if x.dtype.kind == 'O':
+            x_num = np.arange(len(x)) + delta
+            categories = [textwrap.fill(cat, 10) for cat in x]
+            ax.set_xticks(x_num)
+            ax.set_xticklabels(categories)
+
+        if y.dtype.kind == 'O':
+            y_num = np.arange(len(y)) + delta
+            categories = [textwrap.fill(cat, 10) for cat in y]
+            ax.set_yticks(y_num)
+            ax.set_yticklabels(categories)
+
+    def add_legend(self, handles=None, labels=None):
+        if self.split:
+            if handles is None:
+                handles, labels = self.axs[0].get_legend_handles_labels()
+            self.fig.legend(handles, labels, loc='upper left', bbox_to_anchor=(1.01, .8), 
+                            title=self.split)
+
+    def clean_up(self):
+        plt.rcParams = self.original_rcParams
+        return self.fig
+
+
+def line(x, y, data, aggfunc=None, split=None, row=None, col=None, 
          x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
          orientation='v', sort=False, wrap=None, figsize=None, title=None, sharex=True, 
          sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
          yscale='linear', cmap=None):
 
-        self = CommonPlot(x, y, data, groupby, aggfunc, split, row, col, 
+        self = CommonPlot(x, y, data, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, sort, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap)
@@ -386,39 +436,21 @@ def line(x, y, data, groupby=None, aggfunc=None, split=None, row=None, col=None,
                              'variable is string/categorical')
 
         for ax, info in self.final_data.items():
-            for x, y, label, row_label, col_label in info:
-                x_plot, y_plot = x, y
-                if x_plot.dtype.kind == 'O':
-                    x_plot = np.arange(len(x_plot))
-                if y_plot.dtype.kind == 'O':
-                    y_plot = np.arange(len(y_plot))
-                
+            for x, y, label, col_name, row_label, col_label in info:
+                x_plot, y_plot = get_x_y_plot(x, y)
                 ax.plot(x_plot, y_plot, label=label)
-                    
-            if x.dtype.kind == 'O':
-                x_num = np.arange(len(x))
-                categories = [textwrap.fill(cat, 10) for cat in x]
-                ax.set_xticks(x_num)
-                ax.set_xticklabels(categories)
-            if y.dtype.kind == 'O':
-                y_num = np.arange(len(y))
-                categories = [textwrap.fill(cat, 10) for cat in y]
-                ax.set_yticks(y_num)
-                ax.set_yticklabels(categories)
-                
-        if self.split:
-            handles, labels = self.axs[0].get_legend_handles_labels()
-            self.fig.legend(handles, labels, loc='center left', bbox_to_anchor=(1, .6))
-        return self.fig
-
-
-def scatter(x, y, data, groupby=None, aggfunc=None, split=None, row=None, col=None, 
+            self.add_ticklabels(x, y, ax)
+        
+        self.add_legend()
+        return self.clean_up()
+        
+def scatter(x, y, data, aggfunc=None, split=None, row=None, col=None, 
             x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
             orientation='v', sort=False, wrap=None, figsize=None, title=None, sharex=True, 
             sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
             yscale='linear', cmap=None, regression=False):
 
-        self = CommonPlot(x, y, data, groupby, aggfunc, split, row, col, 
+        self = CommonPlot(x, y, data, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, sort, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap)
@@ -428,34 +460,27 @@ def scatter(x, y, data, groupby=None, aggfunc=None, split=None, row=None, col=No
                              'variable is string/categorical')
 
         for ax, info in self.final_data.items():
-            for x, y, label, row_label, col_label in info:
-                if x.dtype.kind == 'O':
-                    categories = [textwrap.fill(cat, 10) for cat in x]
-                    x = np.arange(len(x))
-                    d = dict(zip(categories, x))
-                    formatter = category.StrCategoryFormatter(d)
-                    ax.xaxis.set_major_formatter(formatter)
-                    
-                ax.scatter(x, y, label=label, alpha=.7)
+            for x, y, label, col_name, row_label, col_label in info:
+                x_plot, y_plot = get_x_y_plot(x, y)
+                ax.scatter(x_plot, y_plot, label=label, alpha=.7)
                 if regression:
                     slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
                     x_line = np.array([x.min(), x.max()])
                     y_line = x_line * slope + intercept
                     ax.plot(x_line, y_line)
+            self.add_ticklabels(x, y, ax)
 
-        if self.split:
-            handles, labels = self.axs[0].get_legend_handles_labels()
-            self.fig.legend(handles, labels, loc='center left', bbox_to_anchor=(1, .6))
-        return self.fig
+        self.add_legend()
+        return self.clean_up()
 
 
-def bar(x, y, data, groupby=None, aggfunc=None, split=None, row=None, col=None, 
+def bar(x, y, data, aggfunc=None, split=None, row=None, col=None, 
         x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
-        orientation='v', sort=False, wrap=None, figsize=None, title=None, sharex=True, 
+        orientation='v', stacked=False, sort=False, wrap=None, figsize=None, title=None, sharex=True, 
         sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
         yscale='linear', cmap=None, size=.92):
 
-        self = CommonPlot(x, y, data, groupby, aggfunc, split, row, col, 
+        self = CommonPlot(x, y, data, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, sort, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap)
@@ -464,46 +489,28 @@ def bar(x, y, data, groupby=None, aggfunc=None, split=None, row=None, col=None,
             raise ValueError('Cannot do line plot when the aggregating '
                              'variable is string/categorical')
 
-        
         for ax, info in self.final_data.items():
             cur_size = size / len(info)
-            for i, (x, y, label, row_label, col_label) in enumerate(info):
-                if self.orientation == 'v' and x.dtype.kind == 'O':
-                    x = np.arange(len(x)) + cur_size * i
-                elif self.orientation == 'h' and y.dtype.kind == 'O':
-                    y = np.arange(len(y)) + cur_size * i
-
+            for i, (x, y, label, col_name, row_label, col_label) in enumerate(info):
+                x_plot, y_plot = get_x_y_plot(x, y)
                 if len(x) > 200:
-                    warnings.warn('You are plotting more than 200 bars. Did you forget to use groupby and aggfunc?')
+                    warnings.warn('You are plotting more than 200 bars. '
+                                  'Did you forget to privde an `aggfunc`?')
 
                 if self.orientation == 'v':
-                    ax.bar(x, y, label=label, width=cur_size, align='edge')
+                    x_plot += cur_size * i
+                    ax.bar(x_plot, y_plot, label=label, width=cur_size, align='edge')
                 else:
-                    ax.barh(y, x, label=label, height=cur_size, align='edge')
+                    y_plot += cur_size * i
+                    ax.barh(y_plot, x_plot, label=label, height=cur_size, align='edge')
+            self.add_ticklabels(x, y, ax, delta=size / 2)
 
-        x, y = self.final_data[self.fig.axes[0]][0][:2]
-        ncols = self.fig_shape[1]
-        if self.orientation == 'v':
-            categories = [textwrap.fill(cat, 10) for cat in x]
-            x = np.arange(len(x)) + size / 2
-            d = dict(zip(categories, x))
-            for ax in self.fig.axes[-ncols:]:
-                ax.set_xticks(x)
-                ax.set_xticklabels(categories)
-        else:
-            for ax in self.fig.axes[::ncols]:
-                ax.set_yticks(np.arange(len(y)) + size / 2)
-                ax.set_yticklabels(y)
+        self.add_legend()
+        return self.clean_up()
 
-        if self.split:
-            handles, labels = self.axs[0].get_legend_handles_labels()
-            self.fig.legend(handles, labels, loc='center left', bbox_to_anchor=(1, .6))
-        plt.rcParams['font.size'] = self.orig_fontsize
-        return self.fig
-
-
-def box(x, y, data, split=None, row=None, col=None, x_order=None, y_order=None, 
-        split_order=None, row_order=None, col_order=None, orientation='h', sort=False, 
+# could add groupby to box
+def box(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None, 
+        y_order=None, split_order=None, row_order=None, col_order=None, orientation='h', sort=False, 
         wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
         ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
         notch=None, sym=None, whis=None, positions=None, widths=None, patch_artist=None,
@@ -511,11 +518,62 @@ def box(x, y, data, split=None, row=None, col=None, x_order=None, y_order=None,
         showcaps=None, showbox=None, showfliers=None, boxprops=None, labels=None, flierprops=None,
         medianprops=None, meanprops=None, capprops=None, whiskerprops=None, manage_ticks=True,
         autorange=False, zorder=None):
+        
+        aggfunc = None
+        self = CommonPlot(x, y, data, aggfunc, split, row, col, 
+                          x_order, y_order, split_order, row_order, col_order,
+                          orientation, sort, wrap, figsize, title, sharex, 
+                          sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap)
 
-        groupby = y if orientation == 'h' else x
-        aggfunc = '__ignore__'
+        vert = self.orientation == 'v'
+        for ax, info in self.final_data.items():
+            cur_data = defaultdict(list)
+            cur_ticklabels = defaultdict(list)
+            for x, y, split_label, col_name, row_label, col_label in info:
+                if vert:
+                    cur_data[split_label].append(y)
+                else:
+                    cur_data[split_label].append(x)
+                cur_ticklabels[split_label].append(col_name)
 
-        self = CommonPlot(x, y, data, groupby, aggfunc, split, row, col, 
+            handles = []
+            split_labels = []
+            ticklabels = []
+            other_info = {}
+            n_splits = len(cur_data)
+            widths = .85 / n_splits
+            for i, (split_label, data) in enumerate(cur_data.items()):
+                n = len(data)
+                n_boxes = len(cur_data) * n
+                markersize = max(6 - n_boxes // 5, 2)
+                positions = np.arange(n) + i * widths
+                box = ax.boxplot(data, vert=vert, positions=positions, widths=widths, 
+                                 patch_artist=True, 
+                                 boxprops={'facecolor': self.colors[i % len(self.colors)] ,'edgecolor': 'black'},
+                                 medianprops={'color': '.2'}, 
+                                 flierprops={'markersize': markersize})
+                handles.append(box['boxes'][0])
+                split_labels.append(split_label)
+            delta = (n_splits / 2 - .5) * widths
+            ticklabels = cur_ticklabels[split_label]
+            if vert:
+                ax.set_xticks(np.arange(n) + delta)
+                ax.set_xticklabels(ticklabels)
+            else:
+                ax.set_yticks(np.arange(n) + delta)
+                ax.set_yticklabels(ticklabels)
+
+        self.add_legend(handles, split_labels)
+        return self.clean_up()
+
+
+def violin(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None, y_order=None, 
+           split_order=None, row_order=None, col_order=None, orientation='h', sort=False, 
+           wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
+           ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None):
+
+        aggfunc = None
+        self = CommonPlot(x, y, data, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, sort, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap)
@@ -524,26 +582,50 @@ def box(x, y, data, split=None, row=None, col=None, x_order=None, y_order=None,
         for ax, info in self.final_data.items():
             handles = []
             labels = []
-            widths = .9 / len(info)
-            for i, (x, y, label, row_label, col_label) in enumerate(info):
+            n_splits = len(info)
+            widths = .9 / n_splits
+            for i, (x, y, label, col_name, row_label, col_label) in enumerate(info):
                 positions = np.arange(len(x)) + i * widths
-                box = ax.boxplot(x, vert=vert, positions=positions, widths=widths, 
-                                 patch_artist=True, 
-                                 boxprops={'facecolor': self.colors[i] ,'edgecolor': 'black'},
-                                 medianprops={'color': '.2'}, 
-                                 flierprops={'markersize': np.sqrt(widths) * 6})
-                handles.append(box['boxes'][0])
+                box = ax.violinplot(x, vert=vert, positions=positions, widths=widths,
+                                    showmeans=True, showextrema=False)
+                handles.append(box['bodies'][0])
                 labels.append(label)
+
+            delta = (n_splits / 2 - .5) * widths
             if vert:
-                ax.set_xticks(positions // 1 + .45)
+                ax.set_xticks(np.arange(len(x)) + delta)
                 ax.set_xticklabels(y)
             else:
-                ax.set_yticks(positions // 1 + .45)
+                ax.set_yticks(np.arange(len(x)) + delta)
                 ax.set_yticklabels(y)
 
-        if self.split:
-            self.fig.legend(handles, labels, loc='upper left', bbox_to_anchor=(1, .8))
-        return self.fig
+        self.add_legend(handles, labels)
+        return self.clean_up()
+
+def hist(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None, y_order=None, 
+           split_order=None, row_order=None, col_order=None, orientation='h', sort=False, 
+           wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
+           ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None,
+           bins=None, range=None, density=False, weights=None, cumulative=False, bottom=None,
+           histtype='bar', align='mid', rwidth=None, log=False,
+           stacked=False):
+
+        aggfunc = None
+        self = CommonPlot(x, y, data, aggfunc, split, row, col, 
+                          x_order, y_order, split_order, row_order, col_order,
+                          orientation, sort, wrap, figsize, title, sharex, 
+                          sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap)
+
+        orientation = 'vertical' if self.orientation == 'v' else 'horizontal'
+        for ax, info in self.final_data.items():
+            handles = []
+            labels = []
+            n_splits = len(info)
+            for i, (x, y, label, col_name, row_label, col_label) in enumerate(info):
+                ax.hist(x, orientation=orientation, label=label)
+
+        self.add_legend()
+        return self.clean_up()
 
         
 # """
