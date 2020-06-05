@@ -1,4 +1,3 @@
-
 # Dexplot
 
 A Python library for making data visualizations.
@@ -16,7 +15,7 @@ The primary goals for dexplot are:
 
 `pip install dexplot`
 
-# Comparison with Seaborn
+## Comparison with Seaborn
 
 If you have used the seaborn library, then you should notice a lot of similarities. Much of Dexplot was inspired by Seaborn. Below is a list of the extra features in dexplot not found in seaborn
 
