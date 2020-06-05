@@ -5,7 +5,7 @@ from collections import defaultdict
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib import ticker, category
+from matplotlib import ticker
 from matplotlib.colors import Colormap
 from scipy import stats
 
@@ -18,7 +18,8 @@ class CommonPlot:
     def __init__(self, x, y, data, aggfunc, split, row, col, 
                  x_order, y_order, split_order, row_order, col_order,
                  orientation, sort, wrap, figsize, title, sharex, sharey, 
-                 xlabel, ylabel, xlim, ylim, xscale, yscale, cmap):
+                 xlabel, ylabel, xlim, ylim, xscale, yscale, cmap, 
+                 x_textwrap, y_textwrap):
 
         self.groups = []
         self.data = self.get_data(data)
@@ -54,6 +55,8 @@ class CommonPlot:
         self.xscale = xscale
         self.yscale = yscale
         self.colors = self.get_colors(cmap)
+        self.x_textwrap = x_textwrap
+        self.y_textwrap = y_textwrap
 
         self.validate_args(figsize)
         self.plot_type = self.get_plot_type()
@@ -459,8 +462,21 @@ class CommonPlot:
                 spine.set_visible(False)
 
     def add_x_y_labels(self):
-        self.fig.text(0, .5, self.y, rotation=90, ha='center', va='center', size='larger')
-        self.fig.text(.5, 0, self.x, ha='center', va='center', size='larger')
+        rows, cols = self.fig_shape
+        top_left_ax, bottom_right_ax = self.axs[0], self.axs[rows * cols - 1]
+        top_left_points = top_left_ax.get_position().get_points()
+        bottom_right_points = bottom_right_ax.get_position().get_points()
+
+        left = top_left_points[0][0]
+        right = bottom_right_points[1][0]
+        x = (right + left) / 2
+        print(x)
+
+        top = top_left_points[1][1]
+        bottom = bottom_right_points[0][1]
+        y = (top + bottom) / 2
+        self.fig.text(0, y, self.y, rotation=90, ha='center', va='center', size='larger')
+        self.fig.text(x, 0, self.x, ha='center', va='center', size='larger')
 
     def add_ax_titles(self):
         for ax, info in self.final_data.items():
@@ -495,9 +511,8 @@ class CommonPlot:
 
         if y.dtype.kind == 'O':
             y_num = np.arange(len(y)) + delta
-            categories = [textwrap.fill(str(cat), 10) for cat in y]
             ax.set_yticks(y_num)
-            ax.set_yticklabels(categories)
+            ax.set_yticklabels(y)
 
     def add_legend(self, handles=None, labels=None):
         if self.split:
