@@ -1,16 +1,22 @@
 import numpy as np
 from scipy.stats import gaussian_kde
-import matplotlib.pyplot as plt
 
-DATASETS = {
-    'airbnb': 'asdf'
-}
+RAW_URL = 'https://raw.githubusercontent.com/dexplo/dexplot/master/data/{name}.csv'
+DATASETS = ['airbnb']
 
 def load_dataset(name):
+    """
+    Load a dataset. Must be connected to the internet
+
+    Datasets
+    --------
+    airbnb
+    """
     if name not in DATASETS:
-        names = ', '.join(DATASETS)
-        raise KeyError(f'Dataset {name} does not exist. Choose one of the following: {names}')
-    pd.read_csv()
+        raise KeyError(f'Dataset {name} does not exist. Choose one of the following: {DATASETS}')
+
+    url = RAW_URL.format(name=name)
+    return pd.read_csv(url)
 
 
 def _calculate_density(data):
