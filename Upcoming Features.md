@@ -10,6 +10,7 @@
 
 # Upcoming Features
 * parameter for wrapping text (default 10)
+* allow user access to entire dataframe in custom aggfunc
 
 * [ ] kde with annotations, allow for binning
 * [ ] scatter with kde

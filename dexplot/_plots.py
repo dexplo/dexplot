@@ -48,7 +48,7 @@ def scatter(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=N
             self.add_ticklabels(x, y, ax)
 
         self.add_legend()
-         if x.dtype == 'O' or y.dtype == 'O':
+        if x.dtype == 'O' or y.dtype == 'O':
             self.update_fig_size(len(x), 1)
         return self.clean_up()
 
@@ -57,12 +57,21 @@ def bar(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None,
         x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
         orientation='v', stacked=False, sort='lex_asc', wrap=None, figsize=None, title=None, sharex=True, 
         sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
-        yscale='linear', cmap=None, size=.92):
+        yscale='linear', cmap=None, size=.92, bar_kwargs=None):
 
         self = CommonPlot(x, y, data, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, sort, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap)
+
+        default_bar_kwargs = {'ec': 'white', 'alpha': .9}
+        if bar_kwargs is None:
+            bar_kwargs = default_bar_kwargs
+        else:
+            try:
+                bar_kwargs = {**default_bar_kwargs, **bar_kwargs}
+            except:
+                raise TypeError('`bar_kwargs` must be a dictionary')
 
         for ax, info in self.final_data.items():
             cur_size = size / len(info)
@@ -74,10 +83,10 @@ def bar(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None,
 
                 if self.orientation == 'v':
                     x_plot = x_plot + cur_size * i
-                    ax.bar(x_plot, y_plot, label=label, width=cur_size, align='edge')
+                    ax.bar(x_plot, y_plot, label=label, width=cur_size, align='edge', **bar_kwargs)
                 else:
                     y_plot = y_plot + cur_size * i
-                    ax.barh(y_plot, x_plot, label=label, height=cur_size, align='edge')
+                    ax.barh(y_plot, x_plot, label=label, height=cur_size, align='edge', **bar_kwargs)
             self.add_ticklabels(x, y, ax, delta=size / 2)
 
         self.add_legend()

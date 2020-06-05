@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from scipy.stats import gaussian_kde
 
 RAW_URL = 'https://raw.githubusercontent.com/dexplo/dexplot/master/data/{name}.csv'

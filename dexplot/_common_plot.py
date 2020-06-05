@@ -61,6 +61,7 @@ class CommonPlot:
         self.data = self.set_index()
         self.unique_rows, self.unique_cols = self.get_uniques()
         self.fig_shape = self.get_fig_shape()
+        self.user_figsize = figsize is not None
         self.figsize = self.get_figsize(figsize)
         self.original_rcParams = plt.rcParams.copy()
         self.set_rcParams()
@@ -310,6 +311,28 @@ class CommonPlot:
             order = np.lexsort([x, -y])
         return x[order], y[order]
 
+    def get_order(self, arr, vals):
+        arr = arr.tolist()
+        order = []
+        for val in vals:
+            try:
+                idx = arr.index(val)
+            except ValueError:
+                raise ValueError(f'{val} is not a valid column value')
+            order.append(idx)
+        return order
+
+    def order_xy(self, x, y):
+        if self.x_order:
+            order = self.get_order(x, self.x_order)
+            x = x[order]
+            y = y[order]
+        elif self.y_order:
+            order = self.get_order(y, self.y_order)
+            x = x[order]
+            y = y[order]
+        return x, y
+
     def get_correct_data_order(self, x, y=None):
         if y is None:
             x, y = x.index.values, x.values
@@ -317,6 +340,7 @@ class CommonPlot:
             x, y = x.values, y.values
 
         x, y = self.sort_xy(x, y)
+        x, y = self.order_xy(x, y)
         if self.orientation == 'h':
             x, y = y, x
         return x, y
@@ -336,13 +360,34 @@ class CommonPlot:
                 cols.append(col)
         return cols
 
+    def split_groups(self, data):
+        order = []
+        groups = []
+        for grp, data_grp in data.groupby(self.split, sort=self.groupby_sort):
+            order.append((grp, data_grp))
+            groups.append(grp)
+
+        if self.split_order:
+            new_order = []
+            for split in self.split_order:
+                try:
+                    idx = groups.index(split)
+                except ValueError:
+                    raise ValueError(f'Value {split} from `split_order` is '
+                                     'not in column {self.split}')
+        
+                new_order.append(idx)
+            order = [order[i] for i in new_order]
+        return order
+
+
     def get_final_data(self):
         # create list of data for each call to plotting method
         final_data = defaultdict(list)
         for (labels, data), ax in zip(self.data_for_plots, self.axs):
             row_label, col_label = self.get_labels(labels)
             if self.split:
-                for grp, data_grp in data.groupby(self.split, sort=self.groupby_sort):
+                for grp, data_grp in self.split_groups(data):
                     if self.x is None or self.y is None:
                         if self.x:
                             x, y = self.get_correct_data_order(data_grp[self.x])
@@ -467,7 +512,9 @@ class CommonPlot:
         return self.fig
 
     def update_fig_size(self, n_splits, n_groups_per_split):
-        new_size = 1.5 + (.25 + .05 * n_splits) * n_groups_per_split
+        if self.user_figsize:
+            return
+        new_size = 1.5 + (.3 + .06 * n_splits) * n_groups_per_split
         if self.orientation == 'v':
             height = max(2.5 - .3 * self.fig_shape[0], 1.2)
             width = new_size * .9 * self.fig_shape[1]
