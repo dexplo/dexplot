@@ -310,7 +310,6 @@ class CommonPlot:
             order = np.lexsort([x, -y])
         return x[order], y[order]
 
-
     def get_correct_data_order(self, x, y=None):
         if y is None:
             x, y = x.index.values, x.values
@@ -466,3 +465,16 @@ class CommonPlot:
     def clean_up(self):
         plt.rcParams = self.original_rcParams
         return self.fig
+
+    def update_fig_size(self, n_splits, n_groups_per_split):
+        new_size = 1.5 + (.25 + .05 * n_splits) * n_groups_per_split
+        if self.orientation == 'v':
+            height = max(2.5 - .3 * self.fig_shape[0], 1.2)
+            width = new_size * .9 * self.fig_shape[1]
+            height = height * self.fig_shape[0]
+        else:
+            width = max(3 - .3 * self.fig_shape[1], 1.5)
+            height = new_size * .9 * self.fig_shape[1]
+            width = width * self.fig_shape[0]
+        width, height = min(width, 25), min(height, 25)
+        self.fig.set_size_inches(width, height)

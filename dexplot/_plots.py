@@ -21,6 +21,8 @@ def line(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None
             self.add_ticklabels(x, y, ax)
         
         self.add_legend()
+        if x.dtype == 'O' or y.dtype == 'O':
+            self.update_fig_size(len(x), 1)
         return self.clean_up()
         
 def scatter(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None, 
@@ -46,6 +48,8 @@ def scatter(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=N
             self.add_ticklabels(x, y, ax)
 
         self.add_legend()
+         if x.dtype == 'O' or y.dtype == 'O':
+            self.update_fig_size(len(x), 1)
         return self.clean_up()
 
 
@@ -77,19 +81,7 @@ def bar(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None,
             self.add_ticklabels(x, y, ax, delta=size / 2)
 
         self.add_legend()
-        n_splits = len(info)
-        n = len(x)
-        new_size = 1.5 + (.25 + .05 * n_splits) * n
-        if self.orientation == 'v':
-            height = max(2.5 - .3 * self.fig_shape[0], 1.2)
-            width = new_size * .9 * self.fig_shape[1]
-            height = height * self.fig_shape[0]
-        else:
-            width = max(3 - .3 * self.fig_shape[1], 1.5)
-            height = new_size * .9 * self.fig_shape[1]
-            width = width * self.fig_shape[0]
-        width, height = min(width, 25), min(height, 25)
-        self.fig.set_size_inches(width, height)
+        self.update_fig_size(len(info), len(x))
         return self.clean_up()
 
 def count(val, data=None, normalize=None, split=None, row=None, col=None, 
@@ -118,6 +110,7 @@ def count(val, data=None, normalize=None, split=None, row=None, col=None,
             self.add_ticklabels(x, y, ax, delta=size / 2)
 
         self.add_legend()
+        self.update_fig_size(len(info), len(x))
         return self.clean_up()
 
 def _common_dist(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None, 
@@ -180,19 +173,7 @@ def _common_dist(x=None, y=None, data=None, split=None, row=None, col=None, x_or
                 ax.set_yticklabels(ticklabels)
 
         self.add_legend(handles, split_labels)
-        # adjust figure size
-        new_size = 1.2 + (.2 + .05 * n_splits) * n
-        if self.orientation == 'v':
-            height = max(3 - .3 * self.fig_shape[0], 1.5)
-            width = new_size * .9 ** self.fig_shape[1]
-            height = height * self.fig_shape[0]
-        else:
-            width = max(3 - .3 * self.fig_shape[1], 1.5)
-            height = new_size * .9 ** self.fig_shape[1]
-            width = width * self.fig_shape[0]
-        width, height = min(width, 25), min(height, 25)
-        self.fig.set_size_inches(width, height)
-
+        self.update_fig_size(n_splits, n)
         return self.clean_up()
 
 # could add groupby to box
@@ -269,6 +250,7 @@ def hist(val, data=None, split=None, row=None, col=None, x_order=None, y_order=N
                 ax.hist(val, orientation=orientation, label=label, **kwargs, ec='white', lw=1, alpha=.8)
 
         self.add_legend()
+        self.update_fig_size(n_splits, len(x))
         return self.clean_up()
 
 # """
