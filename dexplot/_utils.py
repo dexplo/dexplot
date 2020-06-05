@@ -2,33 +2,15 @@ import numpy as np
 from scipy.stats import gaussian_kde
 import matplotlib.pyplot as plt
 
+DATASETS = {
+    'airbnb': 'asdf'
+}
 
-def _calculate_figsize(nrows, ncols):
-    return ncols * 2 + 8, nrows * 2 + 4
-
-
-def _get_fig_shape(n, wrap, is_row):
-    if is_row:
-        if wrap is None:
-            return n, 1
-        else:
-            return wrap, int(np.ceil(n / wrap))
-    else:
-        if wrap is None:
-            return 1, n
-        else:
-            return int(np.ceil(n / wrap)), wrap
-
-
-def _map_val_to_color(vals):
-    n = len(vals)
-    if n <= 10:
-        colors = plt.cm.tab10(range(n))
-    elif n <= 20:
-        colors = plt.cm.tab20(range(n))
-    else:
-        colors = plt.cm.viridis(n)
-    return dict(zip(vals, colors))
+def load_dataset(name):
+    if name not in DATASETS:
+        names = ', '.join(DATASETS)
+        raise KeyError(f'Dataset {name} does not exist. Choose one of the following: {names}')
+    pd.read_csv()
 
 
 def _calculate_density(data):

@@ -4,9 +4,12 @@
   * ax.get_position() after fig.canvas.draw()
 * size figure by number of bars/boxes/etc
 * allow user to set by axes
+* font size proportion to number of labels
+* all text in figure proportional to number of items in figuer
 
 
 # Upcoming Features
+* parameter for wrapping text (default 10)
 
 * [ ] kde with annotations, allow for binning
 * [ ] scatter with kde
@@ -23,40 +26,6 @@
 * [ ] option to add counts to all aggregate plots
 * [ ] have `agg` and `y` for `aggplot`/`jointplot` take a list of variables. Have option to split the plots
         into new Axes
-
-## Redeign API
-
-* df.agg.plotname(data, agg, aggfunc, groupby, groupby2, groupby_row, groupby_col, data, orient, 
-                  sort,wrap, figsize, title, sharex, sharey, xlabel, ylabel, xlim,
-                  ylim, xscale, yscale, kwargs)
-        * line - c, cmap, lw, ls, marker, ms, mec, mew
-        * bar - stacked
-        * count - no agg, line - boolean to use line instead
-        * scatter - marker
-        * box
-        * hist
-        * kde
-
-* df.raw.plotname(x, y)
-
-
-### Next idea
-
-* df.long
-* df.wide(x, y)
-  * x will be index
-  * y will be all columns by default
-  * can be explicit with df.wide.scatter(x='', y='')
-
-dxp.long.bar(x='dept', y='salary', data=df, groupby='dept', groupby2='race', aggfunc='mean')
-dxp.long.scatter(x='exp', y='salary', groupby='dept') no aggregation needed
-
-### wide
-
-Used when pivot table already created
-
-dxp.wide.bar() - default - plot all columns, use index as x, values as y
-dxp.wide.bar(x='dept', y='salary', groupby='race')
 
 ### One entry point again
 
@@ -80,4 +49,7 @@ dxp.kde(x, y, data, split, row, col) - 2d KDEs
 dxp.box(x, y, data, split, row, col) boxplots can have x and y
 
 Other plots
+* kde
+* heat
+* hexplot
 * mosaic
