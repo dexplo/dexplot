@@ -41,10 +41,32 @@ class TestSort:
         ticklabels = [t.get_text() for t in fig.axes[0].get_xticklabels()]
         ticklabels = [label.replace('\n', ' ') for label in ticklabels]
         values = [p.get_height() for p in fig.axes[0].patches]
-        
+
         s = airbnb.groupby('neighborhood')['price'].median().sort_values()
         correct_labels = s.index.tolist()
         correct_values = s.values.tolist()
         assert ticklabels == correct_labels
         assert values == correct_values
+
+    def test_desc_values(self):
+        fig = dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median', sort='desc')
+        ticklabels = [t.get_text() for t in fig.axes[0].get_xticklabels()]
+        ticklabels = [label.replace('\n', ' ') for label in ticklabels]
+        values = [p.get_height() for p in fig.axes[0].patches]
         
+        df = airbnb.groupby('neighborhood').agg({'price': 'median'}).reset_index() \
+                   .sort_values(['price', 'neighborhood'], ascending=[False, True])
+        s = df.set_index('neighborhood').squeeze()
+        correct_labels = s.index.tolist()
+        correct_values = s.values.tolist()
+        assert ticklabels == correct_labels
+        assert values == correct_values
+
+
+class TestOrder:
+
+    def test_x_order(self):
+        pass
+
+
+    
