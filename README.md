@@ -17,11 +17,11 @@ The primary goals for dexplot are:
 
 Dexplot is primarily built for long data, which is a form of data where each row represents a single observation and each column represents a distinct quantity. It is often referred to as "tidy" data. Here, we have some long data.
 
-![png](long.png)
+![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/long.png)
 
 Dexplot also has the ability to handle wide data, where multiple columns may contain values that represent the same kind of quantity. The same data above has been aggregated to show the mean for each combination of neighborhood and property type. It is now wide data as each column contains the same quantity (price).
 
-![png](wide.png)
+![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/wide.png)
 
 ## Usage
 
@@ -219,7 +219,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median')
 
 
 
-![png](output_8_0.png)
+![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_8_0.png)
 
 
 
@@ -317,7 +317,7 @@ fig
 
 
 
-![png](output_12_0.png)
+![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_12_0.png)
 
 
 
@@ -329,7 +329,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median', sort='asc')
 
 
 
-![png](output_13_0.png)
+![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_13_0.png)
 
 
 
@@ -346,7 +346,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median',
 
 
 
-![png](output_15_0.png)
+![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_15_0.png)
 
 
 
@@ -362,7 +362,7 @@ dxp.bar(x='price', y='neighborhood', data=airbnb, aggfunc='median', orientation=
 
 
 
-![png](output_17_0.png)
+![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_17_0.png)
 
 
 
@@ -378,7 +378,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median', split='super
 
 
 
-![png](output_19_0.png)
+![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_19_0.png)
 
 
 
@@ -465,7 +465,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median',
 
 
 
-![png](output_23_0.png)
+![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_23_0.png)
 
 
 
@@ -482,7 +482,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median',
 
 
 
-![png](output_25_0.png)
+![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_25_0.png)
 
 
 
@@ -499,7 +499,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median',
 
 
 
-![png](output_27_0.png)
+![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_27_0.png)
 
 
 
@@ -514,7 +514,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median',
 
 
 
-![png](output_29_0.png)
+![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_29_0.png)
 
 
 
@@ -529,7 +529,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median',
 
 
 
-![png](output_31_0.png)
+![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_31_0.png)
 
 
 
@@ -545,7 +545,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median',
 
 
 
-![png](output_33_0.png)
+![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_33_0.png)
 
 
 
@@ -561,7 +561,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median',
 
 
 
-![png](output_35_0.png)
+![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_35_0.png)
 
 
 
@@ -578,7 +578,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median', split='prope
 
 
 
-![png](output_37_0.png)
+![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_37_0.png)
 
 
 
@@ -594,6 +594,6 @@ dxp.box(x='price', y='neighborhood', data=airbnb)
 
 
 
-![png](output_39_0.png)
+![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_39_0.png)
 
 
