@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import numpy as np
 
 from ._common_plot import CommonPlot
@@ -144,7 +146,7 @@ def _common_dist(x=None, y=None, data=None, split=None, row=None, col=None, x_or
         ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
         x_textwrap=10, y_textwrap=None, kind=None, **kwargs):
         
-        aggfunc = None
+        aggfunc = '__distribution__'
         self = CommonPlot(x, y, data, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, sort, wrap, figsize, title, sharex, 
@@ -158,10 +160,11 @@ def _common_dist(x=None, y=None, data=None, split=None, row=None, col=None, x_or
             cur_data = defaultdict(list)
             cur_ticklabels = defaultdict(list)
             for x, y, split_label, col_name, row_label, col_label in info:
+                x_plot, y_plot = self.get_x_y_plot(x, y)
                 if vert:
-                    cur_data[split_label].append(y)
+                    cur_data[split_label].append(y_plot)
                 else:
-                    cur_data[split_label].append(x)
+                    cur_data[split_label].append(x_plot)
                 cur_ticklabels[split_label].append(col_name)
 
             handles = []
@@ -215,7 +218,7 @@ def box(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None,
 
     if medianprops is None:
         medianprops = {'color': '.2'}
-
+    
     kwargs = dict(notch=notch, sym=sym, whis=whis, patch_artist=patch_artist,
                   bootstrap=bootstrap, usermedians=usermedians, conf_intervals=conf_intervals, 
                   meanline=meanline, showmeans=showmeans, showcaps=showcaps, showbox=showbox, 
@@ -223,7 +226,7 @@ def box(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None,
                   medianprops=medianprops, meanprops=meanprops, capprops=capprops, 
                   whiskerprops=whiskerprops, manage_ticks=manage_ticks, 
                   autorange=autorange, zorder=zorder)
-
+    
     return _common_dist(x, y, data, split, row, col, x_order, y_order, split_order, 
                         row_order, col_order, orientation, sort, wrap, figsize, title, sharex, 
                         sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap, 
@@ -260,7 +263,6 @@ def hist(val, data=None, split=None, row=None, col=None, x_order=None, y_order=N
                       cumulative=cumulative, bottom=bottom, histtype=histtype, align=align, 
                       rwidth=rwidth, log=log, stacked=stacked)
 
-        aggfunc = None
         self = CommonPlot(x, y, data, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, sort, wrap, figsize, title, sharex, 

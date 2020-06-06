@@ -1,6 +1,6 @@
 # Dexplot
 
-Dexplot is a Python library for delivering beautiful data visualizations. It's aim is to be powerful with a simple and intuitive user experience.
+Dexplot is a Python library for delivering beautiful data visualizations with a simple and intuitive user experience.
 
 ## Goals
 
@@ -15,9 +15,13 @@ The primary goals for dexplot are:
 
 ## Built for long and wide data
 
-Dexplot is primarily built for long data, which is a form of data where each row represents a single observation and each column represents a distinct quantity. It is often referred to as "tidy" data.
+Dexplot is primarily built for long data, which is a form of data where each row represents a single observation and each column represents a distinct quantity. It is often referred to as "tidy" data. Here, we have some long data.
 
-Dexplot also has the ability to handle wide data, where multiple columns may contain values that represent the same kind of quantity.
+![png](long.png)
+
+Dexplot also has the ability to handle wide data, where multiple columns may contain values that represent the same kind of quantity. The same data above has been aggregated to show the mean for each combination of neighborhood and property type. It is now wide data as each column contains the same quantity (price).
+
+![png](wide.png)
 
 ## Usage
 
@@ -38,9 +42,24 @@ dxp.plotting_func(x, y, data, aggfunc, split, row, col, orientation, ...)
 
 When `aggfunc` is provided, `x` will be the grouping variable and `y` will be aggregated when vertical and vice-versa when horizontal. The best way to learn how to use dexplot is with the examples below.
 
+## Families of plots
+
+There are two primary families of plots, **aggregation** and **distribution**. Aggregation plots take a sequence of values and return a **single** value using the function provided to `aggfunc` to do so. Distribution plots take a sequence of values and depict the shape of the distribution in some manner.
+
+* Aggregation
+    * bar
+    * line
+    * scatter
+    * count
+* Distribution
+    * box
+    * violin
+    * hist
+    * kde
+
 ## Comparison with Seaborn
 
-If you have used the seaborn library, then you should notice a lot of similarities. Much of Dexplot was inspired by Seaborn. Below is a list of the extra features in dexplot not found in seaborn
+If you have used the seaborn library, then you should notice a lot of similarities. Much of dexplot was inspired by Seaborn. Below is a list of the extra features in dexplot not found in seaborn
 
 * The ability to graph relative frequency percentage and normalize over any number of variables
 * Far fewer public functions
@@ -57,24 +76,14 @@ If you have used the seaborn library, then you should notice a lot of similariti
 
 Most of the examples below use long data.
 
-## Bar Charts
+## Aggregating plots - bar, line and scatter
+
+We'll begin by covering the plots that **aggregate**. An aggregation is defined as a function that summarizes a sequence of numbers with a single value.
 
 The examples come from the Airbnb dataset, which contains many property rental listings from the Washington D.C. area.
 
-
-```python
-%load_ext autoreload
-%autoreload 2
-```
-
-
 ```python
 import dexplot as dxp
-import pandas as pd
-import seaborn as sns
-import numpy as np
-import matplotlib.pyplot as plt
-pd.set_option('display.max_columns', None)
 airbnb = dxp.load_dataset('airbnb')
 airbnb.head()
 ```
@@ -83,6 +92,7 @@ airbnb.head()
 
 
 <div>
+
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -183,7 +193,7 @@ airbnb.head()
 
 
 
-There are nearly 5,000 listings in our dataset. We will use bar charts to aggregate the data.
+There are more than 4,000 listings in our dataset. We will use bar charts to aggregate the data.
 
 
 ```python
@@ -193,7 +203,7 @@ airbnb.shape
 
 
 
-    (4902, 12)
+    (4581, 12)
 
 
 
@@ -209,7 +219,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median')
 
 
 
-![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_8_0.png)
+![png](output_8_0.png)
 
 
 
@@ -252,19 +262,19 @@ airbnb.groupby('neighborhood').agg({'price': 'median'})
   <tbody>
     <tr>
       <th>Brightwood Park</th>
-      <td>90.0</td>
+      <td>87.0</td>
     </tr>
     <tr>
       <th>Capitol Hill</th>
-      <td>140.0</td>
+      <td>129.5</td>
     </tr>
     <tr>
       <th>Columbia Heights</th>
-      <td>99.0</td>
+      <td>95.0</td>
     </tr>
     <tr>
       <th>Dupont Circle</th>
-      <td>130.0</td>
+      <td>125.0</td>
     </tr>
     <tr>
       <th>Edgewood</th>
@@ -272,15 +282,15 @@ airbnb.groupby('neighborhood').agg({'price': 'median'})
     </tr>
     <tr>
       <th>Kalorama Heights</th>
-      <td>119.0</td>
+      <td>118.0</td>
     </tr>
     <tr>
       <th>Shaw</th>
-      <td>140.0</td>
+      <td>133.5</td>
     </tr>
     <tr>
       <th>Union Station</th>
-      <td>128.5</td>
+      <td>120.0</td>
     </tr>
   </tbody>
 </table>
@@ -307,7 +317,7 @@ fig
 
 
 
-![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_12_0.png)
+![png](output_12_0.png)
 
 
 
@@ -319,7 +329,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median', sort='asc')
 
 
 
-![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_13_0.png)
+![png](output_13_0.png)
 
 
 
@@ -336,7 +346,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median',
 
 
 
-![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_15_0.png)
+![png](output_15_0.png)
 
 
 
@@ -352,7 +362,7 @@ dxp.bar(x='price', y='neighborhood', data=airbnb, aggfunc='median', orientation=
 
 
 
-![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_17_0.png)
+![png](output_17_0.png)
 
 
 
@@ -368,7 +378,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median', split='super
 
 
 
-![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_19_0.png)
+![png](output_19_0.png)
 
 
 
@@ -400,43 +410,43 @@ airbnb.pivot_table(index='neighborhood', columns='superhost',
   <tbody>
     <tr>
       <th>Brightwood Park</th>
-      <td>90</td>
-      <td>90</td>
+      <td>85.0</td>
+      <td>90.0</td>
     </tr>
     <tr>
       <th>Capitol Hill</th>
-      <td>150</td>
-      <td>135</td>
+      <td>129.0</td>
+      <td>130.0</td>
     </tr>
     <tr>
       <th>Columbia Heights</th>
-      <td>95</td>
-      <td>105</td>
+      <td>90.5</td>
+      <td>103.0</td>
     </tr>
     <tr>
       <th>Dupont Circle</th>
-      <td>125</td>
-      <td>139</td>
+      <td>120.0</td>
+      <td>135.0</td>
     </tr>
     <tr>
       <th>Edgewood</th>
-      <td>105</td>
-      <td>100</td>
+      <td>100.0</td>
+      <td>100.0</td>
     </tr>
     <tr>
       <th>Kalorama Heights</th>
-      <td>115</td>
-      <td>124</td>
+      <td>110.0</td>
+      <td>124.0</td>
     </tr>
     <tr>
       <th>Shaw</th>
-      <td>149</td>
-      <td>139</td>
+      <td>130.0</td>
+      <td>135.0</td>
     </tr>
     <tr>
       <th>Union Station</th>
-      <td>130</td>
-      <td>125</td>
+      <td>120.0</td>
+      <td>125.0</td>
     </tr>
   </tbody>
 </table>
@@ -455,7 +465,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median',
 
 
 
-![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_23_0.png)
+![png](output_23_0.png)
 
 
 
@@ -472,7 +482,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median',
 
 
 
-![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_25_0.png)
+![png](output_25_0.png)
 
 
 
@@ -489,7 +499,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median',
 
 
 
-![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_27_0.png)
+![png](output_27_0.png)
 
 
 
@@ -504,7 +514,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median',
 
 
 
-![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_29_0.png)
+![png](output_29_0.png)
 
 
 
@@ -519,7 +529,7 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median',
 
 
 
-![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_31_0.png)
+![png](output_31_0.png)
 
 
 
@@ -535,7 +545,23 @@ dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median',
 
 
 
-![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_33_0.png)
+![png](output_33_0.png)
+
+
+
+By default, all axis limits are shared. Allow each plot to set its own limits with the `sharex` and `sharey` parameters.
+
+
+```python
+dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median',
+        split='superhost', col='property_type', col_order=['House', 'Condominium', 'Apartment'],
+        row='bedrooms', row_order=[0, 1, 2, 3], sharey=False)
+```
+
+
+
+
+![png](output_35_0.png)
 
 
 
@@ -546,12 +572,28 @@ The width of the bars is set with the `size` parameter.
 
 ```python
 dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median', split='property_type',
-       split_order=['Apartment', 'House'], x_order=['Dupont Circle', 'Capitol Hill'], size=.5)
+       split_order=['Apartment', 'House'], x_order=['Dupont Circle', 'Capitol Hill', 'Union Station'], size=.5)
 ```
 
 
 
 
-![png](https://github.com/dexplo/dexplot/raw/gh-pages/images/output_35_0.png)
+![png](output_37_0.png)
+
+
+
+## Distribution plots - box, violin, histogram, kde
+
+Distribution plots work similarly, but do not have an `aggfunc` since they do not aggregate.
+
+
+```python
+dxp.box(x='price', y='neighborhood', data=airbnb)
+```
+
+
+
+
+![png](output_39_0.png)
 
 

@@ -408,6 +408,36 @@ class CommonPlot:
         return order
 
 
+    def get_final_groups(self, data, split_label, row_label, col_label):
+        groups = []
+        if self.groupby is not None:
+            if self.aggfunc == '__distribution__':
+                for grp, data_grp in data.groupby(self.groupby, sort=self.groupby_sort):
+                    x, y = self.get_correct_data_order(data_grp[self.agg])
+                    groups.append((x, y, split_label, grp, row_label, col_label))
+            else:
+                s = data.groupby(self.groupby, sort=self.groupby_sort)[self.agg].agg(self.aggfunc)
+                x, y = self.get_correct_data_order(s)
+                groups.append((x, y, split_label, None, row_label, col_label))
+        elif self.x is None or self.y is None:
+            if self.x:
+                x, y = self.get_correct_data_order(data[self.x])
+                groups.append((x, y, split_label, None, row_label, col_label))
+            elif self.y:
+                x, y = self.get_correct_data_order(data[self.y])
+                groups.append((x, y, split_label, None, row_label, col_label))
+            else:
+                # wide data
+                for col in self.get_wide_columns(data):
+                    x, y = self.get_correct_data_order(data[col])
+                    groups.append((x, y, split_label, col, row_label, col_label))
+        else:
+            # simple raw plot - make sure to warn when lots of data for bar/box/hist
+            # one graph per row - OK for scatterplots and line plots
+            x, y = self.get_correct_data_order(data[self.x], data[self.y])
+            groups.append((x, y, None, None, row_label, col_label))
+        return groups
+
     def get_final_data(self):
         # create list of data for each call to plotting method
         final_data = defaultdict(list)
@@ -415,65 +445,9 @@ class CommonPlot:
             row_label, col_label = self.get_labels(labels)
             if self.split:
                 for grp, data_grp in self.split_groups(data):
-                    if self.x is None or self.y is None:
-                        if self.x:
-                            x, y = self.get_correct_data_order(data_grp[self.x])
-                            final_data[ax].append((x, y, grp, None, row_label, col_label))
-                        elif self.y:
-                            x, y = self.get_correct_data_order(data_grp[self.y])
-                            final_data[ax].append((x, y, grp, None, row_label, col_label))
-                        else:
-                            # wide data
-                            for col in self.get_wide_columns(data_grp):
-                                x, y = self.get_correct_data_order(data_grp[col])
-                                final_data[ax].append((x, y, grp, col, row_label, col_label))
-                    elif self.groupby is not None:
-                        if self.aggfunc is None:
-                            # no aggregation - splitting data into groups (for distribution plots)
-                            column_data = []
-                            labels = []
-                            for grp_grp, data_grp_grp in data_grp.groupby(self.groupby, sort=self.groupby_sort):
-                                x, y = self.get_correct_data_order(data_grp_grp[self.agg])
-                                final_data[ax].append((x, y, grp, grp_grp, row_label, col_label))
-                        else:
-                            s = data_grp.groupby(self.groupby, sort=self.groupby_sort)[self.agg].agg(self.aggfunc)
-                            x, y = self.get_correct_data_order(s)
-                            final_data[ax].append((x, y, grp, None, row_label, col_label))
-                    else:
-                        x, y = self.get_correct_data_order(data_grp[self.x], data_grp[self.y])
-                        final_data[ax].append((x, y, grp, None, row_label, col_label))
-            elif self.aggfunc is None:
-                if self.x is None or self.y is None:
-                    if self.x:
-                        x, y = self.get_correct_data_order(data[self.x])
-                        final_data[ax].append((x, y, None, None, row_label, col_label))
-                    elif self.y:
-                        x, y = self.get_correct_data_order(data[self.y])
-                        final_data[ax].append((x, y, None, None, row_label, col_label))
-                    else:
-                        # wide data
-                        for col in self.get_wide_columns(data):
-                            x, y = self.get_correct_data_order(data[col])
-                            final_data[ax].append((x, y, None, col, row_label, col_label))
-                elif self.groupby is None:
-                    # simple raw plot - make sure to warn when lots of data for bar/box/hist
-                    # one graph per row - OK for scatterplots and line plots
-                    x, y = self.get_correct_data_order(data[self.x], data[self.y])
-                    final_data[ax].append((x, y, None, None, row_label, col_label))
-                else:
-                    for grp, data_grp in data.groupby(self.groupby, sort=self.groupby_sort):
-                        x, y = self.get_correct_data_order(data_grp[self.agg])
-                        final_data[ax].append((x, y, None, grp, row_label, col_label))
+                    final_data[ax].extend(self.get_final_groups(data_grp, grp, row_label, col_label))
             else:
-                if self.agg:
-                    s = data.groupby(self.groupby, sort=self.groupby_sort)[self.agg].agg(self.aggfunc)
-                    x, y = self.get_correct_data_order(s)
-                    final_data[ax].append((x, y, None, None, row_label, col_label))
-                elif self.aggfunc == 'count':
-                    pass
-                else:
-                    raise ValueError('SHOULD NOT ERROR. Please report this issue '
-                                     'on github.com/dexplo/dexplot')
+                final_data[ax].extend(self.get_final_groups(data, None, row_label, col_label))
         return final_data
 
     def style_fig(self):
