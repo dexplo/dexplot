@@ -5,7 +5,7 @@ from ._common_plot import CommonPlot
 
 def line(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None, 
          x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
-         orientation='v', sort=False, wrap=None, figsize=None, title=None, sharex=True, 
+         orientation='v', sort='lex_asc', wrap=None, figsize=None, title=None, sharex=True, 
          sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
          yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None):
 
@@ -28,7 +28,7 @@ def line(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None
         
 def scatter(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None, 
             x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
-            orientation='v', sort=False, wrap=None, figsize=None, title=None, sharex=True, 
+            orientation='v', sort='lex_asc', wrap=None, figsize=None, title=None, sharex=True, 
             sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
             yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None, regression=False):
 
@@ -78,19 +78,30 @@ def bar(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None,
                 raise TypeError('`bar_kwargs` must be a dictionary')
 
         for ax, info in self.final_data.items():
-            cur_size = size / len(info)
+            cur_size = size
+            if not stacked:
+                cur_size /= len(info)
+            base = None
             for i, (x, y, label, col_name, row_label, col_label) in enumerate(info):
                 x_plot, y_plot = self.get_x_y_plot(x, y)
+                if base is None:
+                    base = np.zeros(len(x_plot))
                 if len(x) > 200:
                     warnings.warn('You are plotting more than 200 bars. '
                                   'Did you forget to privde an `aggfunc`?')
 
                 if self.orientation == 'v':
-                    x_plot = x_plot + cur_size * i
-                    ax.bar(x_plot, y_plot, label=label, width=cur_size, align='edge', **bar_kwargs)
+                    x_plot = x_plot + cur_size * i * (1 - stacked)
+                    ax.bar(x_plot, y_plot, label=label, width=cur_size, 
+                           bottom=base, align='edge', **bar_kwargs)
+                    if stacked:
+                        base += y_plot
                 else:
-                    y_plot = y_plot + cur_size * i
-                    ax.barh(y_plot, x_plot, label=label, height=cur_size, align='edge', **bar_kwargs)
+                    y_plot = y_plot + cur_size * i * (1 - stacked)
+                    ax.barh(y_plot, x_plot, label=label, height=cur_size, 
+                            left=base, align='edge', **bar_kwargs)
+                    if stacked:
+                        base += x_plot
             self.add_ticklabels(x, y, ax, delta=size / 2)
 
         self.add_legend()
@@ -99,7 +110,7 @@ def bar(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None,
 
 def count(val, data=None, normalize=None, split=None, row=None, col=None, 
           x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
-          orientation='v', stacked=False, sort=False, wrap=None, figsize=None, title=None, 
+          orientation='v', stacked=False, sort='lex_asc', wrap=None, figsize=None, title=None, 
           sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, 
           xscale='linear', yscale='linear', cmap=None, size=.92, x_textwrap=10, y_textwrap=None):
 
@@ -194,7 +205,7 @@ def _common_dist(x=None, y=None, data=None, split=None, row=None, col=None, x_or
 # could add groupby to box
 def box(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None, 
         y_order=None, split_order=None, row_order=None, col_order=None, orientation='h', 
-        sort=False, wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
+        sort='lex_asc', wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
         ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
         x_textwrap=10, y_textwrap=None, notch=None, sym=None, whis=None, patch_artist=True, 
         bootstrap=None, usermedians=None, conf_intervals=None, meanline=None, showmeans=None, 
@@ -220,7 +231,7 @@ def box(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None,
 
 
 def violin(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None, y_order=None, 
-           split_order=None, row_order=None, col_order=None, orientation='h', sort=False, 
+           split_order=None, row_order=None, col_order=None, orientation='h', sort='lex_asc', 
            wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
            ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
            x_textwrap=10, y_textwrap=None, showmeans=False, showextrema=True, showmedians=True, 
@@ -237,7 +248,7 @@ def violin(x=None, y=None, data=None, split=None, row=None, col=None, x_order=No
 
 
 def hist(val, data=None, split=None, row=None, col=None, x_order=None, y_order=None, 
-         split_order=None, row_order=None, col_order=None, orientation='v', sort=False, 
+         split_order=None, row_order=None, col_order=None, orientation='v', sort='lex_asc', 
          wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
          ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
          x_textwrap=10, y_textwrap=None, bins=None, range=None, density=False, weights=None, 

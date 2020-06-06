@@ -1,6 +1,7 @@
 import textwrap
 import warnings
 from collections import defaultdict
+import io
 
 import numpy as np
 import pandas as pd
@@ -62,7 +63,8 @@ class CommonPlot:
         self.plot_type = self.get_plot_type()
         self.agg_kind = self.get_agg_kind()
         self.data = self.set_index()
-        self.unique_rows, self.unique_cols = self.get_uniques()
+        self.rows, self.cols = self.get_uniques()
+        self.rows, self.cols = self.get_row_col_order()
         self.fig_shape = self.get_fig_shape()
         self.user_figsize = figsize is not None
         self.figsize = self.get_figsize(figsize)
@@ -73,7 +75,6 @@ class CommonPlot:
         self.data_for_plots = self.get_data_for_every_plot()
         self.final_data = self.get_final_data()
         self.style_fig()
-        self.add_x_y_labels()
         self.add_ax_titles()
         
     def get_data(self, data):
@@ -232,16 +233,39 @@ class CommonPlot:
             return None, self.data.index.unique()
         else:
             return self.data.index.levels
+
+    def get_row_col_order(self):
+        rows, cols = self.rows, self.cols
+        if rows is not None:
+            rows = sorted(rows)
+        if cols is not None:
+            cols = sorted(cols)
+
+        if self.row_order:
+            new_rows = []
+            for row in self.row_order:
+                if row not in rows:
+                    raise ValueError(f'Row value {row} does not exist')
+                new_rows.append(row)
+            rows = new_rows
+        if self.col_order:
+            new_cols = []
+            for col in self.col_order:
+                if col not in cols:
+                    raise ValueError(f'Column value {col} does not exist')
+                new_cols.append(col)
+            cols = new_cols
+        return rows, cols
         
     def get_fig_shape(self):
         if self.plot_type == 'single':
             return 1, 1
 
         nrows = ncols = 1
-        if self.unique_rows is not None:
-            nrows = len(self.unique_rows)
-        if self.unique_cols is not None:
-            ncols = len(self.unique_cols) 
+        if self.rows is not None:
+            nrows = len(self.rows)
+        if self.cols is not None:
+            ncols = len(self.cols) 
 
         if self.wrap:
             if self.plot_type == 'row_only':
@@ -253,15 +277,15 @@ class CommonPlot:
         return nrows, ncols
 
     def get_data_for_every_plot(self):
-        rows, cols = self.unique_rows, self.unique_cols
+        rows, cols = self.get_row_col_order()
         if self.plot_type == 'row_only':
             return [(row, self.data.loc[row]) for row in rows]
         if self.plot_type in ('row_only', 'col_only'):
             return [(col, self.data.loc[col]) for col in cols]
         elif self.plot_type == 'square':
             groups = []
-            for row in rows:
-                for col in cols:
+            for col in cols:
+                for row in rows:
                     group = row, col
                     try:
                         with warnings.catch_warnings():
@@ -275,14 +299,14 @@ class CommonPlot:
             return [(None, self.data)]
 
     def get_labels(self, labels):
-        if isinstance(labels, tuple):
-            return labels
-        elif labels is None:
-            return None, None
+        # this won't work for wrapping
+        if self.plot_type == 'square':
+            return str(labels[0]), str(labels[1])
         elif self.plot_type == 'row_only':
-            return labels, None
-        else:
-            return None, labels
+            return str(labels), None
+        elif self.plot_type == 'col_only':
+            return None, str(labels)
+        return None, None
 
     def get_figsize(self, figsize):
         if figsize:
@@ -462,6 +486,13 @@ class CommonPlot:
                 spine.set_visible(False)
 
     def add_x_y_labels(self):
+        if self.plot_type == 'single':
+            self.axs[0].set_xlabel(self.x)
+            self.axs[0].set_ylabel(self.y)
+            return
+        
+        # need to eliminate next line to save lots of time
+        self.fig.canvas.print_figure(io.BytesIO())
         rows, cols = self.fig_shape
         top_left_ax, bottom_right_ax = self.axs[0], self.axs[rows * cols - 1]
         top_left_points = top_left_ax.get_position().get_points()
@@ -470,7 +501,6 @@ class CommonPlot:
         left = top_left_points[0][0]
         right = bottom_right_points[1][0]
         x = (right + left) / 2
-        print(x)
 
         top = top_left_points[1][1]
         bottom = bottom_right_points[0][1]
@@ -481,6 +511,10 @@ class CommonPlot:
     def add_ax_titles(self):
         for ax, info in self.final_data.items():
             row_label, col_label = info[0][-2:]
+            if row_label is not None:
+                row_label = str(row_label)
+            if col_label is not None:
+                col_label = str(col_label)
             row_label = row_label or ''
             col_label = col_label or ''
             if row_label and col_label:
@@ -505,14 +539,17 @@ class CommonPlot:
     def add_ticklabels(self, x, y, ax, delta=0):
         if x.dtype.kind == 'O':
             x_num = np.arange(len(x)) + delta
-            categories = [textwrap.fill(str(cat), 10) for cat in x]
+            categories = [textwrap.fill(str(cat), self.x_textwrap) for cat in x]
             ax.set_xticks(x_num)
             ax.set_xticklabels(categories)
 
         if y.dtype.kind == 'O':
             y_num = np.arange(len(y)) + delta
             ax.set_yticks(y_num)
-            ax.set_yticklabels(y)
+            categories = y
+            if self.y_textwrap:
+                categories = [textwrap.fill(str(cat), self.y_textwrap) for cat in y]
+            ax.set_yticklabels(categories)
 
     def add_legend(self, handles=None, labels=None):
         if self.split:
@@ -523,6 +560,7 @@ class CommonPlot:
                             title=self.split, ncol=ncol)
 
     def clean_up(self):
+        self.add_x_y_labels()
         plt.rcParams = self.original_rcParams
         return self.fig
 
@@ -532,11 +570,12 @@ class CommonPlot:
         new_size = 1.5 + (.3 + .06 * n_splits) * n_groups_per_split
         if self.orientation == 'v':
             height = max(2.5 - .3 * self.fig_shape[0], 1.2)
-            width = new_size * .9 * self.fig_shape[1]
+            shrink = max(.9 - .1 * self.fig_shape[1], .5)
+            width = new_size * shrink * self.fig_shape[1]
             height = height * self.fig_shape[0]
         else:
             width = max(3 - .3 * self.fig_shape[1], 1.5)
-            height = new_size * .9 * self.fig_shape[1]
-            width = width * self.fig_shape[0]
+            height = new_size * .8 * self.fig_shape[0]
+            width = width * self.fig_shape[1]
         width, height = min(width, 25), min(height, 25)
         self.fig.set_size_inches(width, height)
