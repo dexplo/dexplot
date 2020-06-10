@@ -128,7 +128,7 @@ def count(val, data=None, normalize=None, split=None, row=None, col=None,
         aggfunc = '__distribution__'
         self = CommonPlot(x, y, data, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
-                          orientation, sort_values, wrap, figsize, title, sharex, 
+                          orientation, None, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
                           x_textwrap, y_textwrap)
 
@@ -144,19 +144,28 @@ def count(val, data=None, normalize=None, split=None, row=None, col=None,
             df.columns = columns
             base = np.zeros(len(df))
             cur_size = size if stacked else size / len(columns)
+            position = np.arange(len(df))
+
+            if sort_values == 'asc':
+                df = df.iloc[::-1]
+
             labels = df.index.values
-            position = np.arange(len(labels))
+                
             for i, col in enumerate(df.columns):
                 values = df[col].values
+                
                 if self.orientation == 'v':
                     ax.bar(position, values, label=col, width=cur_size, 
                             bottom=base, align='edge', **bar_kwargs)
+                    position = position + cur_size * (1 - stacked)
                 else:
-                    ax.barh(position, values, label=col, height=cur_size, 
+                    ax.barh(position - cur_size, values, label=col, height=cur_size, 
                             left=base, align='edge', **bar_kwargs)
-                
-                position = position + cur_size * (1 - stacked)
+                    position = position - cur_size * (1 - stacked)
 
+                if stacked:
+                    base += values
+                
             self.add_ticklabels(labels, ax, delta=size / 2)
             
         self.add_legend()
@@ -193,7 +202,7 @@ def _common_dist(x=None, y=None, data=None, split=None, row=None, col=None, x_or
             for i, (split_label, data) in enumerate(cur_data.items()):
                 filt = [len(arr) > 0 for arr in data]
                 positions = np.array([i for (i, f) in enumerate(filt) if f])
-                data = [d for (d, f) in zip(data, filt) if f]
+                data = [np.array(d) for (d, f) in zip(data, filt) if f]
                 if self.orientation == 'h':
                     positions = positions - i * widths
                 else:
@@ -312,8 +321,8 @@ def hist(val, data=None, split=None, row=None, col=None, split_order='asc', row_
 
 
 def kde(x=None, y=None, data=None, split=None, row=None, col=None, split_order='asc', 
-        row_order='asc', col_order='asc', orientation='v', wrap=None, 
-        figsize=None, title=None, sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, 
+        row_order='asc', col_order='asc', orientation='v', wrap=None, figsize=None, 
+        title=None, sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, 
         ylim=None, xscale='linear', yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None, 
         range=None, cumulative=False):
 
@@ -332,16 +341,18 @@ def kde(x=None, y=None, data=None, split=None, row=None, col=None, split_order='
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, sort_values, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
-                          x_textwrap, y_textwrap)
+                          x_textwrap, y_textwrap, check_numeric=True)
 
         for ax, info in self.final_data.items():
-            for x, y, split_label, col_name, row_label, col_label in info:
-                x_plot, y_plot = self.get_x_y_plot(x, y)
-                if y is None:
-                    x, density = calculate_density_1d(x_plot, cumulative=cumulative)
-                    ax.plot(x, density, label=split_label)
+            for vals in info:
+                if aggfunc == '__distribution__':
+                    x, split_label = vals[:2]
+                    x, y = calculate_density_1d(x, cumulative=cumulative)
+                    x, y = (x, y) if self.orientation == 'v' else (y, x)
+                    ax.plot(x, y, label=split_label)
                 else:
-                    xmin, xmax, ymin, ymax, Z = calculate_density_2d(x_plot, y_plot)
+                    x, y, split_label = vals[:3]
+                    xmin, xmax, ymin, ymax, Z = calculate_density_2d(x, y)
                     ax.imshow(Z, extent=[xmin, xmax, ymin, ymax], aspect='auto')
                 
         self.add_legend()

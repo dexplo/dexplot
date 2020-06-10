@@ -20,22 +20,23 @@ class CommonPlot:
                  x_order, y_order, split_order, row_order, col_order,
                  orientation, sort_values, wrap, figsize, title, sharex, sharey, 
                  xlabel, ylabel, xlim, ylim, xscale, yscale, cmap, 
-                 x_textwrap, y_textwrap):
+                 x_textwrap, y_textwrap, check_numeric=False):
 
-        self.groups = []
+        self.used_columns = set()
         self.data = self.get_data(data)
         self.x = self.get_col(x)
         self.y = self.get_col(y)
         self.validate_x_y()
         self.orientation = orientation
         self.aggfunc = aggfunc
-        self.groupby = self.get_col(self.get_groupby(), True)
-        self.split = self.get_col(split, True)
-        self.row = self.get_col(row, True)
-        self.col = self.get_col(col, True)
+        self.groupby = self.get_groupby()
+        self.split = self.get_col(split)
+        self.row = self.get_col(row)
+        self.col = self.get_col(col)
         
         self.agg = self.set_agg()
         self.make_groups_categorical()
+        self.validate_numeric(check_numeric)
         
         self.x_order = self.validate_order(x_order, 'x')
         self.y_order = self.validate_order(y_order, 'y')
@@ -92,13 +93,11 @@ class CommonPlot:
                 col in self.data.columns
             except KeyError:
                 raise KeyError(f'{col} is not a column in the DataFrame')
-
-            if group:
-                if col in self.groups:
-                    raise ValueError(f'Column {col} has already been selected for another grouping column')
-                else:
-                    self.groups.append(col)
-        
+            
+            if col in self.used_columns:
+                raise ValueError(f'Column {col} has already been chosen. '
+                                 '`x`, `y`, `split`, `row`, and `col` must all be unique.')
+            self.used_columns.add(col)
             return col
 
     def validate_x_y(self):
@@ -149,6 +148,12 @@ class CommonPlot:
             if col:
                 if self.data[col].dtype.name != 'category':
                     self.data[col] = self.data[col].astype('category')
+
+    def validate_numeric(self, check_numeric):
+        if check_numeric:
+            for val in (self.x, self.y):
+                if val and self.data[val].dtype.kind not in ('i', 'f', 'b'):
+                    raise TypeError(f'Column {val} must be numeric (integer or float)')
 
     def validate_order(self, order, kind):
         if isinstance(order, str):
@@ -256,7 +261,7 @@ class CommonPlot:
         if self.sort_values not in ['asc', 'desc', None]:
             raise ValueError('`sort_values` must be one of "asc", "desc", or `None`')
         if self.sort_values and (self.split or self.row or self.col):
-            raise ValueError('Can only use `sort_value` if `split`, `row`, and `col` are `None`.')
+            raise ValueError('Can only use `sort_values` if `split`, `row`, and `col` are `None`.')
 
     def get_plot_type(self):
         if self.row and self.col:
