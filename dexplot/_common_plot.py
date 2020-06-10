@@ -18,7 +18,7 @@ class CommonPlot:
 
     def __init__(self, x, y, data, aggfunc, split, row, col, 
                  x_order, y_order, split_order, row_order, col_order,
-                 orientation, sort, wrap, figsize, title, sharex, sharey, 
+                 orientation, sort_values, wrap, figsize, title, sharex, sharey, 
                  xlabel, ylabel, xlim, ylim, xscale, yscale, cmap, 
                  x_textwrap, y_textwrap):
 
@@ -37,14 +37,16 @@ class CommonPlot:
         self.agg = self.set_agg()
         self.make_groups_categorical()
         
-        self.x_order = x_order
-        self.y_order = y_order
-        self.split_order = split_order
-        self.row_order = row_order
-        self.col_order = col_order
-        
-        self.sort = sort
-        self.groupby_sort = self.sort is not None
+        self.x_order = self.validate_order(x_order, 'x')
+        self.y_order = self.validate_order(y_order, 'y')
+        self.split_order = self.validate_order(split_order, 'split')
+        self.row_order = self.validate_order(row_order, 'row')
+        self.col_order = self.validate_order(col_order, 'col')
+        self.filter_data()
+        self.groupby_order = self.get_groupby_order()
+
+        self.sort_values = sort_values
+        self.groupby_sort = True
         self.wrap = wrap
         self.title = title
         self.sharex = sharex
@@ -82,7 +84,7 @@ class CommonPlot:
             raise TypeError('`data` must be a pandas DataFrame')
         elif len(data) == 0:
             raise ValueError('DataFrame contains no data')
-        return data
+        return data.copy()
 
     def get_col(self, col, group=False):
         if col:
@@ -111,20 +113,76 @@ class CommonPlot:
     def set_agg(self):
         return self.y if self.orientation == 'v' else self.x
 
+    def filter_data(self):
+        params = 'x', 'y', 'split', 'row', 'col'
+        for param in params:
+            name, order = getattr(self, param), getattr(self, param + '_order')
+            if name and order:
+                s = self.data[name]
+                if isinstance(order, list):
+                    if s.dtype.kind == 'O':
+                        for val in order:
+                            if not (s == val).any():
+                                raise ValueError(f'Value {val} is not in column {name}')
+                        self.data = self.data[s.isin(order)]
+                    else:
+                        # allow datetimes?
+                        if len(order) != 2:
+                            raise ValueError(f'You are filtering {name}. Provide a two-item list '
+                                            'of the min and max values')
+                        self.data = self.data[s.between(*order)]
+                elif isinstance(order, int):
+                    vc = s.value_counts()
+                    if order > 0:
+                        idx = vc.index[:order]
+                    else:
+                        idx = vc.index[order:]
+                    self.data = self.data[s.isin(idx)]
+                    setattr(self, param +'_order', idx.tolist())
+
+            if name and self.data[name].dtype.name == 'category':
+                self.data[name].cat.remove_unused_categories(inplace=True)
+
     def make_groups_categorical(self):
         category_cols = [self.groupby, self.split, self.row, self.col]
-        copied = False
         for col in category_cols:
             if col:
                 if self.data[col].dtype.name != 'category':
-                    if not copied:
-                        self.data = self.data.copy()
-                        copied = True
                     self.data[col] = self.data[col].astype('category')
+
+    def validate_order(self, order, kind):
+        if isinstance(order, str):
+            order = order.strip().lower()
+            if order in ('asc', 'desc'):
+                return order
+            command = order.split()
+            if len(command) != 2 or command[0] not in ('top', 'bottom'):
+                raise ValueError(f'{kind}_order string must begin with either "asc"/"desc" OR '
+                                 ' "top" or "bottom" followed by a space and then an integer.')
+            mult = int(command[0] == "top") * 2 - 1
+            try:
+                num = int(command[1])
+            except ValueError:
+                raise ValueError(f'{command[1]} is not a valid integer')
+            if num == 0:
+                raise ValueError('Number cannot be 0')
+            return num * mult
+        elif isinstance(order, (tuple, list)):
+            return list(order)
+        elif hasattr(order, 'tolist'):
+            return order.tolist()
+        elif order is not None:
+            raise TypeError(f'{kind}_order must be a str or tuple/list/array/series.')
+
+    def get_groupby_order(self):
+        if self.x == self.groupby:
+            return self.x_order
+        if self.y == self.groupby:
+            return self.y_order
 
     def get_colors(self, cmap):
         if cmap is None:
-            cmap = 'dark12'
+            cmap = 't10'
             
         if isinstance(cmap, str):
             from .colors._colormaps import colormaps
@@ -149,7 +207,7 @@ class CommonPlot:
         self.validate_figsize(figsize)
         self.validate_plot_args()
         self.validate_mpl_args()
-        self.validate_sort()
+        self.validate_sort_values()
 
     def validate_figsize(self, figsize):
         if isinstance(figsize, (list, tuple)):
@@ -194,9 +252,11 @@ class CommonPlot:
         if self.yscale not in ('linear', 'log', 'symlog', 'logit'):
             raise ValueError("`xscale must be one of 'linear', 'log', 'symlog', 'logit'")
 
-    def validate_sort(self):
-        if self.sort not in ['lex_asc', 'lex_desc', 'asc', 'desc', None]:
-            raise ValueError('`sort` must be one of "lex_asc", "lex_desc", "asc", "desc", or `None`')
+    def validate_sort_values(self):
+        if self.sort_values not in ['asc', 'desc', None]:
+            raise ValueError('`sort_values` must be one of "asc", "desc", or `None`')
+        if self.sort_values and (self.split or self.row or self.col):
+            raise ValueError('Can only use `sort_value` if `split`, `row`, and `col` are `None`.')
 
     def get_plot_type(self):
         if self.row and self.col:
@@ -237,18 +297,24 @@ class CommonPlot:
     def get_row_col_order(self):
         rows, cols = self.rows, self.cols
         if rows is not None:
-            rows = sorted(rows)
+            if self.row_order == 'desc':
+                rows = sorted(rows, reverse=True)
+            else:
+                rows = sorted(rows)
         if cols is not None:
-            cols = sorted(cols)
+            if self.col_order == 'desc':
+                cols = sorted(cols, reverse=True)
+            else:
+                cols = sorted(cols)
 
-        if self.row_order:
+        if isinstance(self.row_order, list):
             new_rows = []
             for row in self.row_order:
                 if row not in rows:
                     raise ValueError(f'Row value {row} does not exist')
                 new_rows.append(row)
             rows = new_rows
-        if self.col_order:
+        if isinstance(self.col_order, list):
             new_cols = []
             for col in self.col_order:
                 if col not in cols:
@@ -327,15 +393,16 @@ class CommonPlot:
         for ax in self.axs:
             ax.set_prop_cycle(color=self.colors)
 
-    def sort_xy(self, x, y):
-        if self.sort == 'lex_asc' or self.sort is None:
+    def sort_values_xy(self, x, y):
+        grp, num = (x, y) if self.orientation == 'v' else (y, x)
+        if self.sort_values is None:
             return x, y
-        elif self.sort == 'lex_desc':
-            order = np.lexsort([y, x])[::-1]
-        elif self.sort == 'asc':
-            order = np.lexsort([x, y])
+        elif self.sort_values == 'asc':
+            order = np.lexsort([grp, num])
         else:
-            order = np.lexsort([x, -y])
+            order = np.lexsort([grp, -num])
+        if self.orientation == 'h':
+            order = order[::-1]
         return x[order], y[order]
 
     def get_order(self, arr, vals):
@@ -349,27 +416,34 @@ class CommonPlot:
             order.append(idx)
         return order
 
+    def reverse_order(self, order):
+        cond1 = order == 'desc' and self.orientation == 'v'
+        cond2 = order == 'asc' and self.orientation == 'h'
+        return cond1 or cond2
+
     def order_xy(self, x, y):
-        if self.x_order:
-            order = self.get_order(x, self.x_order)
-            x = x[order]
-            y = y[order]
-        elif self.y_order:
-            order = self.get_order(y, self.y_order)
-            x = x[order]
-            y = y[order]
-        return x, y
-
-    def get_correct_data_order(self, x, y=None):
-        if y is None:
-            x, y = x.index.values, x.values
+        if self.x_order and self.x != self.agg:
+            if isinstance(self.x_order, list):
+                order = self.get_order(x, self.x_order)
+            elif self.reverse_order(self.x_order):
+                order = np.lexsort([x])[::-1]
+            else:
+                return x, y
+        elif self.y_order and self.y != self.agg:
+            if isinstance(self.y_order, list):
+                order = self.get_order(y, self.y_order)
+            elif self.reverse_order(self.y_order):
+                order = np.lexsort([y])[::-1]
+            else:
+                return x, y
         else:
-            x, y = x.values, y.values
+            return x, y
+        return x[order], y[order]
 
-        x, y = self.sort_xy(x, y)
-        x, y = self.order_xy(x, y)
-        if self.orientation == 'h':
-            x, y = y, x
+    def get_correct_data_order(self, x, y):
+        x, y = self.sort_values_xy(x, y)
+        if self.sort_values is None:
+            x, y = self.order_xy(x, y)
         return x, y
 
     def get_wide_data(self, data):
@@ -387,49 +461,75 @@ class CommonPlot:
                 cols.append(col)
         return cols
 
-    def split_groups(self, data):
+    def get_ordered_groups(self, data, specific_order, kind):
+        # used for split and groupby groups
         order = []
         groups = []
-        for grp, data_grp in data.groupby(self.split, sort=self.groupby_sort):
+        sort = specific_order is not None
+        for grp, data_grp in data.groupby(getattr(self, kind), sort=sort):
             order.append((grp, data_grp))
             groups.append(grp)
 
-        if self.split_order:
+        if isinstance(specific_order, list):
             new_order = []
-            for split in self.split_order:
+            for grp in specific_order:
                 try:
-                    idx = groups.index(split)
+                    idx = groups.index(grp)
                 except ValueError:
-                    raise ValueError(f'Value {split} from `split_order` is '
-                                     'not in column {self.split}')
+                    col = getattr(self, kind)
+                    raise ValueError(f'Value "{grp}" from `{kind}_order` is '
+                                    f'not in column {col}')
         
                 new_order.append(idx)
             order = [order[i] for i in new_order]
-        return order
+        elif specific_order == 'desc':
+            new_order = np.lexsort([groups])[::-1]
+            order = [order[i] for i in new_order]
 
+        return order
 
     def get_final_groups(self, data, split_label, row_label, col_label):
         groups = []
-        if self.groupby is not None:
-            if self.aggfunc == '__distribution__':
-                for grp, data_grp in data.groupby(self.groupby, sort=self.groupby_sort):
-                    x, y = self.get_correct_data_order(data_grp[self.agg])
-                    groups.append((x, y, split_label, grp, row_label, col_label))
+        if self.aggfunc == '__distribution__':
+            if self.groupby is not None:
+                for grp, data_grp in self.get_ordered_groups(data, self.groupby_order, 'groupby'):
+                    vals = data_grp[self.agg]
+                    groups.append((vals, split_label, grp, row_label, col_label))
             else:
+                col = self.x or self.y
+                vals = data[col]
+                groups.append((vals, split_label, None, row_label, col_label))
+        elif self.groupby is not None:
+            try:
                 s = data.groupby(self.groupby, sort=self.groupby_sort)[self.agg].agg(self.aggfunc)
-                x, y = self.get_correct_data_order(s)
-                groups.append((x, y, split_label, None, row_label, col_label))
+            except Exception as e:
+                if type(e).__name__ == 'DataError':
+                    raise ValueError(f'The aggregating column {self.agg} is not numeric and '
+                                     f'cannot be aggregated with {self.aggfunc}. You might need '
+                                      'to switch x and y')
+                else:
+                    raise e
+            x, y = s.index.values, s.values
+            x, y = (x, y) if self.orientation == 'v' else (y, x)
+            x, y = self.get_correct_data_order(x, y)
+            groups.append((x, y, split_label, None, row_label, col_label))
         elif self.x is None or self.y is None:
             if self.x:
-                x, y = self.get_correct_data_order(data[self.x])
+                s = data[self.x]
+                x, y = s.values, s.index.values
+                x, y = self.get_correct_data_order(x, y)
                 groups.append((x, y, split_label, None, row_label, col_label))
             elif self.y:
-                x, y = self.get_correct_data_order(data[self.y])
+                s = data[self.y]
+                x, y = s.index.values, s.values
+                x, y = self.get_correct_data_order(x, y)
                 groups.append((x, y, split_label, None, row_label, col_label))
             else:
                 # wide data
                 for col in self.get_wide_columns(data):
-                    x, y = self.get_correct_data_order(data[col])
+                    s = data[col]
+                    x, y = s.index.values, s.values
+                    x, y = self.get_correct_data_order(x, y)
                     groups.append((x, y, split_label, col, row_label, col_label))
         else:
             # simple raw plot - make sure to warn when lots of data for bar/box/hist
@@ -444,7 +544,7 @@ class CommonPlot:
         for (labels, data), ax in zip(self.data_for_plots, self.axs):
             row_label, col_label = self.get_labels(labels)
             if self.split:
-                for grp, data_grp in self.split_groups(data):
+                for grp, data_grp in self.get_ordered_groups(data, self.split_order, 'split'):
                     final_data[ax].extend(self.get_final_groups(data_grp, grp, row_label, col_label))
             else:
                 final_data[ax].extend(self.get_final_groups(data, None, row_label, col_label))
@@ -510,20 +610,25 @@ class CommonPlot:
             y_plot = np.arange(len(y_plot))
         return x_plot, y_plot
 
-    def add_ticklabels(self, x, y, ax, delta=0):
-        if x.dtype.kind == 'O':
-            x_num = np.arange(len(x)) + delta
-            categories = [textwrap.fill(str(cat), self.x_textwrap) for cat in x]
-            ax.set_xticks(x_num)
-            ax.set_xticklabels(categories)
+    def get_distribution_data(self, info):
+        cur_data = defaultdict(list)
+        cur_ticklabels = defaultdict(list)
+        for vals, split_label, col_name, row_label, col_label in info:
+            cur_data[split_label].append(vals)
+            cur_ticklabels[split_label].append(col_name)
+        return cur_data, cur_ticklabels
 
-        if y.dtype.kind == 'O':
-            y_num = np.arange(len(y)) + delta
-            ax.set_yticks(y_num)
-            categories = y
+    def add_ticklabels(self, labels, ax, delta=0):
+        ticks = np.arange(len(labels))
+        if self.orientation == 'v':
+            labels = [textwrap.fill(str(label), self.x_textwrap) for label in labels]
+            ax.set_xticks(ticks + delta)
+            ax.set_xticklabels(labels)
+        else:
             if self.y_textwrap:
-                categories = [textwrap.fill(str(cat), self.y_textwrap) for cat in y]
-            ax.set_yticklabels(categories)
+                labels = [textwrap.fill(str(label), self.y_textwrap) for label in labels]
+            ax.set_yticks(ticks - delta)
+            ax.set_yticklabels(labels)
 
     def add_legend(self, handles=None, labels=None):
         if self.split:
@@ -541,7 +646,9 @@ class CommonPlot:
     def update_fig_size(self, n_splits, n_groups_per_split):
         if self.user_figsize:
             return
-        new_size = 1.5 + (.3 + .06 * n_splits) * n_groups_per_split
+        c1 = .3 if self.orientation == 'v' else .2
+        c2 = .06 if self.orientation == 'v' else .04
+        new_size = 1.8 + (c1 + c2 * n_splits) * n_groups_per_split
         if self.orientation == 'v':
             height = max(2.5 - .3 * self.fig_shape[0], 1.2)
             shrink = max(.9 - .1 * self.fig_shape[1], .5)

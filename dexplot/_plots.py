@@ -1,27 +1,40 @@
-from collections import defaultdict
-
 import numpy as np
+import pandas as pd
 
 from ._common_plot import CommonPlot
 
 
+def get_bar_kwargs(bar_kwargs):
+    default_bar_kwargs = {'ec': 'white', 'alpha': .9}
+    if bar_kwargs is None:
+        bar_kwargs = default_bar_kwargs
+    else:
+        try:
+            bar_kwargs = {**default_bar_kwargs, **bar_kwargs}
+        except:
+            raise TypeError('`bar_kwargs` must be a dictionary')
+    return bar_kwargs
+
 def line(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None, 
-         x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
-         orientation='v', sort='lex_asc', wrap=None, figsize=None, title=None, sharex=True, 
+         x_order='asc', y_order='asc', split_order='asc', row_order='asc', col_order='asc',
+         orientation='v', sort_values=None, wrap=None, figsize=None, title=None, sharex=True, 
          sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
          yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None):
 
         self = CommonPlot(x, y, data, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
-                          orientation, sort, wrap, figsize, title, sharex, 
+                          orientation, sort_values, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
                           x_textwrap, y_textwrap)
+        
+        marker = 'o' if self.groupby else None
 
         for ax, info in self.final_data.items():
             for x, y, label, col_name, row_label, col_label in info:
                 x_plot, y_plot = self.get_x_y_plot(x, y)
-                ax.plot(x_plot, y_plot, label=label)
-            self.add_ticklabels(x, y, ax)
+                ax.plot(x_plot, y_plot, label=label, marker=marker)
+            labels = x if self.orientation == 'v' else y
+            self.add_ticklabels(labels, ax)
         
         self.add_legend()
         if x.dtype == 'O' or y.dtype == 'O':
@@ -29,68 +42,59 @@ def line(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None
         return self.clean_up()
         
 def scatter(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None, 
-            x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
-            orientation='v', sort='lex_asc', wrap=None, figsize=None, title=None, sharex=True, 
+            x_order='asc', y_order='asc', split_order='asc', row_order='asc', col_order='asc',
+            orientation='v', sort_values=None, wrap=None, figsize=None, title=None, sharex=True, 
             sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
             yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None, regression=False):
 
         self = CommonPlot(x, y, data, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
-                          orientation, sort, wrap, figsize, title, sharex, 
+                          orientation, sort_values, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
                           x_textwrap, y_textwrap)
+
+        alpha = 1 if self.groupby else .7
 
         for ax, info in self.final_data.items():
             for x, y, label, col_name, row_label, col_label in info:
                 x_plot, y_plot = self.get_x_y_plot(x, y)
-                ax.scatter(x_plot, y_plot, label=label, alpha=.7)
+                ax.scatter(x_plot, y_plot, label=label, alpha=alpha)
                 if regression:
                     slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
                     x_line = np.array([x.min(), x.max()])
                     y_line = x_line * slope + intercept
                     ax.plot(x_line, y_line)
-            self.add_ticklabels(x, y, ax)
+            labels = x if self.orientation == 'v' else y
+            self.add_ticklabels(labels, ax)
 
         self.add_legend()
         if x.dtype == 'O' or y.dtype == 'O':
             self.update_fig_size(len(x), 1)
         return self.clean_up()
 
-
 def bar(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None, 
-        x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
-        orientation='v', stacked=False, sort='lex_asc', wrap=None, figsize=None, 
+        x_order='asc', y_order='asc', split_order='asc', row_order='asc', col_order='asc',
+        orientation='v', stacked=False, sort_values=None, wrap=None, figsize=None, 
         title=None, sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, 
         ylim=None, xscale='linear', yscale='linear', cmap=None, size=.92, 
         x_textwrap=10, y_textwrap=None, bar_kwargs=None):
 
         self = CommonPlot(x, y, data, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
-                          orientation, sort, wrap, figsize, title, sharex, 
+                          orientation, sort_values, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
                           x_textwrap, y_textwrap)
 
-        default_bar_kwargs = {'ec': 'white', 'alpha': .9}
-        if bar_kwargs is None:
-            bar_kwargs = default_bar_kwargs
-        else:
-            try:
-                bar_kwargs = {**default_bar_kwargs, **bar_kwargs}
-            except:
-                raise TypeError('`bar_kwargs` must be a dictionary')
-
+        bar_kwargs = get_bar_kwargs(bar_kwargs)
         for ax, info in self.final_data.items():
-            cur_size = size
-            if not stacked:
-                cur_size /= len(info)
-            base = None
+            cur_size = size if stacked else size / len(info)
             for i, (x, y, label, col_name, row_label, col_label) in enumerate(info):
                 x_plot, y_plot = self.get_x_y_plot(x, y)
-                if base is None:
+                if i == 0:
                     base = np.zeros(len(x_plot))
                 if len(x) > 200:
                     warnings.warn('You are plotting more than 200 bars. '
-                                  'Did you forget to privde an `aggfunc`?')
+                                  'Did you forget to provide an `aggfunc`?')
 
                 if self.orientation == 'v':
                     x_plot = x_plot + cur_size * i * (1 - stacked)
@@ -99,57 +103,77 @@ def bar(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None,
                     if stacked:
                         base += y_plot
                 else:
-                    y_plot = y_plot + cur_size * i * (1 - stacked)
+                    y_plot = y_plot - cur_size * (i + 1) * (1 - stacked)
                     ax.barh(y_plot, x_plot, label=label, height=cur_size, 
                             left=base, align='edge', **bar_kwargs)
                     if stacked:
                         base += x_plot
-            self.add_ticklabels(x, y, ax, delta=size / 2)
+            labels = x if self.orientation == 'v' else y
+            delta = size / 2
+            self.add_ticklabels(labels, ax, delta=delta)
 
         self.add_legend()
         self.update_fig_size(len(info), len(x))
         return self.clean_up()
 
 def count(val, data=None, normalize=None, split=None, row=None, col=None, 
-          x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
-          orientation='v', stacked=False, sort='lex_asc', wrap=None, figsize=None, title=None, 
-          sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, 
-          xscale='linear', yscale='linear', cmap=None, size=.92, x_textwrap=10, y_textwrap=None):
+          x_order='asc', y_order='asc', split_order='asc', row_order='asc', col_order='asc',
+          orientation='v', stacked=False, sort_values='desc', wrap=None, figsize=None, 
+          title=None, sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, 
+          xscale='linear', yscale='linear', cmap=None, size=.92, x_textwrap=10, y_textwrap=None,
+          bar_kwargs=None):
 
+        bar_kwargs = get_bar_kwargs(bar_kwargs)
         x, y = (val, None) if orientation == 'v' else (None, val)
-        aggfunc = 'count'
+        aggfunc = '__distribution__'
         self = CommonPlot(x, y, data, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
-                          orientation, sort, wrap, figsize, title, sharex, 
+                          orientation, sort_values, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
                           x_textwrap, y_textwrap)
 
         for ax, info in self.final_data.items():
-            cur_size = size / len(info)
-            for i, (x, y, label, col_name, row_label, col_label) in enumerate(info):
-                x_plot, y_plot = self.get_x_y_plot(x, y)
+            cur_data, cur_ticklabels = self.get_distribution_data(info)
+            columns = []
+            vcs = []
+            for split_label, data_list in cur_data.items():
+                # becuase count has no x, y params, only one item per data_list
+                vcs.append(data_list[0].value_counts())
+                columns.append(split_label)
+            df = pd.concat(vcs, axis=1)
+            df.columns = columns
+            base = np.zeros(len(df))
+            cur_size = size if stacked else size / len(columns)
+            labels = df.index.values
+            position = np.arange(len(labels))
+            for i, col in enumerate(df.columns):
+                values = df[col].values
                 if self.orientation == 'v':
-                    x_plot = x_plot + cur_size * i
-                    ax.bar(x_plot, y_plot, label=label, width=cur_size, align='edge')
+                    ax.bar(position, values, label=col, width=cur_size, 
+                            bottom=base, align='edge', **bar_kwargs)
                 else:
-                    y_plot = y_plot + cur_size * i
-                    ax.barh(y_plot, x_plot, label=label, height=cur_size, align='edge')
-            self.add_ticklabels(x, y, ax, delta=size / 2)
+                    ax.barh(position, values, label=col, height=cur_size, 
+                            left=base, align='edge', **bar_kwargs)
+                
+                position = position + cur_size * (1 - stacked)
 
+            self.add_ticklabels(labels, ax, delta=size / 2)
+            
         self.add_legend()
-        self.update_fig_size(len(info), len(x))
+        # self.update_fig_size(len(info), len(x))
         return self.clean_up()
 
-def _common_dist(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None, 
-        y_order=None, split_order=None, row_order=None, col_order=None, orientation='h', 
-        sort='lex_asc', wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
+def _common_dist(x=None, y=None, data=None, split=None, row=None, col=None, x_order='asc', 
+        y_order='asc', split_order='asc', row_order='asc', col_order='asc', orientation='h', 
+        wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
         ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
         x_textwrap=10, y_textwrap=None, kind=None, **kwargs):
         
         aggfunc = '__distribution__'
+        sort_values = None
         self = CommonPlot(x, y, data, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
-                          orientation, sort, wrap, figsize, title, sharex, 
+                          orientation, sort_values, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
                           x_textwrap, y_textwrap)
 
@@ -157,58 +181,53 @@ def _common_dist(x=None, y=None, data=None, split=None, row=None, col=None, x_or
         vert = self.orientation == 'v'
         for ax, info in self.final_data.items():
             plot_func = getattr(ax, kind)
-            cur_data = defaultdict(list)
-            cur_ticklabels = defaultdict(list)
-            for x, y, split_label, col_name, row_label, col_label in info:
-                x_plot, y_plot = self.get_x_y_plot(x, y)
-                if vert:
-                    cur_data[split_label].append(y_plot)
-                else:
-                    cur_data[split_label].append(x_plot)
-                cur_ticklabels[split_label].append(col_name)
+            cur_data, cur_ticklabels = self.get_distribution_data(info)
 
             handles = []
             split_labels = []
-            ticklabels = []
-            other_info = {}
             n_splits = len(cur_data)
-            widths = min(.5 + .1 * n_splits, .9) / n_splits
+            widths = min(.5 + .15 * n_splits, .9) / n_splits
             n_boxes = len(info)
             n = len(next(iter(cur_data.values())))  # number of groups
+            markersize = max(6 - n_boxes // 5, 2)
             for i, (split_label, data) in enumerate(cur_data.items()):
-                markersize = max(6 - n_boxes // 5, 2)
-                positions = np.arange(n) + i * widths
                 filt = [len(arr) > 0 for arr in data]
-                positions = [p for (p, f) in zip(positions, filt) if f]
+                positions = np.array([i for (i, f) in enumerate(filt) if f])
                 data = [d for (d, f) in zip(data, filt) if f]
+                if self.orientation == 'h':
+                    positions = positions - i * widths
+                else:
+                    positions = positions + i * widths
+                
                 if kind == 'boxplot':
                     kwargs['boxprops'] = {'facecolor': self.colors[i % len(self.colors)] ,
                                           'edgecolor': 'black'}
                     kwargs['flierprops'] = {'markersize': markersize}
+                
                 ret = plot_func(data, vert=vert, positions=positions, widths=widths, **kwargs)
+
                 if kind == 'violinplot':
                     for k in ['cmeans', 'cmins', 'cmaxes', 'cbars', 'cmedians', 'cquantiles']:
                         if k in ret:
                             ret[k].set_linewidth(1)
+                    for body in ret['bodies']:
+                        body.set_alpha(.8)
+
                 handles.append(ret[key][0])
                 split_labels.append(split_label)
+            
             delta = (n_splits / 2 - .5) * widths
-            ticklabels = cur_ticklabels[split_label]
-            if vert:
-                ax.set_xticks(np.arange(n) + delta)
-                ax.set_xticklabels(ticklabels)
-            else:
-                ax.set_yticks(np.arange(n) + delta)
-                ax.set_yticklabels(ticklabels)
+            labels = cur_ticklabels[split_label]
+            self.add_ticklabels(labels, ax, delta=delta)
 
         self.add_legend(handles, split_labels)
         self.update_fig_size(n_splits, n)
         return self.clean_up()
 
 # could add groupby to box
-def box(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None, 
-        y_order=None, split_order=None, row_order=None, col_order=None, orientation='h', 
-        sort='lex_asc', wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
+def box(x=None, y=None, data=None, split=None, row=None, col=None, x_order='asc', 
+        y_order='asc', split_order='asc', row_order='asc', col_order='asc', orientation='h', 
+        wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
         ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
         x_textwrap=10, y_textwrap=None, notch=None, sym=None, whis=None, patch_artist=True, 
         bootstrap=None, usermedians=None, conf_intervals=None, meanline=None, showmeans=None, 
@@ -228,13 +247,13 @@ def box(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None,
                   autorange=autorange, zorder=zorder)
     
     return _common_dist(x, y, data, split, row, col, x_order, y_order, split_order, 
-                        row_order, col_order, orientation, sort, wrap, figsize, title, sharex, 
-                        sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap, 
+                        row_order, col_order, orientation, wrap, figsize, 
+                        title, sharex, sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap, 
                         x_textwrap, y_textwrap, kind='boxplot', **kwargs)
 
 
-def violin(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None, y_order=None, 
-           split_order=None, row_order=None, col_order=None, orientation='h', sort='lex_asc', 
+def violin(x=None, y=None, data=None, split=None, row=None, col=None, x_order='asc', 
+           y_order='asc', split_order='asc', row_order='asc', col_order='asc', orientation='h', 
            wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
            ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
            x_textwrap=10, y_textwrap=None, showmeans=False, showextrema=True, showmedians=True, 
@@ -245,42 +264,88 @@ def violin(x=None, y=None, data=None, split=None, row=None, col=None, x_order=No
 
     return _common_dist(x, y, data, split, row, col, 
                         x_order, y_order, split_order, row_order, col_order,
-                        orientation, sort, wrap, figsize, title, sharex, 
+                        orientation, wrap, figsize, title, sharex, 
                         sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap, 
                         x_textwrap, y_textwrap, kind='violinplot', **kwargs)
 
 
-def hist(val, data=None, split=None, row=None, col=None, x_order=None, y_order=None, 
-         split_order=None, row_order=None, col_order=None, orientation='v', sort='lex_asc', 
-         wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
-         ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
-         x_textwrap=10, y_textwrap=None, bins=None, range=None, density=False, weights=None, 
-         cumulative=False, bottom=None, histtype='bar', align='mid', rwidth=None, log=False,
-         stacked=False):
+def hist(val, data=None, split=None, row=None, col=None, split_order='asc', row_order='asc', 
+         col_order='asc', orientation='v', wrap=None, figsize=None, title=None, 
+         sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
+         yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None, bins=None, range=None, 
+         density=False, weights=None, cumulative=False, bottom=None, histtype='bar', align='mid', 
+         rwidth=None, log=False):
 
+        x_order = y_order = None
         x, y = (val, None) if orientation == 'v' else (None, val)
+        bins = bins if bins else 20
         kwargs = dict(bins=bins, range=range, density=density, weights=weights, 
                       cumulative=cumulative, bottom=bottom, histtype=histtype, align=align, 
-                      rwidth=rwidth, log=log, stacked=stacked)
+                      rwidth=rwidth, log=log)
 
+        aggfunc = '__distribution__'
+        sort_values = None
         self = CommonPlot(x, y, data, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
-                          orientation, sort, wrap, figsize, title, sharex, 
+                          orientation, sort_values, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
                           x_textwrap, y_textwrap)
 
         orientation = 'vertical' if self.orientation == 'v' else 'horizontal'
         for ax, info in self.final_data.items():
-            handles = []
-            labels = []
-            n_splits = len(info)
-            for x, y, label, col_name, row_label, col_label in info:
-                val = y if orientation == 'vertical' else x
-                ax.hist(val, orientation=orientation, label=label, **kwargs, 
-                        ec='white', lw=1, alpha=.8)
+            cur_data, cur_ticklabels = self.get_distribution_data(info)
 
+            handles = []
+            split_labels = []
+            n_splits = len(cur_data)
+            n = len(next(iter(cur_data.values())))  # number of groups
+            for split_label, data in cur_data.items():
+                filt = [len(arr) > 0 for arr in data]
+                vals = [d for (d, f) in zip(data, filt) if f]    
+                ret = ax.hist(vals, orientation=orientation, alpha=.8, **kwargs)
+                handles.append(ret[-1][0])
+                split_labels.append(split_label)
+
+        self.add_legend(handles, split_labels)
+        # self.update_fig_size(n_splits, n)
+        return self.clean_up()
+
+
+def kde(x=None, y=None, data=None, split=None, row=None, col=None, split_order='asc', 
+        row_order='asc', col_order='asc', orientation='v', wrap=None, 
+        figsize=None, title=None, sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, 
+        ylim=None, xscale='linear', yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None, 
+        range=None, cumulative=False):
+
+        from ._utils import calculate_density_1d, calculate_density_2d
+
+        x_order = y_order = None
+        # x, y = (x, None) if orientation == 'v' else (None, x)
+        kwargs = dict(range=range, cumulative=cumulative)
+
+        if x is not None and y is not None and split is not None:
+            raise ValueError('Cannot use `split` for 2-dimensional KDE plots')
+
+        aggfunc = '__distribution__' if y is None else None
+        sort_values = None
+        self = CommonPlot(x, y, data, aggfunc, split, row, col, 
+                          x_order, y_order, split_order, row_order, col_order,
+                          orientation, sort_values, wrap, figsize, title, sharex, 
+                          sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
+                          x_textwrap, y_textwrap)
+
+        for ax, info in self.final_data.items():
+            for x, y, split_label, col_name, row_label, col_label in info:
+                x_plot, y_plot = self.get_x_y_plot(x, y)
+                if y is None:
+                    x, density = calculate_density_1d(x_plot, cumulative=cumulative)
+                    ax.plot(x, density, label=split_label)
+                else:
+                    xmin, xmax, ymin, ymax, Z = calculate_density_2d(x_plot, y_plot)
+                    ax.imshow(Z, extent=[xmin, xmax, ymin, ymax], aspect='auto')
+                
         self.add_legend()
-        self.update_fig_size(n_splits, len(x))
+        # self.update_fig_size(n_splits, n)
         return self.clean_up()
 
 # """
