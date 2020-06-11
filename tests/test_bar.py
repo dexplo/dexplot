@@ -92,6 +92,11 @@ class TestSplit:
         dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median', 
                 split='superhost', split_order=['Yes', 'No'], stacked=True)
 
+    def test_errors(self):
+        with pytest.raises(ValueError):
+            dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median', 
+                    split='property_type', split_order=['Yes', 'No'])
+
 
 class TestRowCol:
 
