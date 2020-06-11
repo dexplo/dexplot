@@ -10,7 +10,7 @@ setuptools.setup(
     version=__version__,
     author="Ted Petrou",
     author_email="petrou.theodore@gmail.com",
-    description="Data Visualization library using matplotlib for both long and wide data",
+    description="Powerful and intuitive data visualization library using matplotlib for both long and wide data",
     long_description=long_description,
     long_description_content_type="text/markdown",
     keywords="visualization matplotlib pandas",
