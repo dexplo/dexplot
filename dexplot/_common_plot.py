@@ -8,7 +8,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib import ticker
 from matplotlib.colors import Colormap
-from scipy import stats
 
 
 NONETYPE = type(None)
@@ -20,7 +19,7 @@ class CommonPlot:
                  x_order, y_order, split_order, row_order, col_order,
                  orientation, sort_values, wrap, figsize, title, sharex, sharey, 
                  xlabel, ylabel, xlim, ylim, xscale, yscale, cmap, 
-                 x_textwrap, y_textwrap, check_numeric=False):
+                 x_textwrap, y_textwrap, check_numeric=False, kind=None):
 
         self.used_columns = set()
         self.data = self.get_data(data)
@@ -28,14 +27,14 @@ class CommonPlot:
         self.y = self.get_col(y)
         self.validate_x_y()
         self.orientation = orientation
-        self.aggfunc = aggfunc
+        self.aggfunc = self.get_aggfunc(aggfunc)
         self.groupby = self.get_groupby()
         self.split = self.get_col(split)
         self.row = self.get_col(row)
         self.col = self.get_col(col)
         
         self.agg = self.set_agg()
-        self.make_groups_categorical()
+        self.make_groups_categorical(kind)
         self.validate_numeric(check_numeric)
         
         self.x_order = self.validate_order(x_order, 'x')
@@ -79,10 +78,14 @@ class CommonPlot:
         self.final_data = self.get_final_data()
         self.style_fig()
         self.add_ax_titles()
+        self.add_fig_title()
         
     def get_data(self, data):
+        if isinstance(data, pd.Series):
+            return data.to_frame()
+
         if not isinstance(data, pd.DataFrame):
-            raise TypeError('`data` must be a pandas DataFrame')
+            raise TypeError('`data` must be a pandas DataFrame or Series')
         elif len(data) == 0:
             raise ValueError('DataFrame contains no data')
         return data.copy()
@@ -103,6 +106,13 @@ class CommonPlot:
     def validate_x_y(self):
         if self.x == self.y and self.x is not None and self.y is not None:
             raise ValueError('`x` and `y` cannot be the same column name')
+
+    def get_aggfunc(self, aggfunc):
+        if aggfunc == 'countna':
+            return lambda x: x.isna().sum()
+        if aggfunc == 'percna':
+            return lambda x: x.isna().mean()
+        return aggfunc
 
     def get_groupby(self):
         if self.x is None or self.y is None or self.aggfunc is None:
@@ -142,12 +152,16 @@ class CommonPlot:
             if name and self.data[name].dtype.name == 'category':
                 self.data[name].cat.remove_unused_categories(inplace=True)
 
-    def make_groups_categorical(self):
+    def make_groups_categorical(self, kind):
         category_cols = [self.groupby, self.split, self.row, self.col]
         for col in category_cols:
             if col:
                 if self.data[col].dtype.name != 'category':
                     self.data[col] = self.data[col].astype('category')
+        if kind == 'count':
+            col = self.x or self.y
+            if self.data[col].dtype.name != 'category':
+                self.data[col] = self.data[col].astype('category')
 
     def validate_numeric(self, check_numeric):
         if check_numeric:
@@ -348,6 +362,7 @@ class CommonPlot:
         return nrows, ncols
 
     def get_data_for_every_plot(self):
+        # TODO: catch keyerror for groups that dont exist
         rows, cols = self.get_row_col_order()
         if self.plot_type == 'row_only':
             return [(row, self.data.loc[row]) for row in rows]
@@ -362,7 +377,7 @@ class CommonPlot:
                         with warnings.catch_warnings():
                             warnings.simplefilter("ignore")
                             data = self.data.loc[group]
-                    except KeyError:
+                    except (KeyError, TypeError):
                         data = self.data.iloc[:0]
                     groups.append((group, data))
             return groups
@@ -423,7 +438,7 @@ class CommonPlot:
 
     def reverse_order(self, order):
         cond1 = order == 'desc' and self.orientation == 'v'
-        cond2 = order == 'asc' and self.orientation == 'h'
+        cond2 = order in ('asc', None) and self.orientation == 'h'
         return cond1 or cond2
 
     def order_xy(self, x, y):
@@ -471,7 +486,8 @@ class CommonPlot:
         order = []
         groups = []
         sort = specific_order is not None
-        for grp, data_grp in data.groupby(getattr(self, kind), sort=sort):
+        # TODO: Need to decide defaults for x_order, y_order etc... either None or 'asc'
+        for grp, data_grp in data.groupby(getattr(self, kind), sort=True):
             order.append((grp, data_grp))
             groups.append(grp)
 
@@ -535,12 +551,13 @@ class CommonPlot:
                     s = data[col]
                     x, y = s.index.values, s.values
                     x, y = self.get_correct_data_order(x, y)
-                    groups.append((x, y, split_label, col, row_label, col_label))
+                    x, y = (x, y) if self.orientation == 'v' else (y, x)
+                    groups.append((x, y, col, None, row_label, col_label))
         else:
             # simple raw plot - make sure to warn when lots of data for bar/box/hist
             # one graph per row - OK for scatterplots and line plots
             x, y = self.get_correct_data_order(data[self.x], data[self.y])
-            groups.append((x, y, None, None, row_label, col_label))
+            groups.append((x, y, split_label, None, row_label, col_label))
         return groups
 
     def get_final_data(self):
@@ -635,8 +652,8 @@ class CommonPlot:
             ax.set_yticks(ticks - delta)
             ax.set_yticklabels(labels)
 
-    def add_legend(self, handles=None, labels=None):
-        if self.split:
+    def add_legend(self, label=None, handles=None, labels=None):
+        if label is not None:
             if handles is None:
                 handles, labels = self.axs[0].get_legend_handles_labels()
             ncol = len(labels) // 8 + 1
@@ -665,3 +682,6 @@ class CommonPlot:
             width = width * self.fig_shape[1]
         width, height = min(width, 25), min(height, 25)
         self.fig.set_size_inches(width, height)
+
+    def add_fig_title(self):
+        self.fig.suptitle(self.title, y=1.02)

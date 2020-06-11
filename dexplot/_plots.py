@@ -1,5 +1,9 @@
+import warnings
+from collections import defaultdict
+
 import numpy as np
 import pandas as pd
+from scipy import stats
 
 from ._common_plot import CommonPlot
 
@@ -16,11 +20,11 @@ def get_bar_kwargs(bar_kwargs):
     return bar_kwargs
 
 def line(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None, 
-         x_order='asc', y_order='asc', split_order='asc', row_order='asc', col_order='asc',
+         x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
          orientation='v', sort_values=None, wrap=None, figsize=None, title=None, sharex=True, 
          sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
          yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None):
-
+        
         self = CommonPlot(x, y, data, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, sort_values, wrap, figsize, title, sharex, 
@@ -33,16 +37,18 @@ def line(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None
             for x, y, label, col_name, row_label, col_label in info:
                 x_plot, y_plot = self.get_x_y_plot(x, y)
                 ax.plot(x_plot, y_plot, label=label, marker=marker)
-            labels = x if self.orientation == 'v' else y
-            self.add_ticklabels(labels, ax)
+            
+            if self.groupby:
+                ticklabels = x if self.orientation == 'v' else y
+                self.add_ticklabels(ticklabels, ax)
         
-        self.add_legend()
+        self.add_legend(label)
         if x.dtype == 'O' or y.dtype == 'O':
             self.update_fig_size(len(x), 1)
         return self.clean_up()
         
 def scatter(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None, 
-            x_order='asc', y_order='asc', split_order='asc', row_order='asc', col_order='asc',
+            x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
             orientation='v', sort_values=None, wrap=None, figsize=None, title=None, sharex=True, 
             sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
             yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None, regression=False):
@@ -64,20 +70,21 @@ def scatter(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=N
                     x_line = np.array([x.min(), x.max()])
                     y_line = x_line * slope + intercept
                     ax.plot(x_line, y_line)
-            labels = x if self.orientation == 'v' else y
-            self.add_ticklabels(labels, ax)
+            if self.groupby:
+                ticklabels = x if self.orientation == 'v' else y
+                self.add_ticklabels(ticklabels, ax)
 
-        self.add_legend()
+        self.add_legend(label)
         if x.dtype == 'O' or y.dtype == 'O':
             self.update_fig_size(len(x), 1)
         return self.clean_up()
 
 def bar(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None, 
-        x_order='asc', y_order='asc', split_order='asc', row_order='asc', col_order='asc',
-        orientation='v', stacked=False, sort_values=None, wrap=None, figsize=None, 
-        title=None, sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, 
-        ylim=None, xscale='linear', yscale='linear', cmap=None, size=.92, 
-        x_textwrap=10, y_textwrap=None, bar_kwargs=None):
+        x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
+        orientation='v', sort_values=None, wrap=None, figsize=None, title=None, 
+        sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, 
+        ylim=None, xscale='linear', yscale='linear', cmap=None, x_textwrap=10, 
+        y_textwrap=None, size=.92, stacked=False, bar_kwargs=None):
 
         self = CommonPlot(x, y, data, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
@@ -108,21 +115,21 @@ def bar(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None,
                             left=base, align='edge', **bar_kwargs)
                     if stacked:
                         base += x_plot
-            labels = x if self.orientation == 'v' else y
+            ticklabels = x if self.orientation == 'v' else y
             delta = size / 2
-            self.add_ticklabels(labels, ax, delta=delta)
+            self.add_ticklabels(ticklabels, ax, delta=delta)
 
-        self.add_legend()
+        self.add_legend(label)
         self.update_fig_size(len(info), len(x))
         return self.clean_up()
 
-def count(val, data=None, normalize=None, split=None, row=None, col=None, 
-          x_order='asc', y_order='asc', split_order='asc', row_order='asc', col_order='asc',
-          orientation='v', stacked=False, sort_values='desc', wrap=None, figsize=None, 
-          title=None, sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, 
-          xscale='linear', yscale='linear', cmap=None, size=.92, x_textwrap=10, y_textwrap=None,
-          bar_kwargs=None):
-
+def count(val, data=None, normalize=False, split=None, row=None, col=None, 
+          x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
+          orientation='v', sort_values='desc', wrap=None, figsize=None, title=None, 
+          sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, 
+          xscale='linear', yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None,
+          size=.92, stacked=False, bar_kwargs=None):
+       
         bar_kwargs = get_bar_kwargs(bar_kwargs)
         x, y = (val, None) if orientation == 'v' else (None, val)
         aggfunc = '__distribution__'
@@ -130,28 +137,113 @@ def count(val, data=None, normalize=None, split=None, row=None, col=None,
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, None, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
-                          x_textwrap, y_textwrap)
+                          x_textwrap, y_textwrap, kind='count')
 
+        count_dict = {}
+
+        if isinstance(normalize, str):
+            if normalize in (val, self.split, self.row, self.col):
+                normalize = [normalize]
+        
+        if isinstance(normalize, tuple):
+            normalize = list(normalize)
+        elif hasattr(normalize, 'tolist'):
+            normalize = normalize.tolist()
+        elif not isinstance(normalize, (bool, list)):
+            raise ValueError('`normalize` must either be `True`/`False`, one of the columns passed '
+                                 'to `val`, `split`, `row` or `col`, or a list of '
+                                 'those columns')
+        normalize_kind = None
+        if isinstance(normalize, list):
+            row_col = []
+            val_split = []
+            for col in normalize:
+                if col in (self.row, self.col):
+                    row_col.append(col)
+                elif col in (val, self.split):
+                    val_split.append(col)
+                else:
+                    raise ValueError('Columns passed to `normalize` must be the same as '
+                                     ' `val`, `split`, `row` or `col`.')
+
+            if row_col:
+                all_counts = {}
+                for grp, data in self.data.groupby(row_col):
+                    if len(row_col) == 1:
+                        grp = str(grp)
+                    else:
+                        grp = tuple(str(g) for g in grp)
+
+                    if val_split:
+                        normalize_kind = 'all'
+                        all_counts[grp] = data.groupby(val_split).size()
+                    else:
+                        normalize_kind = 'grid'
+                        all_counts[grp] = len(data)
+            else:
+                normalize_kind = 'single'
+                all_counts = self.data.groupby(val_split).size()
+
+        n = 0
         for ax, info in self.final_data.items():
-            cur_data, cur_ticklabels = self.get_distribution_data(info)
             columns = []
             vcs = []
-            for split_label, data_list in cur_data.items():
-                # becuase count has no x, y params, only one item per data_list
-                vcs.append(data_list[0].value_counts())
+            for vals, split_label, col_name, row_label, col_label in info:
+                vcs.append(vals.value_counts())
                 columns.append(split_label)
+
             df = pd.concat(vcs, axis=1)
             df.columns = columns
+            df.index.name = vals.name
+            if normalize_kind == 'single':
+                if len(val_split) == 2:
+                    df = df / all_counts.unstack(self.split)
+                elif df.index.name == all_counts.index.name:
+                    df = df.div(all_counts, axis=0)
+                else:
+                    df = df / all_counts
+            elif normalize_kind in ('grid', 'all'):
+                grp = []
+                for col in normalize:
+                    if col == self.row:
+                        grp.append(row_label)
+                    if col == self.col:
+                        grp.append(col_label)
+                
+                if len(grp) == 1:
+                    grp = grp[0]
+                else:
+                    grp = tuple(grp)
+                grp_val = all_counts[grp]
+                
+                if normalize_kind == 'grid':
+                    df = df / grp_val
+                elif len(val_split) == 2:
+                    df = df / grp_val.unstack(self.split)
+                elif df.index.name == grp_val.index.name:
+                    df = df.div(grp_val, axis=0)
+                else:
+                    df = df / grp_val
+
+            else:
+                n += df.sum().sum()
+            count_dict[ax] = df
+            
+        if normalize is True:
+            count_dict = {ax: df / n for ax, df in count_dict.items()}
+        
+
+        for ax, df in count_dict.items():
             base = np.zeros(len(df))
-            cur_size = size if stacked else size / len(columns)
+            cur_size = size if stacked else size / len(df.columns)
             position = np.arange(len(df))
 
-            if sort_values == 'asc':
+            if sort_values == 'asc' and not (self.split or self.row or self.col):
                 df = df.iloc[::-1]
 
-            labels = df.index.values
+            ticklabels = df.index.values
                 
-            for i, col in enumerate(df.columns):
+            for col in df.columns:
                 values = df[col].values
                 
                 if self.orientation == 'v':
@@ -166,18 +258,18 @@ def count(val, data=None, normalize=None, split=None, row=None, col=None,
                 if stacked:
                     base += values
                 
-            self.add_ticklabels(labels, ax, delta=size / 2)
-            
-        self.add_legend()
-        # self.update_fig_size(len(info), len(x))
+            self.add_ticklabels(ticklabels, ax, delta=size / 2)
+        if self.split or len(df.columns) > 1:
+            self.add_legend(col)
+        self.update_fig_size(len(info), len(df))
         return self.clean_up()
 
-def _common_dist(x=None, y=None, data=None, split=None, row=None, col=None, x_order='asc', 
-        y_order='asc', split_order='asc', row_order='asc', col_order='asc', orientation='h', 
-        wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
-        ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
-        x_textwrap=10, y_textwrap=None, kind=None, **kwargs):
-        
+def _common_dist(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None, 
+                 y_order=None, split_order=None, row_order=None, col_order=None, orientation='h', 
+                 wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
+                 ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
+                 x_textwrap=10, y_textwrap=None, kind=None, **kwargs):
+
         aggfunc = '__distribution__'
         sort_values = None
         self = CommonPlot(x, y, data, aggfunc, split, row, col, 
@@ -226,16 +318,16 @@ def _common_dist(x=None, y=None, data=None, split=None, row=None, col=None, x_or
                 split_labels.append(split_label)
             
             delta = (n_splits / 2 - .5) * widths
-            labels = cur_ticklabels[split_label]
-            self.add_ticklabels(labels, ax, delta=delta)
+            ticklabels = cur_ticklabels[split_label]
+            self.add_ticklabels(ticklabels, ax, delta=delta)
 
-        self.add_legend(handles, split_labels)
+        self.add_legend(self.split, handles, split_labels)
         self.update_fig_size(n_splits, n)
         return self.clean_up()
 
 # could add groupby to box
-def box(x=None, y=None, data=None, split=None, row=None, col=None, x_order='asc', 
-        y_order='asc', split_order='asc', row_order='asc', col_order='asc', orientation='h', 
+def box(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None, 
+        y_order=None, split_order=None, row_order=None, col_order=None, orientation='h', 
         wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
         ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
         x_textwrap=10, y_textwrap=None, notch=None, sym=None, whis=None, patch_artist=True, 
@@ -261,8 +353,8 @@ def box(x=None, y=None, data=None, split=None, row=None, col=None, x_order='asc'
                         x_textwrap, y_textwrap, kind='boxplot', **kwargs)
 
 
-def violin(x=None, y=None, data=None, split=None, row=None, col=None, x_order='asc', 
-           y_order='asc', split_order='asc', row_order='asc', col_order='asc', orientation='h', 
+def violin(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None, 
+           y_order=None, split_order=None, row_order=None, col_order=None, orientation='h', 
            wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
            ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
            x_textwrap=10, y_textwrap=None, showmeans=False, showextrema=True, showmedians=True, 
@@ -278,13 +370,13 @@ def violin(x=None, y=None, data=None, split=None, row=None, col=None, x_order='a
                         x_textwrap, y_textwrap, kind='violinplot', **kwargs)
 
 
-def hist(val, data=None, split=None, row=None, col=None, split_order='asc', row_order='asc', 
-         col_order='asc', orientation='v', wrap=None, figsize=None, title=None, 
+def hist(val, data=None, split=None, row=None, col=None, split_order=None, row_order=None, 
+         col_order=None, orientation='v', wrap=None, figsize=None, title=None, 
          sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
          yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None, bins=None, range=None, 
          density=False, weights=None, cumulative=False, bottom=None, histtype='bar', align='mid', 
          rwidth=None, log=False):
-
+        
         x_order = y_order = None
         x, y = (val, None) if orientation == 'v' else (None, val)
         bins = bins if bins else 20
@@ -315,17 +407,17 @@ def hist(val, data=None, split=None, row=None, col=None, split_order='asc', row_
                 handles.append(ret[-1][0])
                 split_labels.append(split_label)
 
-        self.add_legend(handles, split_labels)
+        self.add_legend(self.split, handles, split_labels)
         # self.update_fig_size(n_splits, n)
         return self.clean_up()
 
 
-def kde(x=None, y=None, data=None, split=None, row=None, col=None, split_order='asc', 
-        row_order='asc', col_order='asc', orientation='v', wrap=None, figsize=None, 
+def kde(x=None, y=None, data=None, split=None, row=None, col=None, split_order=None, 
+        row_order=None, col_order=None, orientation='v', wrap=None, figsize=None, 
         title=None, sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, 
         ylim=None, xscale='linear', yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None, 
         range=None, cumulative=False):
-
+        
         from ._utils import calculate_density_1d, calculate_density_2d
 
         x_order = y_order = None
@@ -355,137 +447,223 @@ def kde(x=None, y=None, data=None, split=None, row=None, col=None, split_order='
                     xmin, xmax, ymin, ymax, Z = calculate_density_2d(x, y)
                     ax.imshow(Z, extent=[xmin, xmax, ymin, ymax], aspect='auto')
                 
-        self.add_legend()
+        self.add_legend(self.split)
         # self.update_fig_size(n_splits, n)
         return self.clean_up()
 
-# """
-# The `aggplot` function aggregates a single column of data. To begin,
-# choose the column you would like to aggregate and set it as the `agg`
-# parameter. The behavior of `aggplot` changes based on the type of
-# variable used for `agg`.
+xy_doc = """\
+x : str, default None
+    Column name of DataFrame whose values will go along the x-axis
 
-# For numeric columns, the average of the values are calculated by default.
-# Use the `aggfunc` parameter to choose the type of aggregation. You may
-# use strings such as 'min', 'max', 'median', etc...
+y : str, default None
+    Column name of DataFrame whose values will go along the y-axis
+"""
 
-# For string and categorical columns, the counts of the unique values are
-# calculated by default. Use the `normalize` parameter to return the
-# percentages instead of the counts. Choose how you would like to
-# `normalize` by setting it to one of the strings 'agg', 'split', 'row',
-# 'col', or 'all'.
+val_doc = """\
+val : str, default None
+    Column name of DataFrame whose values will be used for distribution
+"""
 
-# Use the `groupby` parameter to select a column to group by. This column
-# is passed to the pandas DataFrame `groupby` method. Choose the aggregation
-# method with `aggfunc`. Note, that you cannot use set `groupby` if the `agg`
-# variable is string/categorical.
+aggfunc_doc = """\
+aggfunc : str or function, default None
+    Kind of aggregation to perform. Use a string that the DataFrame `agg` 
+    method understands. If providing a function, it will also be passed to
+    the `agg` method.
 
-# Parameters
-# ----------
-# agg: str
-#     Column name of DataFrame you would like to aggregate. By default, the
-#     mean of numeric columns and the counts of unique values of
-#     string/categorical columns are returned.
+    The strings 'countna' and 'percna' are also available to find the
+    number and percentage of missing values.
+"""
 
-# groupby: str
-#     Column name of the grouping variable. Only available when the `agg`
-#     variable is numeric.
+xy_order = """\
+x_order : str or list, default None
+    Used as both a way to order and filter the x-values. Use the strings
+    'asc'/'desc' to order ascending or descending.
 
-# data: DataFrame
-#     A Pandas DataFrame that typically has non-aggregated data.
-#     This type of data is often referred to as "tidy" or "long" data.
+    Set a specific order with a list, i.e. `['House', 'Apartment', 'Townhouse']`
 
-# split: str
-#     Column name to further group the `agg` variable within a single plot.
-#     Each unique value in the `split` column forms a new group.
+    Use the strings `'top n'` or `'bottom n'` where `n` is an integer. This will
+    filter for the most/least frequent groups.
 
-# row: str
-#     Column name used to group data into separate plots. Each unique value
-#     in the `row` column forms a new row.
+    By default, sorting happens in ascending order.
 
-# col: str
-#     Column name used to group data into separate plots. Each unique value
-#     in the `col` column forms a new row.
+y_order : str or list, default None
+    See x_order
 
-# kind: str
-#     Type of plot to use. Possible choices for all `agg` variables:
-#     * 'bar'
-#     * 'line'
+split_order : str or list, default None
+    See x_order
 
-#     Additional choices for numeric `agg` variables
-#     * 'hist'
-#     * 'kde'
-#     * 'box'
+row_order : str or list, default None
+    See x_order
+    
+col_order : str or list, default None
+    See x_order
+"""
 
-# orientation: str {'v', 'h'}
-#     Choose the orientation of the plots. By default, they are vertical
-#     ('v'). Use 'h' for horizontal
+split_order = """\
+split_order : str or list, default None
+    Used as both a way to order and filter the x-values. Use the strings
+    'asc'/'desc' to order ascending or descending.
 
-# sort: bool - default is False
-#     Whether to sort the `groupby` variables
+    Set a specific order with a list, i.e. `['House', 'Apartment', 'Townhouse']`
 
-# aggfunc: str or function
-#     Used to aggregate `agg` variable. Use any of the strings that Pandas
-#     can understand. You can also use a custom function as long as it
-#     aggregates, i.e. returns a single value.
+    Use the strings `'top n'` or `'bottom n'` where `n` is an integer. This will
+    filter for the most/least frequent groups.
 
-# normalize: str, tuple
-#     When aggregating a string/categorical column, return the percentage
-#     instead of the counts. Choose what columns you would like to
-#     normalize over with the strings 'agg', 'split', 'row', 'col', or 'all'.
-#     Use a tuple of these strings to normalize over two or more of the
-#     above. For example, use ('split', 'row') to normalize over the
-#     `split`, `row` combination.
+    By default, sorting happens in ascending order.
 
-# wrap: int
-#     When using either `row` or either `col` and not both, determines the
-#     maximum number of rows/cols before a new row/col is used.
+row_order : str or list, default None
+    See split_order
+    
+col_order : str or list, default None
+    See split_order
+"""
 
-# stacked: bool
-#     Controls whether bars will be stacked on top of each other
+sort_values_doc = """
+sort_values : str - 'asc' or 'desc', default None
+    Sort the values ascending or descending. If this is given, then
+    x/y_order is ignored.
+"""
 
-# figsize: tuple
-#     Use a tuple of integers. Passed directly to Matplotlib to set the
-#     size of the figure in inches.
+doc = \
+"""
+{plot_doc}
 
-# rot: int
-#     Long labels will be automatically wrapped, but you can still use
-#     this parameter to rotate x-tick labels. Only applied to strings.
+Parameters
+----------
+{xy}
 
-# title: str
-#     Sets the figure title NOT the Axes title
+data : DataFrame or Series, default None
+    A pandas DataFrame with long or wide data. If provided a Series, do not
+    supply x or y.
 
-# sharex: bool
-#     Whether all plots should share the x-axis or not. Default is True
+{aggfunc}
 
-# sharey: bool
-#     Whether all plots should share the y-axis or not. Default is True
+split : str, default None
+    Column name that will be used in the DataFrame `groupby` method to 
+    split the data into independent groups within a single plot
 
-# xlabel: str
-#     Label used for x-axis on figures with a single plot
+row : str
+    Column name that will be used in the DataFrame `groupby` method to 
+    split the data into independent groups to form new plots. Each unique value
+    in the `row` column forms a new row of plots.
 
-# ylabel: str
-#     Label used for y-axis on figures with a single plot
+col : str
+    Column name that will be used in the DataFrame `groupby` method to 
+    split the data into independent groups to form new plots. Each unique value
+    in the `row` column forms a new row of plots.
 
-# xlim: 2-item tuple of numerics
-#     Determines x-axis limits for figures with a single plot
+{order}
 
-# ylim: 2-item tuple of numerics
-#     Determines y-axis limits for figures with a single plot
+orientation : str 'v' or 'h'
+    Choose the orientation of the plots. By default, they are vertical
+    ('v'), except for box and violin plots, which are horizontal.
 
-# xscale: {'linear', 'log', 'symlog', 'logit'}
-#     Sets the scale of the x-axis.
+{sort_values}
 
-# yscale: {'linear', 'log', 'symlog', 'logit'}
-#     Sets the scale of the y-axis
+wrap : int, default None
+    When using either `row` or either `col`, but not both, determines the
+    maximum number of rows/cols before a new row/col is used.
 
-# kwargs: dict
-#     Extra arguments used to control the plot used as the `kind`
-#     parameter.
+figsize : tuple, default None
+    A tuple of numbers used passed to the `figsize` matplotlib parameter. 
+    By default, the figure size will be determined based on the kind of
+    plot produced.
 
-# Returns
-# -------
-# A Matplotlib Axes whenever both `row` and `col` are not defined and a
-# Matplotlib Figure when one or both are.
+title : str
+    Sets the figure title NOT the Axes title
 
-# """
+sharex : bool
+    Whether all plots should share the x-axis or not. Default is True
+
+sharey : bool
+    Whether all plots should share the y-axis or not. Default is True
+
+xlabel : str
+    Label used for x-axis on figures with a single plot
+
+ylabel : str
+    Label used for y-axis on figures with a single plot
+
+xlim : 2-item tuple of numbers
+    Determines x-axis limits for figures with a single plot
+
+ylim : 2-item tuple of numbers
+    Determines y-axis limits for figures with a single plot
+
+xscale : 'linear', 'log', 'symlog', 'logit'
+    Sets the scale of the x-axis.
+
+yscale : 'linear', 'log', 'symlog', 'logit'
+    Sets the scale of the y-axis
+
+cmap : str or matplotlib colormap instance, default None
+
+x_textwrap : int, default 10
+    Number of characters before wrapping text for x-labels
+
+y_textwrap : int, default None
+    Number of characters before wrapping text for y-labels
+
+
+Returns
+-------
+A Matplotlib Figure instance
+"""
+
+
+# line doc
+line_doc = """\
+Create line plots
+"""
+
+scatter_doc = """\
+Create scatter plots
+"""
+
+bar_doc = """\
+Create bar plots
+"""
+
+count_doc = """\
+Create count plots
+"""
+
+box_doc = """\
+Create box plots
+"""
+
+violin_doc = """\
+Create violin plots
+"""
+
+hist_doc = """\
+Create histograms
+"""
+
+kde_doc = """\
+Create kernel density estimate plots
+"""
+
+line.__doc__ = doc.format(plot_doc=line_doc, xy=xy_doc, aggfunc=aggfunc_doc, 
+                          order=xy_order, sort_values=sort_values_doc)
+
+scatter.__doc__ = doc.format(plot_doc=scatter_doc, xy=xy_doc, aggfunc=aggfunc_doc, 
+                          order=xy_order, sort_values=sort_values_doc)
+
+bar.__doc__ = doc.format(plot_doc=bar_doc, xy=xy_doc, aggfunc=aggfunc_doc, 
+                          order=xy_order, sort_values=sort_values_doc)
+
+count.__doc__ = doc.format(plot_doc=count_doc, xy=val_doc, aggfunc='', 
+                          order=split_order, sort_values=sort_values_doc)
+
+box.__doc__ = doc.format(plot_doc=box_doc, xy=xy_doc, aggfunc='', 
+                          order=xy_order, sort_values='')
+
+violin.__doc__ = doc.format(plot_doc=violin_doc, xy=xy_doc, aggfunc='', 
+                          order=xy_order, sort_values='')
+
+hist.__doc__ = doc.format(plot_doc=hist_doc, xy=val_doc, aggfunc='', 
+                          order=split_order, sort_values='')
+
+kde.__doc__ = doc.format(plot_doc=kde_doc, xy=val_doc, aggfunc='', 
+                          order=split_order, sort_values='')
