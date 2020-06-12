@@ -92,15 +92,12 @@ airbnb = dxp.load_dataset('airbnb')
 airbnb.head()
 ```
 
-
-
-
 <div>
 <table border="1" class="dataframe">
   <thead style="border-bottom:1px solid black; vertical-align:bottom;">
     <tr style="text-align: right;">
       <th></th>
-      <th>neighborhood</th>
+      <th style="color:red;">neighborhood</th>
       <th>property_type</th>
       <th>accommodates</th>
       <th>bathrooms</th>
