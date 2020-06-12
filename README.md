@@ -97,7 +97,7 @@ airbnb.head()
 
 <div>
 <table border="1" class="dataframe">
-  <thead>
+  <thead style="border-bottom:1px solid black; vertical-align:bottom;">
     <tr style="text-align: right;">
       <th></th>
       <th>neighborhood</th>
