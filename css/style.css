@@ -41,3 +41,7 @@ tbody tr:nth-child(odd){
 .vid video {
     width: 85%;
 }
+
+.dataframe {
+    overflow: scroll;
+}
