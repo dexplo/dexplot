@@ -1,5 +1,8 @@
 # Dexplot
 
+[![](https://img.shields.io/pypi/v/dexplot)](https://pypi.org/project/dexplot)
+[![PyPI - License](https://img.shields.io/pypi/l/dexplot)](LICENSE)
+
 Dexplot is a Python library for delivering beautiful data visualizations with a simple and intuitive user experience.
 
 ## Goals
