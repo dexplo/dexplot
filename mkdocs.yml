@@ -1,5 +1,5 @@
 site_name: Dexplot
-site_description: A simple data visualization library in Python
+site_description: Dexplot is a powerful and intuitive Python data visualization library using matplotlib for both long and wide data
 site_author: Ted Petrou
 site_url: https://www.dexplo.org/dexplot
 repo_url: https://github.com/dexplo/dexplot
@@ -17,6 +17,9 @@ nav:
   - Home: index.md
   - More Dexplo Libraries:
       - Dexplo: https://www.dexplo.org
+
+extra_css:
+  - css/style.css
 
 extra:
   social:
@@ -37,9 +40,11 @@ markdown_extensions:
         permalink: True
     - codehilite:
         guess_lang: false
+    - pymdownx.superfences
 
 plugins:
     - search
+    - macros
     - minify:
         minify_html: true
 
