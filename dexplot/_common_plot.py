@@ -19,7 +19,8 @@ class CommonPlot:
                  x_order, y_order, split_order, row_order, col_order,
                  orientation, sort_values, wrap, figsize, title, sharex, sharey, 
                  xlabel, ylabel, xlim, ylim, xscale, yscale, cmap, 
-                 x_textwrap, y_textwrap, check_numeric=False, kind=None):
+                 x_textwrap, y_textwrap, x_rot, y_rot, 
+                 check_numeric=False, kind=None):
 
         self.used_columns = set()
         self.data = self.get_data(data)
@@ -60,6 +61,8 @@ class CommonPlot:
         self.colors = self.get_colors(cmap)
         self.x_textwrap = x_textwrap
         self.y_textwrap = y_textwrap
+        self.x_rot = x_rot
+        self.y_rot = y_rot
 
         self.validate_args(figsize)
         self.plot_type = self.get_plot_type()
@@ -645,12 +648,12 @@ class CommonPlot:
         if self.orientation == 'v':
             labels = [textwrap.fill(str(label), self.x_textwrap) for label in labels]
             ax.set_xticks(ticks + delta)
-            ax.set_xticklabels(labels)
+            ax.set_xticklabels(labels, rotation=self.x_rot)
         else:
             if self.y_textwrap:
                 labels = [textwrap.fill(str(label), self.y_textwrap) for label in labels]
             ax.set_yticks(ticks - delta)
-            ax.set_yticklabels(labels)
+            ax.set_yticklabels(labels, rotation=self.y_rot)
 
     def add_legend(self, label=None, handles=None, labels=None):
         if label is not None:

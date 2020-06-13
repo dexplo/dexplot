@@ -23,13 +23,13 @@ def line(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None
          x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
          orientation='v', sort_values=None, wrap=None, figsize=None, title=None, sharex=True, 
          sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
-         yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None):
+         yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None, x_rot=None, y_rot=None):
         
         self = CommonPlot(x, y, data, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, sort_values, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
-                          x_textwrap, y_textwrap)
+                          x_textwrap, y_textwrap, x_rot, y_rot)
         
         marker = 'o' if self.groupby else None
 
@@ -51,13 +51,14 @@ def scatter(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=N
             x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
             orientation='v', sort_values=None, wrap=None, figsize=None, title=None, sharex=True, 
             sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
-            yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None, regression=False):
+            yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None, x_rot=None, y_rot=None, 
+            regression=False):
 
         self = CommonPlot(x, y, data, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, sort_values, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
-                          x_textwrap, y_textwrap)
+                          x_textwrap, y_textwrap, x_rot, y_rot)
 
         alpha = 1 if self.groupby else .7
 
@@ -84,13 +85,13 @@ def bar(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None,
         orientation='v', sort_values=None, wrap=None, figsize=None, title=None, 
         sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, 
         ylim=None, xscale='linear', yscale='linear', cmap=None, x_textwrap=10, 
-        y_textwrap=None, size=.92, stacked=False, bar_kwargs=None):
+        y_textwrap=None, x_rot=None, y_rot=None, size=.92, stacked=False, bar_kwargs=None):
 
         self = CommonPlot(x, y, data, aggfunc, split, row, col, 
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, sort_values, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
-                          x_textwrap, y_textwrap)
+                          x_textwrap, y_textwrap, x_rot, y_rot)
 
         bar_kwargs = get_bar_kwargs(bar_kwargs)
         for ax, info in self.final_data.items():
@@ -127,8 +128,8 @@ def count(val, data=None, normalize=False, split=None, row=None, col=None,
           x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
           orientation='v', sort_values='desc', wrap=None, figsize=None, title=None, 
           sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, 
-          xscale='linear', yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None,
-          size=.92, stacked=False, bar_kwargs=None):
+          xscale='linear', yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None, 
+          x_rot=None, y_rot=None, size=.92, stacked=False, bar_kwargs=None):
        
         bar_kwargs = get_bar_kwargs(bar_kwargs)
         x, y = (val, None) if orientation == 'v' else (None, val)
@@ -137,7 +138,7 @@ def count(val, data=None, normalize=False, split=None, row=None, col=None,
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, None, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
-                          x_textwrap, y_textwrap, kind='count')
+                          x_textwrap, y_textwrap, x_rot, y_rot, kind='count')
 
         count_dict = {}
 
@@ -264,11 +265,12 @@ def count(val, data=None, normalize=False, split=None, row=None, col=None,
         self.update_fig_size(len(info), len(df))
         return self.clean_up()
 
+
 def _common_dist(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None, 
                  y_order=None, split_order=None, row_order=None, col_order=None, orientation='h', 
                  wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
                  ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
-                 x_textwrap=10, y_textwrap=None, kind=None, **kwargs):
+                 x_textwrap=10, y_textwrap=None, x_rot=None, y_rot=None, kind=None, **kwargs):
 
         aggfunc = '__distribution__'
         sort_values = None
@@ -276,7 +278,7 @@ def _common_dist(x=None, y=None, data=None, split=None, row=None, col=None, x_or
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, sort_values, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
-                          x_textwrap, y_textwrap)
+                          x_textwrap, y_textwrap, x_rot, y_rot)
 
         key = 'bodies' if kind == 'violinplot' else 'boxes'
         vert = self.orientation == 'v'
@@ -330,11 +332,11 @@ def box(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None,
         y_order=None, split_order=None, row_order=None, col_order=None, orientation='h', 
         wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
         ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
-        x_textwrap=10, y_textwrap=None, notch=None, sym=None, whis=None, patch_artist=True, 
-        bootstrap=None, usermedians=None, conf_intervals=None, meanline=None, showmeans=None, 
-        showcaps=None, showbox=None, showfliers=None, boxprops=None, labels=None, flierprops=None, 
-        medianprops=None, meanprops=None, capprops=None, whiskerprops=None, manage_ticks=True,
-        autorange=False, zorder=None):
+        x_textwrap=10, y_textwrap=None, x_rot=None, y_rot=None, notch=None, sym=None, whis=None, 
+        patch_artist=True, bootstrap=None, usermedians=None, conf_intervals=None, meanline=None, 
+        showmeans=None, showcaps=None, showbox=None, showfliers=None, boxprops=None, labels=None, 
+        flierprops=None, medianprops=None, meanprops=None, capprops=None, whiskerprops=None, 
+        manage_ticks=True, autorange=False, zorder=None):
 
     if medianprops is None:
         medianprops = {'color': '.2'}
@@ -348,17 +350,17 @@ def box(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None,
                   autorange=autorange, zorder=zorder)
     
     return _common_dist(x, y, data, split, row, col, x_order, y_order, split_order, 
-                        row_order, col_order, orientation, wrap, figsize, 
-                        title, sharex, sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap, 
-                        x_textwrap, y_textwrap, kind='boxplot', **kwargs)
+                        row_order, col_order, orientation, wrap, figsize, title, 
+                        sharex, sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap, 
+                        x_textwrap, y_textwrap, x_rot, y_rot, kind='boxplot', **kwargs)
 
 
 def violin(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None, 
            y_order=None, split_order=None, row_order=None, col_order=None, orientation='h', 
            wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
            ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
-           x_textwrap=10, y_textwrap=None, showmeans=False, showextrema=True, showmedians=True, 
-           quantiles=None, points=100, bw_method=None):
+           x_textwrap=10, y_textwrap=None, x_rot=None, y_rot=None, showmeans=False, 
+           showextrema=True, showmedians=True, quantiles=None, points=100, bw_method=None):
 
     kwargs = dict(showmeans=showmeans, showextrema=showextrema, showmedians=showmedians, 
                   quantiles=quantiles, points=points, bw_method=bw_method)
@@ -367,15 +369,15 @@ def violin(x=None, y=None, data=None, split=None, row=None, col=None, x_order=No
                         x_order, y_order, split_order, row_order, col_order,
                         orientation, wrap, figsize, title, sharex, 
                         sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap, 
-                        x_textwrap, y_textwrap, kind='violinplot', **kwargs)
+                        x_textwrap, y_textwrap, x_rot, y_rot, kind='violinplot', **kwargs)
 
 
 def hist(val, data=None, split=None, row=None, col=None, split_order=None, row_order=None, 
          col_order=None, orientation='v', wrap=None, figsize=None, title=None, 
          sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
-         yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None, bins=None, range=None, 
-         density=False, weights=None, cumulative=False, bottom=None, histtype='bar', align='mid', 
-         rwidth=None, log=False):
+         yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None, x_rot=None, y_rot=None, 
+         bins=None, range=None, density=False, weights=None, cumulative=False, bottom=None, 
+         histtype='bar', align='mid', rwidth=None, log=False):
         
         x_order = y_order = None
         x, y = (val, None) if orientation == 'v' else (None, val)
@@ -390,7 +392,7 @@ def hist(val, data=None, split=None, row=None, col=None, split_order=None, row_o
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, sort_values, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
-                          x_textwrap, y_textwrap)
+                          x_textwrap, y_textwrap, x_rot, y_rot)
 
         orientation = 'vertical' if self.orientation == 'v' else 'horizontal'
         for ax, info in self.final_data.items():
@@ -416,7 +418,7 @@ def kde(x=None, y=None, data=None, split=None, row=None, col=None, split_order=N
         row_order=None, col_order=None, orientation='v', wrap=None, figsize=None, 
         title=None, sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, 
         ylim=None, xscale='linear', yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None, 
-        range=None, cumulative=False):
+        x_rot=None, y_rot=None, range=None, cumulative=False):
         
         from ._utils import calculate_density_1d, calculate_density_2d
 
@@ -433,7 +435,7 @@ def kde(x=None, y=None, data=None, split=None, row=None, col=None, split_order=N
                           x_order, y_order, split_order, row_order, col_order,
                           orientation, sort_values, wrap, figsize, title, sharex, 
                           sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
-                          x_textwrap, y_textwrap, check_numeric=True)
+                          x_textwrap, y_textwrap, x_rot, y_rot, check_numeric=True)
 
         for ax, info in self.final_data.items():
             for vals in info:
