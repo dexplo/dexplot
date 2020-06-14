@@ -31,13 +31,13 @@ class TestSort:
         assert ticklabels == correct
 
     def test_lex_desc(self):
-        fig = dxp.line(x='neighborhood', y='price', data=airbnb, aggfunc='median', sort='lex_desc')
+        fig = dxp.line(x='neighborhood', y='price', data=airbnb, aggfunc='median', x_order='desc')
         ticklabels = [t.get_text() for t in fig.axes[0].get_xticklabels()]
         correct = sorted(ticklabels, reverse=True)
         assert ticklabels == correct
 
     def test_asc_values(self):
-        fig = dxp.line(x='neighborhood', y='price', data=airbnb, aggfunc='median', sort='asc')
+        fig = dxp.line(x='neighborhood', y='price', data=airbnb, aggfunc='median', sort_values='asc')
         ticklabels = [t.get_text() for t in fig.axes[0].get_xticklabels()]
         ticklabels = [label.replace('\n', ' ') for label in ticklabels]
         values = [p.get_height() for p in fig.axes[0].patches]
@@ -48,7 +48,7 @@ class TestSort:
         assert ticklabels == correct_labels
 
     def test_desc_values(self):
-        fig = dxp.line(x='neighborhood', y='price', data=airbnb, aggfunc='median', sort='desc')
+        fig = dxp.line(x='neighborhood', y='price', data=airbnb, aggfunc='median', sort_values='desc')
         ticklabels = [t.get_text() for t in fig.axes[0].get_xticklabels()]
         ticklabels = [label.replace('\n', ' ') for label in ticklabels]
         values = [p.get_height() for p in fig.axes[0].patches]
