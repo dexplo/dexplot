@@ -9,6 +9,7 @@ table {
     color:black;
     font-size:13px;
     table-layout:fixed;
+    overflow: scroll;
     }
 thead {
     border-bottom:1px solid black;vertical-align:bottom;
@@ -39,4 +40,8 @@ tbody tr:nth-child(odd){
 }
 .vid video {
     width: 85%;
+}
+
+.dataframe {
+    overflow: scroll;
 }
