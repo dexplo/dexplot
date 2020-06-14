@@ -606,6 +606,13 @@ x_textwrap : int, default 10
 y_textwrap : int, default None
     Number of characters before wrapping text for y-labels
 
+x_rot : int or float, default None
+    Degree of rotation of x-tick labels. If between 0 and 180
+    horizontal_alignment is set to 'right', otherwise 'left'
+
+y_rot : int or float, default None
+    Degree of rotation of y-tick labels. If between 0 and 180
+    vertical_alignment is set to 'top', otherwise 'bottom'
 
 Returns
 -------

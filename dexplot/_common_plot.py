@@ -645,15 +645,27 @@ class CommonPlot:
 
     def add_ticklabels(self, labels, ax, delta=0):
         ticks = np.arange(len(labels))
+        ha, va = 'center', 'center'
         if self.orientation == 'v':
-            labels = [textwrap.fill(str(label), self.x_textwrap) for label in labels]
+            if self.x_textwrap:
+                labels = [textwrap.fill(str(label), self.x_textwrap) for label in labels]
             ax.set_xticks(ticks + delta)
-            ax.set_xticklabels(labels, rotation=self.x_rot)
+            if self.x_rot is not None:
+                if 0 <= self.x_rot <= 180:
+                    ha = 'right'
+                else:
+                    ha = 'left'
+            ax.set_xticklabels(labels, rotation=self.x_rot, ha=ha)
         else:
             if self.y_textwrap:
                 labels = [textwrap.fill(str(label), self.y_textwrap) for label in labels]
             ax.set_yticks(ticks - delta)
-            ax.set_yticklabels(labels, rotation=self.y_rot)
+            if self.y_rot is not None:
+                if 0 <= self.y_rot <= 180:
+                    va = 'top'
+                else:
+                    va = 'bottom'
+            ax.set_yticklabels(labels, rotation=self.y_rot, va=va)
 
     def add_legend(self, label=None, handles=None, labels=None):
         if label is not None:
