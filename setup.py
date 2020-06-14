@@ -26,5 +26,8 @@ setuptools.setup(
                       'pandas>=0.24', 
                       'numpy>=1.15', 
                       'scipy>=1.0'],
+    extras_require={
+        "apps":  ["ipywidgets"],
+    },
     python_requires='>=3.6'
 )
