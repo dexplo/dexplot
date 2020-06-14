@@ -22,10 +22,10 @@ setuptools.setup(
         "Operating System :: OS Independent",
         "Framework :: Matplotlib"
     ],
-    install_requires=['matplotlib>=3.1', 
-                      'pandas>=0.24', 
-                      'numpy>=1.15', 
-                      'scipy>=1.0'],
+    install_requires=['numpy>=1.15',
+                      'scipy>=1.0'
+                      'matplotlib>=3.1', 
+                      'pandas>=0.24'],
     extras_require={
         "apps":  ["ipywidgets"],
     },
