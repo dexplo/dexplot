@@ -1,13 +1,16 @@
 import setuptools
 
-from dexplot import __version__
+with open('dexplot/__init__.py', 'r') as f:
+    for line in f:
+        if line.startswith('__version__'):
+            version = line.split("'")[1]
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="dexplot",
-    version=__version__,
+    version=version,
     author="Ted Petrou",
     author_email="petrou.theodore@gmail.com",
     description="Powerful and intuitive data visualization library using matplotlib for both long and wide data",
