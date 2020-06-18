@@ -49,6 +49,7 @@ class CommonPlot:
         self.sort_values = sort_values
         self.groupby_sort = True
         self.wrap = wrap
+        self.figsize = figsize
         self.title = title
         self.sharex = sharex
         self.sharey = sharey
@@ -64,24 +65,14 @@ class CommonPlot:
         self.x_rot = x_rot
         self.y_rot = y_rot
 
-        self.validate_args(figsize)
+        self.validate_args()
         self.plot_type = self.get_plot_type()
         self.agg_kind = self.get_agg_kind()
         self.data = self.set_index()
         self.rows, self.cols = self.get_uniques()
         self.rows, self.cols = self.get_row_col_order()
         self.fig_shape = self.get_fig_shape()
-        self.user_figsize = figsize is not None
-        self.figsize = self.get_figsize(figsize)
-        self.original_rcParams = plt.rcParams.copy()
-        self.set_rcParams()
-        self.fig, self.axs = self.create_figure()
-        self.set_color_cycle()
-        self.data_for_plots = self.get_data_for_every_plot()
-        self.final_data = self.get_final_data()
-        self.style_fig()
-        self.add_ax_titles()
-        self.add_fig_title()
+        
         
     def get_data(self, data):
         if isinstance(data, pd.Series):
@@ -225,21 +216,10 @@ class CommonPlot:
             raise TypeError('`cmap` must be a string name of a colormap, a matplotlib colormap '
                             'instance, list, or tuple of colors')
         
-    def validate_args(self, figsize):
-        self.validate_figsize(figsize)
+    def validate_args(self):
         self.validate_plot_args()
         self.validate_mpl_args()
         self.validate_sort_values()
-
-    def validate_figsize(self, figsize):
-        if isinstance(figsize, (list, tuple)):
-            if len(figsize) != 2:
-                raise ValueError('figsize must be a two-item tuple/list')
-            for val in figsize:
-                if not isinstance(val, (int, float)):
-                    raise ValueError('Each item in figsize must be an integer or a float')
-        elif figsize is not None:
-            raise TypeError('figsize must be a two-item tuple')
 
     def validate_plot_args(self):
         if self.orientation not in ('v', 'h'):
@@ -397,25 +377,6 @@ class CommonPlot:
             return None, str(labels)
         return None, None
 
-    def get_figsize(self, figsize):
-        if figsize:
-            return figsize
-        else:
-            return self.fig_shape[1] * 4, self.fig_shape[0] * 3
-
-    def create_figure(self):
-        fig = plt.Figure(tight_layout=True, dpi=144, figsize=self.figsize)
-        axs = fig.subplots(*self.fig_shape, sharex=self.sharex, sharey=self.sharey)
-        if self.fig_shape != (1, 1):
-            axs = axs.flatten(order='F')
-        else:
-            axs = [axs]
-        return fig, axs
-
-    def set_color_cycle(self):
-        for ax in self.axs:
-            ax.set_prop_cycle(color=self.colors)
-
     def sort_values_xy(self, x, y):
         grp, num = (x, y) if self.orientation == 'v' else (y, x)
         if self.sort_values is None:
@@ -522,7 +483,7 @@ class CommonPlot:
             else:
                 col = self.x or self.y
                 vals = data[col]
-                groups.append((vals, split_label, None, row_label, col_label))
+                groups.append((vals, split_label, self.col, row_label, col_label))
         elif self.groupby is not None:
             try:
                 s = data.groupby(self.groupby, sort=self.groupby_sort)[self.agg].agg(self.aggfunc)
@@ -536,18 +497,18 @@ class CommonPlot:
             x, y = s.index.values, s.values
             x, y = (x, y) if self.orientation == 'v' else (y, x)
             x, y = self.get_correct_data_order(x, y)
-            groups.append((x, y, split_label, None, row_label, col_label))
+            groups.append((x, y, split_label, self.groupby, row_label, col_label))
         elif self.x is None or self.y is None:
             if self.x:
                 s = data[self.x]
                 x, y = s.values, s.index.values
                 x, y = self.get_correct_data_order(x, y)
-                groups.append((x, y, split_label, None, row_label, col_label))
+                groups.append((x, y, split_label, self.x, row_label, col_label))
             elif self.y:
                 s = data[self.y]
                 x, y = s.index.values, s.values
                 x, y = self.get_correct_data_order(x, y)
-                groups.append((x, y, split_label, None, row_label, col_label))
+                groups.append((x, y, split_label, self.y, row_label, col_label))
             else:
                 # wide data
                 for col in self.get_wide_columns(data):
@@ -562,6 +523,76 @@ class CommonPlot:
             x, y = self.get_correct_data_order(data[self.x], data[self.y])
             groups.append((x, y, split_label, None, row_label, col_label))
         return groups
+
+    def get_x_y_plot(self, x, y):
+        x_plot, y_plot = x, y
+        if x_plot.dtype.kind == 'O':
+            x_plot = np.arange(len(x_plot))
+        if y_plot.dtype.kind == 'O':
+            y_plot = np.arange(len(y_plot))
+        return x_plot, y_plot
+
+    def get_distribution_data(self, info):
+        cur_data = defaultdict(list)
+        cur_ticklabels = defaultdict(list)
+        for vals, split_label, col_name, row_label, col_label in info:
+            cur_data[split_label].append(vals)
+            cur_ticklabels[split_label].append(col_name)
+        return cur_data, cur_ticklabels
+
+
+class MPLCommon(CommonPlot):
+
+    def __init__(self, x, y, data, aggfunc, split, row, col, 
+                 x_order, y_order, split_order, row_order, col_order,
+                 orientation, sort_values, wrap, figsize, title, sharex, sharey, 
+                 xlabel, ylabel, xlim, ylim, xscale, yscale, cmap, 
+                 x_textwrap, y_textwrap, x_rot, y_rot, 
+                 check_numeric=False, kind=None):
+        super().__init__(x, y, data, aggfunc, split, row, col, 
+                 x_order, y_order, split_order, row_order, col_order,
+                 orientation, sort_values, wrap, figsize, title, sharex, sharey, 
+                 xlabel, ylabel, xlim, ylim, xscale, yscale, cmap, 
+                 x_textwrap, y_textwrap, x_rot, y_rot, 
+                 check_numeric=False, kind=None)
+        self.figsize = self.get_figsize()
+        self.user_figsize = self.figsize is not None
+        self.original_rcParams = plt.rcParams.copy()
+        self.set_rcParams()
+        self.fig, self.axs = self.create_figure()
+        self.set_color_cycle()
+        self.data_for_plots = self.get_data_for_every_plot()
+        self.final_data = self.get_final_data()
+        self.style_fig()
+        self.add_ax_titles()
+        self.add_fig_title()
+    
+    def get_figsize(self):
+        if self.figsize is None:
+            return
+        elif isinstance(self.figsize, (list, tuple)):
+            if len(self.figsize) != 2:
+                raise ValueError('figsize must be a two-item tuple/list')
+            for val in self.figsize:
+                if not isinstance(val, (int, float)):
+                    raise ValueError('Each item in figsize must be an integer or a float')
+        else:
+            raise TypeError('figsize must be a two-item tuple')
+
+        return self.fig_shape[1] * 4, self.fig_shape[0] * 3
+
+    def create_figure(self):
+        fig = plt.Figure(tight_layout=True, dpi=144, figsize=self.figsize)
+        axs = fig.subplots(*self.fig_shape, sharex=self.sharex, sharey=self.sharey)
+        if self.fig_shape != (1, 1):
+            axs = axs.flatten(order='F')
+        else:
+            axs = [axs]
+        return fig, axs
+
+    def set_color_cycle(self):
+        for ax in self.axs:
+            ax.set_prop_cycle(color=self.colors)
 
     def get_final_data(self):
         # create list of data for each call to plotting method
@@ -627,22 +658,6 @@ class CommonPlot:
         plt.rcParams['font.size'] = 6
         plt.rcParams['font.family'] = 'Helvetica'
 
-    def get_x_y_plot(self, x, y):
-        x_plot, y_plot = x, y
-        if x_plot.dtype.kind == 'O':
-            x_plot = np.arange(len(x_plot))
-        if y_plot.dtype.kind == 'O':
-            y_plot = np.arange(len(y_plot))
-        return x_plot, y_plot
-
-    def get_distribution_data(self, info):
-        cur_data = defaultdict(list)
-        cur_ticklabels = defaultdict(list)
-        for vals, split_label, col_name, row_label, col_label in info:
-            cur_data[split_label].append(vals)
-            cur_ticklabels[split_label].append(col_name)
-        return cur_data, cur_ticklabels
-
     def add_ticklabels(self, labels, ax, delta=0):
         ticks = np.arange(len(labels))
         ha, va = 'center', 'center'
@@ -700,3 +715,177 @@ class CommonPlot:
 
     def add_fig_title(self):
         self.fig.suptitle(self.title, y=1.02)
+
+
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+
+class PlotlyCommon(CommonPlot):
+
+    def __init__(self, x, y, data, aggfunc, split, row, col, 
+                 x_order, y_order, split_order, row_order, col_order,
+                 orientation, sort_values, wrap, figsize, title, sharex, sharey, 
+                 xlabel, ylabel, xlim, ylim, xscale, yscale, cmap, 
+                 x_textwrap, y_textwrap, x_rot, y_rot, 
+                 check_numeric=False, kind=None):
+        super().__init__(x, y, data, aggfunc, split, row, col, 
+                 x_order, y_order, split_order, row_order, col_order,
+                 orientation, sort_values, wrap, figsize, title, sharex, sharey, 
+                 xlabel, ylabel, xlim, ylim, xscale, yscale, cmap, 
+                 x_textwrap, y_textwrap, x_rot, y_rot, 
+                 check_numeric=False, kind=None)
+
+        self.data_for_plots = self.get_data_for_every_plot()
+        self.final_data = self.get_final_data()
+        self.fig = self.create_figure()
+
+    def create_figure(self):
+        titles = self.get_subplot_titles()
+        fig = make_subplots(rows=self.fig_shape[0], cols=self.fig_shape[1], subplot_titles=titles,
+                            shared_xaxes=self.sharex, shared_yaxes=self.sharey, 
+                            horizontal_spacing=.03)
+        fig.update_layout(title_text=self.title, legend_title_text=self.split)
+        return fig
+
+    def get_final_data(self):
+        # create list of data for each call to plotting method
+        final_data = defaultdict(list)
+        locs = []
+        for i in range(self.fig_shape[0]):
+            for j in range(self.fig_shape[1]):
+                locs.append((i + 1, j + 1))
+
+        for (labels, data), loc in zip(self.data_for_plots, locs):
+            row_label, col_label = self.get_labels(labels)
+            if self.split:
+                for grp, data_grp in self.get_ordered_groups(data, self.split_order, 'split'):
+                    final_data[loc].extend(self.get_final_groups(data_grp, grp, row_label, col_label))
+            else:
+                final_data[loc].extend(self.get_final_groups(data, None, row_label, col_label))
+        return final_data
+
+    def get_subplot_titles(self):
+        titles = []
+        for (i, j), info in self.final_data.items():
+            row_label, col_label = info[0][-2:]
+            if row_label is not None:
+                row_label = str(row_label)
+            if col_label is not None:
+                col_label = str(col_label)
+            row_label = row_label or ''
+            col_label = col_label or ''
+            if row_label and col_label:
+                title = row_label + ' - ' + col_label
+            else:
+                title = row_label or col_label
+            title = textwrap.fill(str(title), 30)
+            titles.append(title)
+        return titles
+    
+
+class CountCommon(CommonPlot):
+
+    def get_count_dict(self, normalize):
+        count_dict = {}
+
+        if isinstance(normalize, str):
+            if normalize in (val, self.split, self.row, self.col):
+                normalize = [normalize]
+        
+        if isinstance(normalize, tuple):
+            normalize = list(normalize)
+        elif hasattr(normalize, 'tolist'):
+            normalize = normalize.tolist()
+        elif not isinstance(normalize, (bool, list)):
+            raise ValueError('`normalize` must either be `True`/`False`, one of the columns passed '
+                                    'to `val`, `split`, `row` or `col`, or a list of '
+                                    'those columns')
+        normalize_kind = None
+        if isinstance(normalize, list):
+            row_col = []
+            val_split = []
+            for col in normalize:
+                if col in (self.row, self.col):
+                    row_col.append(col)
+                elif col in (val, self.split):
+                    val_split.append(col)
+                else:
+                    raise ValueError('Columns passed to `normalize` must be the same as '
+                                        ' `val`, `split`, `row` or `col`.')
+
+            if row_col:
+                all_counts = {}
+                for grp, data in self.data.groupby(row_col):
+                    if len(row_col) == 1:
+                        grp = str(grp)
+                    else:
+                        grp = tuple(str(g) for g in grp)
+
+                    if val_split:
+                        normalize_kind = 'all'
+                        all_counts[grp] = data.groupby(val_split).size()
+                    else:
+                        normalize_kind = 'grid'
+                        all_counts[grp] = len(data)
+            else:
+                normalize_kind = 'single'
+                all_counts = self.data.groupby(val_split).size()
+
+        n = 0
+        for key, info in self.final_data.items():
+            columns = []
+            vcs = []
+            for vals, split_label, col_name, row_label, col_label in info:
+                vcs.append(vals.value_counts())
+                columns.append(split_label)
+
+            df = pd.concat(vcs, axis=1)
+            df.columns = columns
+            df.index.name = vals.name
+            if normalize_kind == 'single':
+                if len(val_split) == 2:
+                    df = df / all_counts.unstack(self.split)
+                elif df.index.name == all_counts.index.name:
+                    df = df.div(all_counts, axis=0)
+                else:
+                    df = df / all_counts
+            elif normalize_kind in ('grid', 'all'):
+                grp = []
+                for col in normalize:
+                    if col == self.row:
+                        grp.append(row_label)
+                    if col == self.col:
+                        grp.append(col_label)
+                
+                if len(grp) == 1:
+                    grp = grp[0]
+                else:
+                    grp = tuple(grp)
+                grp_val = all_counts[grp]
+                
+                if normalize_kind == 'grid':
+                    df = df / grp_val
+                elif len(val_split) == 2:
+                    df = df / grp_val.unstack(self.split)
+                elif df.index.name == grp_val.index.name:
+                    df = df.div(grp_val, axis=0)
+                else:
+                    df = df / grp_val
+
+            else:
+                n += df.sum().sum()
+            count_dict[key] = df
+            
+        if normalize is True:
+            count_dict = {key: df / n for key, df in count_dict.items()}
+
+        return count_dict
+
+
+class MPLCount(CountCommon, MPLCommon):
+    pass
+
+
+class PlotlyCount(CountCommon, PlotlyCommon):
+    pass

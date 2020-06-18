@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-from ._common_plot import CommonPlot
+from ._common_plot import MPLCommon, MPLCount
 
 
 def get_bar_kwargs(bar_kwargs):
@@ -19,33 +19,53 @@ def get_bar_kwargs(bar_kwargs):
             raise TypeError('`bar_kwargs` must be a dictionary')
     return bar_kwargs
 
+
+def verify_gap_args(mode, gap, groupgap):
+    if mode not in ('group', 'stack', 'overlay', 'relative'):
+        raise ValueError("`moe` must be one of 'group', 'stack', 'overlay', 'relative'")
+    if gap < 0 or gap >= 1:
+        raise ValueError('`gap` must be greater than or equal to 0 and less than 1')
+    if groupgap < 0 or groupgap >= 1:
+        raise ValueError('`groupgap` must be greater than or equal to 0 and less than 1')
+
+
+def get_jump_size(n, mode, gap, groupgap):
+    total = 1 - gap
+    jump = total / n 
+    size = jump * (1 - groupgap)
+    if mode != 'group':
+        jump = 0
+        size *= n
+    return jump, size
+
+
 def line(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None, 
          x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
          orientation='v', sort_values=None, wrap=None, figsize=None, title=None, sharex=True, 
          sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
          yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None, x_rot=None, y_rot=None):
         
-        self = CommonPlot(x, y, data, aggfunc, split, row, col, 
-                          x_order, y_order, split_order, row_order, col_order,
-                          orientation, sort_values, wrap, figsize, title, sharex, 
-                          sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
-                          x_textwrap, y_textwrap, x_rot, y_rot)
-        
-        marker = 'o' if self.groupby else None
+    self = MPLCommon(x, y, data, aggfunc, split, row, col, 
+                        x_order, y_order, split_order, row_order, col_order,
+                        orientation, sort_values, wrap, figsize, title, sharex, 
+                        sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
+                        x_textwrap, y_textwrap, x_rot, y_rot)
+    
+    marker = 'o' if self.groupby else None
 
-        for ax, info in self.final_data.items():
-            for x, y, label, col_name, row_label, col_label in info:
-                x_plot, y_plot = self.get_x_y_plot(x, y)
-                ax.plot(x_plot, y_plot, label=label, marker=marker)
-            
-            if self.groupby:
-                ticklabels = x if self.orientation == 'v' else y
-                self.add_ticklabels(ticklabels, ax)
+    for ax, info in self.final_data.items():
+        for x, y, label, col_name, row_label, col_label in info:
+            x_plot, y_plot = self.get_x_y_plot(x, y)
+            ax.plot(x_plot, y_plot, label=label, marker=marker)
         
-        self.add_legend(label)
-        if x.dtype == 'O' or y.dtype == 'O':
-            self.update_fig_size(len(x), 1)
-        return self.clean_up()
+        if self.groupby:
+            ticklabels = x if self.orientation == 'v' else y
+            self.add_ticklabels(ticklabels, ax)
+    
+    self.add_legend(label)
+    if x.dtype == 'O' or y.dtype == 'O':
+        self.update_fig_size(len(x), 1)
+    return self.clean_up()
         
 def scatter(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None, 
             x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
@@ -54,216 +74,126 @@ def scatter(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=N
             yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None, x_rot=None, y_rot=None, 
             regression=False):
 
-        self = CommonPlot(x, y, data, aggfunc, split, row, col, 
-                          x_order, y_order, split_order, row_order, col_order,
-                          orientation, sort_values, wrap, figsize, title, sharex, 
-                          sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
-                          x_textwrap, y_textwrap, x_rot, y_rot)
+    self = MPLCommon(x, y, data, aggfunc, split, row, col, 
+                        x_order, y_order, split_order, row_order, col_order,
+                        orientation, sort_values, wrap, figsize, title, sharex, 
+                        sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
+                        x_textwrap, y_textwrap, x_rot, y_rot)
 
-        alpha = 1 if self.groupby else .7
+    alpha = 1 if self.groupby else .7
 
-        for ax, info in self.final_data.items():
-            for x, y, label, col_name, row_label, col_label in info:
-                x_plot, y_plot = self.get_x_y_plot(x, y)
-                ax.scatter(x_plot, y_plot, label=label, alpha=alpha)
-                if regression:
-                    slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
-                    x_line = np.array([x.min(), x.max()])
-                    y_line = x_line * slope + intercept
-                    ax.plot(x_line, y_line)
-            if self.groupby:
-                ticklabels = x if self.orientation == 'v' else y
-                self.add_ticklabels(ticklabels, ax)
+    for ax, info in self.final_data.items():
+        for x, y, label, col_name, row_label, col_label in info:
+            x_plot, y_plot = self.get_x_y_plot(x, y)
+            ax.scatter(x_plot, y_plot, label=label, alpha=alpha)
+            if regression:
+                slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
+                x_line = np.array([x.min(), x.max()])
+                y_line = x_line * slope + intercept
+                ax.plot(x_line, y_line)
+        if self.groupby:
+            ticklabels = x if self.orientation == 'v' else y
+            self.add_ticklabels(ticklabels, ax)
 
-        self.add_legend(label)
-        if x.dtype == 'O' or y.dtype == 'O':
-            self.update_fig_size(len(x), 1)
-        return self.clean_up()
+    self.add_legend(label)
+    if x.dtype == 'O' or y.dtype == 'O':
+        self.update_fig_size(len(x), 1)
+    return self.clean_up()
 
 def bar(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None, 
         x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
         orientation='v', sort_values=None, wrap=None, figsize=None, title=None, 
         sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, 
         ylim=None, xscale='linear', yscale='linear', cmap=None, x_textwrap=10, 
-        y_textwrap=None, x_rot=None, y_rot=None, size=.92, stacked=False, bar_kwargs=None):
+        y_textwrap=None, x_rot=None, y_rot=None, mode='group', 
+        gap=.2, groupgap=0, bar_kwargs=None):
 
-        self = CommonPlot(x, y, data, aggfunc, split, row, col, 
-                          x_order, y_order, split_order, row_order, col_order,
-                          orientation, sort_values, wrap, figsize, title, sharex, 
-                          sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
-                          x_textwrap, y_textwrap, x_rot, y_rot)
+    self = MPLCommon(x, y, data, aggfunc, split, row, col, 
+                        x_order, y_order, split_order, row_order, col_order,
+                        orientation, sort_values, wrap, figsize, title, sharex, 
+                        sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
+                        x_textwrap, y_textwrap, x_rot, y_rot)
 
-        bar_kwargs = get_bar_kwargs(bar_kwargs)
-        for ax, info in self.final_data.items():
-            cur_size = size if stacked else size / len(info)
-            for i, (x, y, label, col_name, row_label, col_label) in enumerate(info):
-                x_plot, y_plot = self.get_x_y_plot(x, y)
-                if i == 0:
-                    base = np.zeros(len(x_plot))
-                if len(x) > 200:
-                    warnings.warn('You are plotting more than 200 bars. '
-                                  'Did you forget to provide an `aggfunc`?')
+    bar_kwargs = get_bar_kwargs(bar_kwargs)
+    verify_gap_args(mode, gap, groupgap)
+    for ax, info in self.final_data.items():
+        jump, size = get_jump_size(len(info), mode, gap, groupgap)
+        for i, (x, y, label, col_name, row_label, col_label) in enumerate(info):
+            x_plot, y_plot = self.get_x_y_plot(x, y)
+            if i == 0:
+                base = np.zeros(len(x_plot))
+            if len(x) > 200:
+                warnings.warn('You are plotting more than 200 bars. '
+                                'Did you forget to provide an `aggfunc`?')
 
-                if self.orientation == 'v':
-                    x_plot = x_plot + cur_size * i * (1 - stacked)
-                    ax.bar(x_plot, y_plot, label=label, width=cur_size, 
-                           bottom=base, align='edge', **bar_kwargs)
-                    if stacked:
-                        base += y_plot
-                else:
-                    y_plot = y_plot - cur_size * (i + 1) * (1 - stacked)
-                    ax.barh(y_plot, x_plot, label=label, height=cur_size, 
-                            left=base, align='edge', **bar_kwargs)
-                    if stacked:
-                        base += x_plot
-            ticklabels = x if self.orientation == 'v' else y
-            delta = size / 2
-            self.add_ticklabels(ticklabels, ax, delta=delta)
+            if self.orientation == 'v':
+                x_plot = x_plot + jump * i
+                ax.bar(x_plot, y_plot, label=label, width=size, 
+                        bottom=base, align='edge', **bar_kwargs)
+                if barmode == 'stack':
+                    base += y_plot
+            else:
+                y_plot = y_plot - jump * (i + 1)
+                ax.barh(y_plot, x_plot, label=label, height=size, 
+                        left=base, align='edge', **bar_kwargs)
+                if barmode == 'stack':
+                    base += x_plot
+        ticklabels = x if self.orientation == 'v' else y
+        delta = jump * (i + 1) / 2 if barmode == 'group' else size / 2
+        self.add_ticklabels(ticklabels, ax, delta=delta)
 
-        self.add_legend(label)
-        self.update_fig_size(len(info), len(x))
-        return self.clean_up()
+    self.add_legend(label)
+    self.update_fig_size(len(info), len(x))
+    return self.clean_up()
 
 def count(val, data=None, normalize=False, split=None, row=None, col=None, 
           x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
           orientation='v', sort_values='desc', wrap=None, figsize=None, title=None, 
           sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, 
           xscale='linear', yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None, 
-          x_rot=None, y_rot=None, size=.92, stacked=False, bar_kwargs=None):
+          x_rot=None, y_rot=None, mode='group', gap=.2, groupgap=0, 
+          bar_kwargs=None):
        
-        bar_kwargs = get_bar_kwargs(bar_kwargs)
-        x, y = (val, None) if orientation == 'v' else (None, val)
-        aggfunc = '__distribution__'
-        self = CommonPlot(x, y, data, aggfunc, split, row, col, 
-                          x_order, y_order, split_order, row_order, col_order,
-                          orientation, None, wrap, figsize, title, sharex, 
-                          sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
-                          x_textwrap, y_textwrap, x_rot, y_rot, kind='count')
+    bar_kwargs = get_bar_kwargs(bar_kwargs)
+    verify_gap_args(mode, gap, groupgap)
+    x, y = (val, None) if orientation == 'v' else (None, val)
+    aggfunc = '__distribution__'
+    self = MPLCount(x, y, data, aggfunc, split, row, col, 
+                    x_order, y_order, split_order, row_order, col_order,
+                    orientation, None, wrap, figsize, title, sharex, 
+                    sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
+                    x_textwrap, y_textwrap, x_rot, y_rot, kind='count')
 
-        count_dict = {}
+    count_dict = self.get_count_dict(normalize)
+    for ax, df in count_dict.items():
+        base = np.zeros(len(df))
+        position = np.arange(len(df))
+        if sort_values == 'asc' and not (self.split or self.row or self.col):
+            df = df.iloc[::-1]
 
-        if isinstance(normalize, str):
-            if normalize in (val, self.split, self.row, self.col):
-                normalize = [normalize]
-        
-        if isinstance(normalize, tuple):
-            normalize = list(normalize)
-        elif hasattr(normalize, 'tolist'):
-            normalize = normalize.tolist()
-        elif not isinstance(normalize, (bool, list)):
-            raise ValueError('`normalize` must either be `True`/`False`, one of the columns passed '
-                                 'to `val`, `split`, `row` or `col`, or a list of '
-                                 'those columns')
-        normalize_kind = None
-        if isinstance(normalize, list):
-            row_col = []
-            val_split = []
-            for col in normalize:
-                if col in (self.row, self.col):
-                    row_col.append(col)
-                elif col in (val, self.split):
-                    val_split.append(col)
-                else:
-                    raise ValueError('Columns passed to `normalize` must be the same as '
-                                     ' `val`, `split`, `row` or `col`.')
-
-            if row_col:
-                all_counts = {}
-                for grp, data in self.data.groupby(row_col):
-                    if len(row_col) == 1:
-                        grp = str(grp)
-                    else:
-                        grp = tuple(str(g) for g in grp)
-
-                    if val_split:
-                        normalize_kind = 'all'
-                        all_counts[grp] = data.groupby(val_split).size()
-                    else:
-                        normalize_kind = 'grid'
-                        all_counts[grp] = len(data)
-            else:
-                normalize_kind = 'single'
-                all_counts = self.data.groupby(val_split).size()
-
-        n = 0
-        for ax, info in self.final_data.items():
-            columns = []
-            vcs = []
-            for vals, split_label, col_name, row_label, col_label in info:
-                vcs.append(vals.value_counts())
-                columns.append(split_label)
-
-            df = pd.concat(vcs, axis=1)
-            df.columns = columns
-            df.index.name = vals.name
-            if normalize_kind == 'single':
-                if len(val_split) == 2:
-                    df = df / all_counts.unstack(self.split)
-                elif df.index.name == all_counts.index.name:
-                    df = df.div(all_counts, axis=0)
-                else:
-                    df = df / all_counts
-            elif normalize_kind in ('grid', 'all'):
-                grp = []
-                for col in normalize:
-                    if col == self.row:
-                        grp.append(row_label)
-                    if col == self.col:
-                        grp.append(col_label)
-                
-                if len(grp) == 1:
-                    grp = grp[0]
-                else:
-                    grp = tuple(grp)
-                grp_val = all_counts[grp]
-                
-                if normalize_kind == 'grid':
-                    df = df / grp_val
-                elif len(val_split) == 2:
-                    df = df / grp_val.unstack(self.split)
-                elif df.index.name == grp_val.index.name:
-                    df = df.div(grp_val, axis=0)
-                else:
-                    df = df / grp_val
-
-            else:
-                n += df.sum().sum()
-            count_dict[ax] = df
+        ticklabels = df.index.values
+        jump, size = get_jump_size(df.shape[1], mode, gap, groupgap)
+        for col in df.columns:
+            values = df[col].values
             
-        if normalize is True:
-            count_dict = {ax: df / n for ax, df in count_dict.items()}
-        
+            if self.orientation == 'v':
+                ax.bar(position, values, label=col, width=size, 
+                        bottom=base, align='edge', **bar_kwargs)
+                position = position + jump
+            else:
+                ax.barh(position - cur_size, values, label=col, height=size, 
+                        left=base, align='edge', **bar_kwargs)
+                position = position - jump
 
-        for ax, df in count_dict.items():
-            base = np.zeros(len(df))
-            cur_size = size if stacked else size / len(df.columns)
-            position = np.arange(len(df))
+            if barmode == 'stack':
+                base += values
 
-            if sort_values == 'asc' and not (self.split or self.row or self.col):
-                df = df.iloc[::-1]
-
-            ticklabels = df.index.values
-                
-            for col in df.columns:
-                values = df[col].values
-                
-                if self.orientation == 'v':
-                    ax.bar(position, values, label=col, width=cur_size, 
-                            bottom=base, align='edge', **bar_kwargs)
-                    position = position + cur_size * (1 - stacked)
-                else:
-                    ax.barh(position - cur_size, values, label=col, height=cur_size, 
-                            left=base, align='edge', **bar_kwargs)
-                    position = position - cur_size * (1 - stacked)
-
-                if stacked:
-                    base += values
-                
-            self.add_ticklabels(ticklabels, ax, delta=size / 2)
-        if self.split or len(df.columns) > 1:
-            self.add_legend(col)
-        self.update_fig_size(len(info), len(df))
-        return self.clean_up()
+        delta = jump * df.shape[1] / 2 if barmode == 'group' else size / 2
+        self.add_ticklabels(ticklabels, ax, delta=delta)
+    if self.split or len(df.columns) > 1:
+        self.add_legend(col)
+    self.update_fig_size(df.shape[1], df.shape[0])
+    return self.clean_up()
 
 
 def _common_dist(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None, 
@@ -272,60 +202,61 @@ def _common_dist(x=None, y=None, data=None, split=None, row=None, col=None, x_or
                  ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
                  x_textwrap=10, y_textwrap=None, x_rot=None, y_rot=None, kind=None, **kwargs):
 
-        aggfunc = '__distribution__'
-        sort_values = None
-        self = CommonPlot(x, y, data, aggfunc, split, row, col, 
-                          x_order, y_order, split_order, row_order, col_order,
-                          orientation, sort_values, wrap, figsize, title, sharex, 
-                          sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
-                          x_textwrap, y_textwrap, x_rot, y_rot)
+    aggfunc = '__distribution__'
+    sort_values = None
+    self = MPLCommon(x, y, data, aggfunc, split, row, col, 
+                        x_order, y_order, split_order, row_order, col_order,
+                        orientation, sort_values, wrap, figsize, title, sharex, 
+                        sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
+                        x_textwrap, y_textwrap, x_rot, y_rot)
 
-        key = 'bodies' if kind == 'violinplot' else 'boxes'
-        vert = self.orientation == 'v'
-        for ax, info in self.final_data.items():
-            plot_func = getattr(ax, kind)
-            cur_data, cur_ticklabels = self.get_distribution_data(info)
+    key = 'bodies' if kind == 'violinplot' else 'boxes'
+    vert = self.orientation == 'v'
+    for ax, info in self.final_data.items():
+        plot_func = getattr(ax, kind)
+        cur_data, cur_ticklabels = self.get_distribution_data(info)
 
-            handles = []
-            split_labels = []
-            n_splits = len(cur_data)
-            widths = min(.5 + .15 * n_splits, .9) / n_splits
-            n_boxes = len(info)
-            n = len(next(iter(cur_data.values())))  # number of groups
-            markersize = max(6 - n_boxes // 5, 2)
-            for i, (split_label, data) in enumerate(cur_data.items()):
-                filt = [len(arr) > 0 for arr in data]
-                positions = np.array([i for (i, f) in enumerate(filt) if f])
-                data = [np.array(d) for (d, f) in zip(data, filt) if f]
-                if self.orientation == 'h':
-                    positions = positions - i * widths
-                else:
-                    positions = positions + i * widths
-                
-                if kind == 'boxplot':
-                    kwargs['boxprops'] = {'facecolor': self.colors[i % len(self.colors)] ,
-                                          'edgecolor': 'black'}
-                    kwargs['flierprops'] = {'markersize': markersize}
-                
-                ret = plot_func(data, vert=vert, positions=positions, widths=widths, **kwargs)
-
-                if kind == 'violinplot':
-                    for k in ['cmeans', 'cmins', 'cmaxes', 'cbars', 'cmedians', 'cquantiles']:
-                        if k in ret:
-                            ret[k].set_linewidth(1)
-                    for body in ret['bodies']:
-                        body.set_alpha(.8)
-
-                handles.append(ret[key][0])
-                split_labels.append(split_label)
+        handles = []
+        split_labels = []
+        n_splits = len(cur_data)
+        widths = min(.5 + .15 * n_splits, .9) / n_splits
+        n_boxes = len(info)
+        n = len(next(iter(cur_data.values())))  # number of groups
+        markersize = max(6 - n_boxes // 5, 2)
+        jump, size = get_jump_size(n, boxmode, boxgap, boxgroupgap)
+        for i, (split_label, data) in enumerate(cur_data.items()):
+            filt = [len(arr) > 0 for arr in data]
+            positions = np.array([i for (i, f) in enumerate(filt) if f])
+            data = [np.array(d) for (d, f) in zip(data, filt) if f]
+            if self.orientation == 'h':
+                positions = positions - i * widths
+            else:
+                positions = positions + i * widths
             
-            delta = (n_splits / 2 - .5) * widths
-            ticklabels = cur_ticklabels[split_label]
-            self.add_ticklabels(ticklabels, ax, delta=delta)
+            if kind == 'boxplot':
+                kwargs['boxprops'] = {'facecolor': self.colors[i % len(self.colors)] ,
+                                        'edgecolor': 'black'}
+                kwargs['flierprops'] = {'markersize': markersize}
+            
+            ret = plot_func(data, vert=vert, positions=positions, widths=widths, **kwargs)
 
-        self.add_legend(self.split, handles, split_labels)
-        self.update_fig_size(n_splits, n)
-        return self.clean_up()
+            if kind == 'violinplot':
+                for k in ['cmeans', 'cmins', 'cmaxes', 'cbars', 'cmedians', 'cquantiles']:
+                    if k in ret:
+                        ret[k].set_linewidth(1)
+                for body in ret['bodies']:
+                    body.set_alpha(.8)
+
+            handles.append(ret[key][0])
+            split_labels.append(split_label)
+        
+        delta = (n_splits / 2 - .5) * widths
+        ticklabels = cur_ticklabels[split_label]
+        self.add_ticklabels(ticklabels, ax, delta=delta)
+
+    self.add_legend(self.split, handles, split_labels)
+    self.update_fig_size(n_splits, n)
+    return self.clean_up()
 
 # could add groupby to box
 def box(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None, 
@@ -379,39 +310,39 @@ def hist(val, data=None, split=None, row=None, col=None, split_order=None, row_o
          bins=None, range=None, density=False, weights=None, cumulative=False, bottom=None, 
          histtype='bar', align='mid', rwidth=None, log=False):
         
-        x_order = y_order = None
-        x, y = (val, None) if orientation == 'v' else (None, val)
-        bins = bins if bins else 20
-        kwargs = dict(bins=bins, range=range, density=density, weights=weights, 
-                      cumulative=cumulative, bottom=bottom, histtype=histtype, align=align, 
-                      rwidth=rwidth, log=log)
+    x_order = y_order = None
+    x, y = (val, None) if orientation == 'v' else (None, val)
+    bins = bins if bins else 20
+    kwargs = dict(bins=bins, range=range, density=density, weights=weights, 
+                    cumulative=cumulative, bottom=bottom, histtype=histtype, align=align, 
+                    rwidth=rwidth, log=log)
 
-        aggfunc = '__distribution__'
-        sort_values = None
-        self = CommonPlot(x, y, data, aggfunc, split, row, col, 
-                          x_order, y_order, split_order, row_order, col_order,
-                          orientation, sort_values, wrap, figsize, title, sharex, 
-                          sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
-                          x_textwrap, y_textwrap, x_rot, y_rot)
+    aggfunc = '__distribution__'
+    sort_values = None
+    self = MPLCommon(x, y, data, aggfunc, split, row, col, 
+                        x_order, y_order, split_order, row_order, col_order,
+                        orientation, sort_values, wrap, figsize, title, sharex, 
+                        sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
+                        x_textwrap, y_textwrap, x_rot, y_rot)
 
-        orientation = 'vertical' if self.orientation == 'v' else 'horizontal'
-        for ax, info in self.final_data.items():
-            cur_data, cur_ticklabels = self.get_distribution_data(info)
+    orientation = 'vertical' if self.orientation == 'v' else 'horizontal'
+    for ax, info in self.final_data.items():
+        cur_data, cur_ticklabels = self.get_distribution_data(info)
 
-            handles = []
-            split_labels = []
-            n_splits = len(cur_data)
-            n = len(next(iter(cur_data.values())))  # number of groups
-            for split_label, data in cur_data.items():
-                filt = [len(arr) > 0 for arr in data]
-                vals = [d for (d, f) in zip(data, filt) if f]    
-                ret = ax.hist(vals, orientation=orientation, alpha=.8, **kwargs)
-                handles.append(ret[-1][0])
-                split_labels.append(split_label)
+        handles = []
+        split_labels = []
+        n_splits = len(cur_data)
+        n = len(next(iter(cur_data.values())))  # number of groups
+        for split_label, data in cur_data.items():
+            filt = [len(arr) > 0 for arr in data]
+            vals = [d for (d, f) in zip(data, filt) if f]    
+            ret = ax.hist(vals, orientation=orientation, alpha=.8, **kwargs)
+            handles.append(ret[-1][0])
+            split_labels.append(split_label)
 
-        self.add_legend(self.split, handles, split_labels)
-        # self.update_fig_size(n_splits, n)
-        return self.clean_up()
+    self.add_legend(self.split, handles, split_labels)
+    # self.update_fig_size(n_splits, n)
+    return self.clean_up()
 
 
 def kde(x=None, y=None, data=None, split=None, row=None, col=None, split_order=None, 
@@ -420,38 +351,38 @@ def kde(x=None, y=None, data=None, split=None, row=None, col=None, split_order=N
         ylim=None, xscale='linear', yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None, 
         x_rot=None, y_rot=None, range=None, cumulative=False):
         
-        from ._utils import calculate_density_1d, calculate_density_2d
+    from ._utils import calculate_density_1d, calculate_density_2d
 
-        x_order = y_order = None
-        # x, y = (x, None) if orientation == 'v' else (None, x)
-        kwargs = dict(range=range, cumulative=cumulative)
+    x_order = y_order = None
+    # x, y = (x, None) if orientation == 'v' else (None, x)
+    kwargs = dict(range=range, cumulative=cumulative)
 
-        if x is not None and y is not None and split is not None:
-            raise ValueError('Cannot use `split` for 2-dimensional KDE plots')
+    if x is not None and y is not None and split is not None:
+        raise ValueError('Cannot use `split` for 2-dimensional KDE plots')
 
-        aggfunc = '__distribution__' if y is None else None
-        sort_values = None
-        self = CommonPlot(x, y, data, aggfunc, split, row, col, 
-                          x_order, y_order, split_order, row_order, col_order,
-                          orientation, sort_values, wrap, figsize, title, sharex, 
-                          sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
-                          x_textwrap, y_textwrap, x_rot, y_rot, check_numeric=True)
+    aggfunc = '__distribution__' if y is None else None
+    sort_values = None
+    self = MPLCommon(x, y, data, aggfunc, split, row, col, 
+                        x_order, y_order, split_order, row_order, col_order,
+                        orientation, sort_values, wrap, figsize, title, sharex, 
+                        sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
+                        x_textwrap, y_textwrap, x_rot, y_rot, check_numeric=True)
 
-        for ax, info in self.final_data.items():
-            for vals in info:
-                if aggfunc == '__distribution__':
-                    x, split_label = vals[:2]
-                    x, y = calculate_density_1d(x, cumulative=cumulative)
-                    x, y = (x, y) if self.orientation == 'v' else (y, x)
-                    ax.plot(x, y, label=split_label)
-                else:
-                    x, y, split_label = vals[:3]
-                    xmin, xmax, ymin, ymax, Z = calculate_density_2d(x, y)
-                    ax.imshow(Z, extent=[xmin, xmax, ymin, ymax], aspect='auto')
-                
-        self.add_legend(self.split)
-        # self.update_fig_size(n_splits, n)
-        return self.clean_up()
+    for ax, info in self.final_data.items():
+        for vals in info:
+            if aggfunc == '__distribution__':
+                x, split_label = vals[:2]
+                x, y = calculate_density_1d(x, cumulative=cumulative)
+                x, y = (x, y) if self.orientation == 'v' else (y, x)
+                ax.plot(x, y, label=split_label)
+            else:
+                x, y, split_label = vals[:3]
+                xmin, xmax, ymin, ymax, Z = calculate_density_2d(x, y)
+                ax.imshow(Z, extent=[xmin, xmax, ymin, ymax], aspect='auto')
+            
+    self.add_legend(self.split)
+    # self.update_fig_size(n_splits, n)
+    return self.clean_up()
 
 xy_doc = """\
 x : str, default None
