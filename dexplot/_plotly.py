@@ -85,6 +85,7 @@ def bar_plotly(x=None, y=None, data=None, aggfunc=None, split=None, row=None, co
 
     return self.fig
 
+
 def count_plotly(val, data=None, normalize=False, split=None, row=None, col=None, 
         x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
         orientation='v', sort_values='desc', wrap=None, figsize=None, title=None, 
@@ -169,6 +170,55 @@ def violin_plotly(x=None, y=None, data=None, split=None, row=None, col=None, x_o
                                 name=label, row=row, col=col, 
                                 marker_color=self.colors[i % len(self.colors)], 
                                 showlegend=showlegend)
+        showlegend = False
+        
+    return self.fig
+
+def kde_plotly(x=None, y=None, data=None, split=None, row=None, col=None, split_order=None, 
+               row_order=None, col_order=None, orientation='v', wrap=None, figsize=None, 
+               title=None, sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, 
+               ylim=None, xscale='linear', yscale='linear', cmap=None, x_textwrap=10, 
+               y_textwrap=None, x_rot=None, y_rot=None, range=None, cumulative=False):
+
+    aggfunc = None
+    sort_values = None
+    self = PlotlyCommon(x, y, data, aggfunc, split, row, col, 
+                    x_order, y_order, split_order, row_order, col_order,
+                    orientation, sort_values, wrap, figsize, title, sharex, 
+                    sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
+                    x_textwrap, y_textwrap, x_rot, y_rot)
+
+    showlegend = self.split is not None
+    from ._utils import calculate_density_1d, calculate_density_2d
+
+    x_order = y_order = None
+    # x, y = (x, None) if orientation == 'v' else (None, x)
+
+    if x is not None and y is not None and split is not None:
+        raise ValueError('Cannot use `split` for 2-dimensional KDE plots')
+
+    aggfunc = '__distribution__' if y is None else None
+    sort_values = None
+    self = PlotlyCommon(x, y, data, aggfunc, split, row, col, 
+                        x_order, y_order, split_order, row_order, col_order,
+                        orientation, sort_values, wrap, figsize, title, sharex, 
+                        sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap,
+                        x_textwrap, y_textwrap, x_rot, y_rot, check_numeric=True)
+
+    for ax, info in self.final_data.items():
+        for vals in info:
+            if aggfunc == '__distribution__':
+                x, split_label = vals[:2]
+                x, y = calculate_density_1d(x, cumulative=cumulative)
+                x, y = (x, y) if self.orientation == 'v' else (y, x)
+                self.fig.add_scatter(x=x, y=y, name=split_label, row=row, col=col,
+                            marker_color=self.colors[i % len(self.colors)], 
+                            showlegend=showlegend)
+            else:
+                x, y, split_label = vals[:3]
+                xmin, xmax, ymin, ymax, Z = calculate_density_2d(x, y)
+                ax.imshow(Z, extent=[xmin, xmax, ymin, ymax], aspect='auto')
+    
         showlegend = False
         
     return self.fig
