@@ -67,6 +67,7 @@ def line(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None
         self.update_fig_size(len(x), 1)
     return self.clean_up()
         
+
 def scatter(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None, 
             x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
             orientation='v', sort_values=None, wrap=None, figsize=None, title=None, sharex=True, 
@@ -100,6 +101,7 @@ def scatter(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=N
         self.update_fig_size(len(x), 1)
     return self.clean_up()
 
+
 def bar(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None, 
         x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
         orientation='v', sort_values=None, wrap=None, figsize=None, title=None, 
@@ -130,21 +132,22 @@ def bar(x=None, y=None, data=None, aggfunc=None, split=None, row=None, col=None,
                 x_plot = x_plot + jump * i
                 ax.bar(x_plot, y_plot, label=label, width=size, 
                         bottom=base, align='edge', **bar_kwargs)
-                if barmode == 'stack':
+                if mode == 'stack':
                     base += y_plot
             else:
                 y_plot = y_plot - jump * (i + 1)
                 ax.barh(y_plot, x_plot, label=label, height=size, 
                         left=base, align='edge', **bar_kwargs)
-                if barmode == 'stack':
+                if mode == 'stack':
                     base += x_plot
         ticklabels = x if self.orientation == 'v' else y
-        delta = jump * (i + 1) / 2 if barmode == 'group' else size / 2
+        delta = jump * (i + 1) / 2 if mode == 'group' else size / 2
         self.add_ticklabels(ticklabels, ax, delta=delta)
 
     self.add_legend(label)
     self.update_fig_size(len(info), len(x))
     return self.clean_up()
+
 
 def count(val, data=None, normalize=False, split=None, row=None, col=None, 
           x_order=None, y_order=None, split_order=None, row_order=None, col_order=None,
@@ -185,10 +188,10 @@ def count(val, data=None, normalize=False, split=None, row=None, col=None,
                         left=base, align='edge', **bar_kwargs)
                 position = position - jump
 
-            if barmode == 'stack':
+            if mode == 'stack':
                 base += values
 
-        delta = jump * df.shape[1] / 2 if barmode == 'group' else size / 2
+        delta = jump * df.shape[1] / 2 if mode == 'group' else size / 2
         self.add_ticklabels(ticklabels, ax, delta=delta)
     if self.split or len(df.columns) > 1:
         self.add_legend(col)
@@ -200,7 +203,8 @@ def _common_dist(x=None, y=None, data=None, split=None, row=None, col=None, x_or
                  y_order=None, split_order=None, row_order=None, col_order=None, orientation='h', 
                  wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
                  ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
-                 x_textwrap=10, y_textwrap=None, x_rot=None, y_rot=None, kind=None, **kwargs):
+                 x_textwrap=10, y_textwrap=None, x_rot=None, y_rot=None, 
+                 mode='group', gap=.2, groupgap=0, kind=None, **kwargs):
 
     aggfunc = '__distribution__'
     sort_values = None
@@ -223,7 +227,7 @@ def _common_dist(x=None, y=None, data=None, split=None, row=None, col=None, x_or
         n_boxes = len(info)
         n = len(next(iter(cur_data.values())))  # number of groups
         markersize = max(6 - n_boxes // 5, 2)
-        jump, size = get_jump_size(n, boxmode, boxgap, boxgroupgap)
+        jump, size = get_jump_size(n, mode, gap, groupgap)
         for i, (split_label, data) in enumerate(cur_data.items()):
             filt = [len(arr) > 0 for arr in data]
             positions = np.array([i for (i, f) in enumerate(filt) if f])
@@ -263,38 +267,45 @@ def box(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None,
         y_order=None, split_order=None, row_order=None, col_order=None, orientation='h', 
         wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
         ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
-        x_textwrap=10, y_textwrap=None, x_rot=None, y_rot=None, notch=None, sym=None, whis=None, 
+        x_textwrap=10, y_textwrap=None, x_rot=None, y_rot=None, mode='group', gap=.2,
+        groupgap=0, box_kwargs=None):
+            
+    kwargs = dict(notch=None, sym=None, whis=None, 
         patch_artist=True, bootstrap=None, usermedians=None, conf_intervals=None, meanline=None, 
         showmeans=None, showcaps=None, showbox=None, showfliers=None, boxprops=None, labels=None, 
         flierprops=None, medianprops=None, meanprops=None, capprops=None, whiskerprops=None, 
-        manage_ticks=True, autorange=False, zorder=None):
+        manage_ticks=True, autorange=False, zorder=None)
 
-    if medianprops is None:
-        medianprops = {'color': '.2'}
+    if kwargs['medianprops'] is None:
+        kwargs['medianprops'] = {'color': '.2'}
     
-    kwargs = dict(notch=notch, sym=sym, whis=whis, patch_artist=patch_artist,
-                  bootstrap=bootstrap, usermedians=usermedians, conf_intervals=conf_intervals, 
-                  meanline=meanline, showmeans=showmeans, showcaps=showcaps, showbox=showbox, 
-                  showfliers=showfliers, boxprops=boxprops, labels=labels, flierprops=flierprops,
-                  medianprops=medianprops, meanprops=meanprops, capprops=capprops, 
-                  whiskerprops=whiskerprops, manage_ticks=manage_ticks, 
-                  autorange=autorange, zorder=zorder)
+    # kwargs = dict(notch=notch, sym=sym, whis=whis, patch_artist=patch_artist,
+    #               bootstrap=bootstrap, usermedians=usermedians, conf_intervals=conf_intervals, 
+    #               meanline=meanline, showmeans=showmeans, showcaps=showcaps, showbox=showbox, 
+    #               showfliers=showfliers, boxprops=boxprops, labels=labels, flierprops=flierprops,
+    #               medianprops=medianprops, meanprops=meanprops, capprops=capprops, 
+    #               whiskerprops=whiskerprops, manage_ticks=manage_ticks, 
+    #               autorange=autorange, zorder=zorder)
     
     return _common_dist(x, y, data, split, row, col, x_order, y_order, split_order, 
                         row_order, col_order, orientation, wrap, figsize, title, 
                         sharex, sharey, xlabel, ylabel, xlim, ylim, xscale, yscale, cmap, 
-                        x_textwrap, y_textwrap, x_rot, y_rot, kind='boxplot', **kwargs)
+                        x_textwrap, y_textwrap, x_rot, y_rot, mode, gap, groupgap, 
+                        kind='boxplot', **kwargs)
 
 
 def violin(x=None, y=None, data=None, split=None, row=None, col=None, x_order=None, 
            y_order=None, split_order=None, row_order=None, col_order=None, orientation='h', 
            wrap=None, figsize=None, title=None, sharex=True, sharey=True, xlabel=None, 
            ylabel=None, xlim=None, ylim=None, xscale='linear', yscale='linear', cmap=None, 
-           x_textwrap=10, y_textwrap=None, x_rot=None, y_rot=None, showmeans=False, 
-           showextrema=True, showmedians=True, quantiles=None, points=100, bw_method=None):
+           x_textwrap=10, y_textwrap=None, x_rot=None, y_rot=None, mode='group', gap=.2,
+           groupgap=0, violin_kwargs=None):
+           
+    kwargs = dict(showmeans=False, showextrema=True, showmedians=True, 
+                  quantiles=None, points=100, bw_method=None)
 
-    kwargs = dict(showmeans=showmeans, showextrema=showextrema, showmedians=showmedians, 
-                  quantiles=quantiles, points=points, bw_method=bw_method)
+    # kwargs = dict(showmeans=showmeans, showextrema=showextrema, showmedians=showmedians, 
+    #               quantiles=quantiles, points=points, bw_method=bw_method)
 
     return _common_dist(x, y, data, split, row, col, 
                         x_order, y_order, split_order, row_order, col_order,
@@ -307,8 +318,10 @@ def hist(val, data=None, split=None, row=None, col=None, split_order=None, row_o
          col_order=None, orientation='v', wrap=None, figsize=None, title=None, 
          sharex=True, sharey=True, xlabel=None, ylabel=None, xlim=None, ylim=None, xscale='linear', 
          yscale='linear', cmap=None, x_textwrap=10, y_textwrap=None, x_rot=None, y_rot=None, 
-         bins=None, range=None, density=False, weights=None, cumulative=False, bottom=None, 
-         histtype='bar', align='mid', rwidth=None, log=False):
+         mode='group', gap=.2, groupgap=0, hist_kwargs=None):
+
+    hist_kwargs = dict(bins=None, range=None, density=False, weights=None, cumulative=False, 
+                       bottom=None, histtype='bar', align='mid', rwidth=None, log=False)
         
     x_order = y_order = None
     x, y = (val, None) if orientation == 'v' else (None, val)
@@ -384,20 +397,20 @@ def kde(x=None, y=None, data=None, split=None, row=None, col=None, split_order=N
     # self.update_fig_size(n_splits, n)
     return self.clean_up()
 
-xy_doc = """\
+xy_doc = """
 x : str, default None
     Column name of DataFrame whose values will go along the x-axis
 
 y : str, default None
     Column name of DataFrame whose values will go along the y-axis
-"""
+    """
 
-val_doc = """\
+val_doc = """
 val : str, default None
     Column name of DataFrame whose values will be used for distribution
-"""
+    """
 
-aggfunc_doc = """\
+aggfunc_doc = """
 aggfunc : str or function, default None
     Kind of aggregation to perform. Use a string that the DataFrame `agg` 
     method understands. If providing a function, it will also be passed to
@@ -405,9 +418,9 @@ aggfunc : str or function, default None
 
     The strings 'countna' and 'percna' are also available to find the
     number and percentage of missing values.
-"""
+    """
 
-xy_order = """\
+xy_order = """
 x_order : str or list, default None
     Used as both a way to order and filter the x-values. Use the strings
     'asc'/'desc' to order ascending or descending.
@@ -430,9 +443,9 @@ row_order : str or list, default None
     
 col_order : str or list, default None
     See x_order
-"""
+    """
 
-split_order = """\
+split_order = """
 split_order : str or list, default None
     Used as both a way to order and filter the x-values. Use the strings
     'asc'/'desc' to order ascending or descending.
@@ -449,13 +462,13 @@ row_order : str or list, default None
     
 col_order : str or list, default None
     See split_order
-"""
+    """
 
 sort_values_doc = """
 sort_values : str - 'asc' or 'desc', default None
     Sort the values ascending or descending. If this is given, then
     x/y_order is ignored.
-"""
+    """
 
 doc = \
 """
@@ -464,13 +477,10 @@ doc = \
 Parameters
 ----------
 {xy}
-
 data : DataFrame or Series, default None
     A pandas DataFrame with long or wide data. If provided a Series, do not
     supply x or y.
-
 {aggfunc}
-
 split : str, default None
     Column name that will be used in the DataFrame `groupby` method to 
     split the data into independent groups within a single plot
@@ -484,15 +494,11 @@ col : str
     Column name that will be used in the DataFrame `groupby` method to 
     split the data into independent groups to form new plots. Each unique value
     in the `row` column forms a new row of plots.
-
 {order}
-
 orientation : str 'v' or 'h'
     Choose the orientation of the plots. By default, they are vertical
     ('v'), except for box and violin plots, which are horizontal.
-
 {sort_values}
-
 wrap : int, default None
     When using either `row` or either `col`, but not both, determines the
     maximum number of rows/cols before a new row/col is used.
@@ -544,6 +550,12 @@ x_rot : int or float, default None
 y_rot : int or float, default None
     Degree of rotation of y-tick labels. If between 0 and 180
     vertical_alignment is set to 'top', otherwise 'bottom'
+
+mode : str
+
+gap : float
+
+groupgap : float
 
 Returns
 -------
