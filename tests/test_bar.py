@@ -4,22 +4,14 @@ import dexplot as dxp
 
 
 airbnb = dxp.load_dataset('airbnb')
+aggfunc = ['median', 'mean', 'min', 'max', 'size', np.median, np.mean, np.min, np.max, np.max]
+
 
 class TestAgg:
 
-    def test_string_name(self):
-        dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='median')
-        dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='mean')
-        dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='min')
-        dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='max')
-        dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc='size')
-
-    def test_function(self):
-        dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc=np.median)
-        dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc=np.mean)
-        dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc=np.min)
-        dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc=np.max)
-        dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc=np.size)
+    @pytest.mark.parametrize('aggfunc', aggfunc)
+    def test_string_name(self, aggfunc):
+        dxp.bar(x='neighborhood', y='price', data=airbnb, aggfunc=aggfunc)
 
 
 class TestSort:
